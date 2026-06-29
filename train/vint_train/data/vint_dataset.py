@@ -239,9 +239,15 @@ class ViNT_Dataset(Dataset):
     def _compute_actions(self, traj_data, curr_time, goal_time):
         start_index = curr_time
         end_index = curr_time + self.len_traj_pred * self.waypoint_spacing + 1
-        yaw = traj_data["yaw"][start_index:end_index:self.waypoint_spacing]
-        positions = traj_data["position"][start_index:end_index:self.waypoint_spacing]
-        goal_pos = traj_data["position"][min(goal_time, len(traj_data["position"]) - 1)]
+        yaw = np.asarray(
+            traj_data["yaw"][start_index:end_index:self.waypoint_spacing], dtype=np.float64
+        ).reshape(-1)
+        positions = np.asarray(
+            traj_data["position"][start_index:end_index:self.waypoint_spacing], dtype=np.float64
+        ).reshape(-1, 2)
+        goal_pos = np.asarray(
+            traj_data["position"][min(goal_time, len(traj_data["position"]) - 1)], dtype=np.float64
+        ).reshape(-1)[:2]
 
         if len(yaw.shape) == 2:
             yaw = yaw.squeeze(1)

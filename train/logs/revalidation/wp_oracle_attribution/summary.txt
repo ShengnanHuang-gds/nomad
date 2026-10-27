@@ -1,0 +1,22 @@
+=== Waypoint oracle gain attribution (PP -> PG) ===
+
+n=1000 locked far frames
+mean delta_use_cm +2.036 (sum +2035.9)
+mean delta_ade_m +2.036 cm
+frames with PG better (delta_ade>0): 67.8%
+pearson(wp_err_deg, delta_use_cm): +0.623
+pearson(wp_err_deg, delta_ade_m): +0.623
+pearson(|dyaw|, delta_use_cm): +0.157
+top 10% frames (100) hold 68.9% of positive gain
+top 5% frames (50) hold 47.3% of positive gain
+
+--- turn vs straight ---
+  turn 0.30m/45deg: n=593 median_wp_err=14.5 deg >45 deg 19% mean_duse=+3.02cm share_of_total_gain=88% top10pct_within_subset=59%
+  straight (not 0.15m/20deg): n=179 median_wp_err=3.5 deg >45 deg 1% mean_duse=+0.31cm share_of_total_gain=3% top10pct_within_subset=77%
+
+--- wp error quintiles (mean delta_use_cm) ---
+  Q1 [0.0,3.2] deg n=200 mean=+0.03 frac_total=0%
+  Q2 [3.2,7.6] deg n=200 mean=+0.12 frac_total=1%
+  Q3 [7.6,13.4] deg n=200 mean=+0.37 frac_total=4%
+  Q4 [13.4,29.0] deg n=200 mean=+1.86 frac_total=18%
+  Q5 [29.0,179.9] deg n=200 mean=+7.80 frac_total=77%

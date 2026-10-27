@@ -1,4 +1,14 @@
 train/logs/*
+# Weekly report / revalidation summaries (no npz, no huge CSV, no train.log)
+!train/logs/revalidation/
+train/logs/revalidation/**
+!train/logs/revalidation/**/
+!train/logs/revalidation/**/*.txt
+!train/logs/revalidation/**/*.md
+!train/logs/revalidation/**/*.json
+!train/logs/revalidation/**/*.csv
+train/logs/revalidation/**/*.npz
+train/logs/revalidation/hard_pairs/hard_pairs_train.csv
 train/datasets/*
 train/vint_train/data/data_splits/*
 train/wandb/*

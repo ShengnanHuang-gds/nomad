@@ -1,0 +1,15 @@
+{
+  "best": {
+    "kind": "suppress",
+    "name": "sup_w35_55_c1.00_t0.00",
+    "wp_lo": 35,
+    "wp_hi": 55,
+    "cap": 1.0,
+    "turn_weight": 0.0,
+    "all_use_cm": 3.16,
+    "hard_use_cm": 3.09,
+    "hard_kappa_minus_goal_cm": 0.09
+  },
+  "baseline_all_cm": 2.8,
+  "baseline_hard_kg_cm": -2.93
+}

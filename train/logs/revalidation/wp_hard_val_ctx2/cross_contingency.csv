@@ -1,0 +1,2 @@
+pair,n,n_hard45,n_turn_strict,n_both,pct_hard45_given_turn_strict,pct_turn_strict_given_hard45,jaccard
+hard45_vs_turn_strict,5110,362,2751,346,12.57724463831334,95.58011049723757,0.12504517528008674

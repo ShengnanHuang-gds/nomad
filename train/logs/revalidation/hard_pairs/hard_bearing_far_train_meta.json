@@ -1,0 +1,7 @@
+{
+  "rule": "hard_bearing and far (steps>=20)",
+  "n": 662878,
+  "n_trajs": 1280,
+  "npz": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\hard_pairs\\hard_bearing_far_train.npz",
+  "note": "Use for loss weight; prefer online |bearing|>45 from batch target if possible (zero disk)."
+}

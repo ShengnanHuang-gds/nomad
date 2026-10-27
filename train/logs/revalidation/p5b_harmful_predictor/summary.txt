@@ -1,0 +1,17 @@
+=== P5b harmful-blend predictor (no GT wp_err in features) ===
+n=1000 harmful=447 (44.7%)
+GroupKFold by traj (5 folds) OOF AUC=0.520 folds=[0.519, 0.479, 0.553, 0.491, 0.577]
+
+Baselines (cm use):
+  kappa blend     +2.62
+  goal only       +2.03
+  oracle pick     +3.80  (know true harmful)
+
+Best OOF logistic thr=0.60 frac_goal=0.00 use=+2.62
+OOF theta>=thr (per-fold tune) frac_goal=0.12 use=+2.29
+OOF turn & theta>=thr (per-fold tune) use=+2.34
+
+hard45 subset:
+  kappa -1.41 goal +2.86 policy -1.41 oracle +3.60
+
+Features: theta_deg, r_w, log_kw, log_kg, turn_strict, yaw8_deg, spread, turn_loose, endpoint_lateral_m

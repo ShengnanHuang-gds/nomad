@@ -1,0 +1,1 @@
+C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\nomad_d\nomad_dino_wp_ctx2_hard_os3_2026_10_26_19_07_17

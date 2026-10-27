@@ -1,0 +1,3 @@
+kind,name,all_use_cm,hard_use_cm,hard_kappa_minus_goal_cm
+baseline,kappa blend,2.7953815374523403,0.07157135754823685,-2.92937820777297
+baseline,goal head (direct),1.9527366986498238,3.000949565321207,0.0

@@ -1,0 +1,13 @@
+=== P5a (locked n=1000) ===
+beneficial 553 harmful 447 mean du +0.59cm
+pearson wp_err,du -0.317 rw +0.065 theta +0.141
+Cohen d harm vs ben: rw -0.04 theta -0.06 wp_err +0.38 kw -0.02 kg -0.06
+ benef n=553 rw_med=0.719 th_med=20.6 wpe_med=8.7 du +3.20
+ harm n=447 rw_med=0.701 th_med=19.4 wpe_med=12.8 du -2.65
+ hard45 n=120 rw_med=0.664 th_med=36.8 wpe_med=70.1 du -4.27
+ h45&harm n=77 rw_med=0.664 th_med=48.8 wpe_med=71.9 du -7.81
+ wp<45 ben n=510 rw=0.720 du +3.30
+ wp<45 harm n=370 rw=0.704 du -1.57
+ wp>=45 ben n=43 rw=0.656 du +2.06
+ wp>=45 harm n=77 rw=0.664 du -7.81
+Hypothesis: rw not higher on harm => bad WP dir dominates

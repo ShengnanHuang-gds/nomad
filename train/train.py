@@ -197,9 +197,12 @@ def main(config):
         else: 
             raise ValueError(f"Vision encoder {config['vision_encoder']} not supported")
             
+        goal_pos_dim = 2 if config.get("goal_pos_oracle") else 0
+        if goal_pos_dim:
+            print(f"E-oracle: diffusion condition appends true goal_pos ({goal_pos_dim})")
         noise_pred_net = ConditionalUnet1D(
                 input_dim=2,
-                global_cond_dim=config["encoding_size"],
+                global_cond_dim=config["encoding_size"] + goal_pos_dim,
                 down_dims=config["down_dims"],
                 cond_predict_scale=config["cond_predict_scale"],
             )
@@ -283,10 +286,28 @@ def main(config):
     if "load_run" in config:
         load_project_folder = os.path.join("logs", config["load_run"])
         print("Loading model from ", load_project_folder)
-        latest_path = os.path.join(load_project_folder, "latest.pth")
-        latest_checkpoint = torch.load(latest_path) #f"cuda:{}" if torch.cuda.is_available() else "cpu")
+        if config.get("load_epoch") is not None:
+            load_epoch = int(config["load_epoch"])
+            latest_path = os.path.join(load_project_folder, f"{load_epoch}.pth")
+            if not os.path.isfile(latest_path):
+                raise FileNotFoundError(f"Checkpoint not found: {latest_path}")
+            current_epoch = load_epoch + 1
+            print(f"Resuming NoMaD at epoch {current_epoch} from {load_epoch}.pth")
+        else:
+            latest_path = os.path.join(load_project_folder, "latest.pth")
+        latest_checkpoint = torch.load(latest_path, map_location=device)
         load_model(model, config["model_type"], latest_checkpoint)
-        if "epoch" in latest_checkpoint:
+        if config.get("load_epoch") is None and config["model_type"] == "nomad":
+            saved_epochs = [
+                int(os.path.splitext(name)[0])
+                for name in os.listdir(load_project_folder)
+                if name.endswith(".pth") and os.path.splitext(name)[0].isdigit()
+            ]
+            if not saved_epochs:
+                raise FileNotFoundError(f"No numbered checkpoints in {load_project_folder}")
+            current_epoch = max(saved_epochs) + 1
+            print(f"Resuming NoMaD at epoch {current_epoch} (last complete checkpoint: {max(saved_epochs)}.pth)")
+        elif config.get("load_epoch") is None and "epoch" in latest_checkpoint:
             current_epoch = latest_checkpoint["epoch"] + 1
 
     # Multi-GPU
@@ -295,10 +316,50 @@ def main(config):
     model = model.to(device)
 
     if "load_run" in config:  # load optimizer and scheduler after data parallel
-        if "optimizer" in latest_checkpoint:
-            optimizer.load_state_dict(latest_checkpoint["optimizer"].state_dict())
-        if scheduler is not None and "scheduler" in latest_checkpoint:
-            scheduler.load_state_dict(latest_checkpoint["scheduler"].state_dict())
+        resume_matches_latest = config.get("load_epoch") is None
+        if config["model_type"] == "nomad" and resume_matches_latest:
+            optimizer_path = os.path.join(load_project_folder, "optimizer_latest.pth")
+            scheduler_path = os.path.join(load_project_folder, "scheduler_latest.pth")
+            if os.path.isfile(optimizer_path):
+                optimizer.load_state_dict(torch.load(optimizer_path, map_location=device))
+                print("Loaded optimizer from", optimizer_path)
+            if scheduler is not None and os.path.isfile(scheduler_path):
+                scheduler.load_state_dict(torch.load(scheduler_path, map_location=device))
+                print("Loaded scheduler from", scheduler_path)
+        elif config["model_type"] == "nomad" and scheduler is not None:
+            # Only optimizer_latest/scheduler_latest are stored, and those belong to the
+            # last finished epoch. Stepping a fresh scheduler keeps the learning rate
+            # aligned with the chosen checkpoint. The loop steps the scheduler twice per epoch.
+            scheduler_steps = 2 * (int(config["load_epoch"]) + 1)
+            for _ in range(scheduler_steps):
+                scheduler.step()
+            print(
+                f"Optimizer moments start fresh. Scheduler advanced {scheduler_steps} steps "
+                f"to the end of epoch {int(config['load_epoch'])}; "
+                f"lr={optimizer.param_groups[0]['lr']:.6g}"
+            )
+        elif not resume_matches_latest:
+            pass
+        else:
+            if "optimizer" in latest_checkpoint:
+                optimizer.load_state_dict(latest_checkpoint["optimizer"].state_dict())
+            if scheduler is not None and "scheduler" in latest_checkpoint:
+                scheduler.load_state_dict(latest_checkpoint["scheduler"].state_dict())
+
+    # epochs in the yaml is the cosine T_max used when the scheduler was built.
+    # stop_epoch is the last epoch index to run. Without it, a fresh run of
+    # epochs: 30 trains 0..29. This applies to a fresh run as well as a resume.
+    stop_epoch = config.get("stop_epoch")
+    if stop_epoch is None:
+        stop_epoch = int(config["epochs"]) - 1
+    else:
+        stop_epoch = int(stop_epoch)
+    if current_epoch > stop_epoch:
+        raise ValueError(
+            f"Checkpoint already reached epoch {current_epoch}, but stop_epoch is {stop_epoch}."
+        )
+    config["epochs"] = stop_epoch - current_epoch + 1
+    print(f"Training epochs {current_epoch} through {stop_epoch}")
 
     if config["model_type"] == "vint" or config["model_type"] == "gnm": 
         train_eval_loop(
@@ -345,6 +406,7 @@ def main(config):
             use_wandb=config["use_wandb"],
             eval_fraction=config["eval_fraction"],
             eval_freq=config["eval_freq"],
+            goal_pos_oracle=bool(config.get("goal_pos_oracle", False)),
         )
 
     print("FINISHED TRAINING")

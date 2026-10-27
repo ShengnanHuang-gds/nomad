@@ -62,7 +62,7 @@ learn_angle: False
 image_size: [96, 96] # width, height
 datasets:
   go_stanford:
-    data_folder: /Users/oliverhuang/Desktop/nomad/go_stanford
+    data_folder: C:/Users/61078/Desktop/nomad/go_stanford
     train: vint_train/data/data_splits/go_stanford/train/
     test: vint_train/data/data_splits/go_stanford/test/
     end_slack: 0

@@ -1,0 +1,8 @@
+{
+  "n_frames": 80,
+  "n_test_trajs": 1,
+  "n_train_trajs": 1,
+  "meters_per_unit": 0.25,
+  "data_folder": "C:/Users/61078/Desktop/nomad/recon_gnm/recon",
+  "note": "zero-shot GoStanford heads/B/E on HF reconstructed RECON; images 128x128"
+}

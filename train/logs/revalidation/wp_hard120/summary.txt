@@ -1,0 +1,39 @@
+=== P1b WP hard120 (wp_err>=45) ===
+n_hard=120  n_H&G_top10%=67
+pct in turn_strict: 93.3%
+pct hidden_turn (not loose but high winding): 0.0%
+pct goal_err<15 & wp>=45: 18.3%
+max consecutive hard frames same traj: 2
+
+--- Enrichment vs C_match (Cohen d, top |d|) ---
+  wp_bearing_err_deg           d=+2.61  med_H=70.07 med_C=9.66
+  delta_use_cm                 d=+1.09  med_H=8.50 med_C=0.20
+  path_winding_8               d=+0.75  med_H=108.48 med_C=69.43
+  max_step_yaw_deg             d=+0.75  med_H=24.17 med_C=16.49
+  past_yaw_rate                d=+0.73  med_H=14.10 med_C=7.35
+  past_winding_3               d=+0.73  med_H=42.30 med_C=22.05
+  goal_bearing_err_deg         d=+0.73  med_H=50.40 med_C=15.23
+  chord_arc_ratio              d=+0.69  med_H=1.15 med_C=1.06
+  goal_low_wp_high             d=+0.67  med_H=0.00 med_C=0.00
+  yaw8_deg                     d=+0.65  med_H=100.26 med_C=52.17
+  wp_kappa                     d=-0.58  med_H=8.91 med_C=35.80
+  path_dyaw_t_to_g             d=+0.48  med_H=315.98 med_C=251.78
+
+--- Logistic is_hard (std features) ---
+  past_yaw_rate: +0.547
+  path_winding_8: +0.544
+  goal_bearing_err_deg: +0.538
+  turn_strict: +0.360
+  hidden_turn: -0.238
+  chord_arc_ratio: +0.204
+  abs_endpoint_dyaw_deg: +0.046
+
+{
+  "n_hard": 120,
+  "n_hard_intersect_top_gain": 67,
+  "max_consecutive_same_traj": 2,
+  "mean_run_len": 1.0619469026548674,
+  "pct_hard_in_turn_strict": 93.33333333333333,
+  "pct_hard_hidden_turn": 0.0,
+  "pct_hard_goal_low_wp_high": 18.333333333333332
+}

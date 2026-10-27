@@ -1,0 +1,40 @@
+{
+  "oof_auc": 0.520051296365968,
+  "fold_aucs": [
+    0.5191090555014606,
+    0.4792181069958848,
+    0.5527695463870527,
+    0.4907595221996845,
+    0.5766625615763546
+  ],
+  "baselines": {
+    "kappa_blend": 2.6199888860806824,
+    "goal_only": 2.0340113716199997,
+    "oracle_pick": 3.8031935436651114
+  },
+  "best_oof": {
+    "thr": 0.6,
+    "use_cm": 2.6199888860806824,
+    "frac_goal": 0.0
+  },
+  "theta_rule_use_cm": 2.2859941652044653,
+  "turn_theta_rule_use_cm": 2.343239379487932,
+  "hard45": {
+    "n": 120,
+    "kappa_use": -1.4063834274808567,
+    "goal_use": 2.8642007087667785,
+    "policy_use": -1.4063834274808567,
+    "oracle_use": 3.6023190865914025
+  },
+  "features": [
+    "theta_deg",
+    "r_w",
+    "log_kw",
+    "log_kg",
+    "turn_strict",
+    "yaw8_deg",
+    "spread",
+    "turn_loose",
+    "endpoint_lateral_m"
+  ]
+}

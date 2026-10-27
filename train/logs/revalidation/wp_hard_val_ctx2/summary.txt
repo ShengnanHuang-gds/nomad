@@ -1,0 +1,23 @@
+=== Val far: lock large WP error (ctx2) ===
+n_far=5110  turn_strict=53.8% of far
+
+LOCK set: wp_err >= 45 deg
+  n=362 = 7.08% of ALL far  (~P1b 12% on locked)
+  among turn_strict only: 12.58% frames are hard45
+  among non_turn: 0.68%
+  of hard45: 95.6% are turn_strict (rest straight-label)
+
+Compare to turn_strict (~54% of far): weighting ALL turns != weighting hard45
+  Jaccard-like: both hard45 & turn: 346 frames
+
+Softer pool wp>=30: n=659 (12.90% far)
+hard45 that are also acute_any(p66): 93.1%
+
+Error tiers (pct_turn = within tier):
+  0_15: n=3557 (69.6% far) turn=42.1% acute_any=39.1%
+  15_30: n=894 (17.5% far) turn=72.0% acute_any=74.8%
+  30_45: n=297 (5.8% far) turn=88.9% acute_any=86.2%
+  45_90: n=246 (4.8% far) turn=93.9% acute_any=90.7%
+  ge_90: n=116 (2.3% far) turn=99.1% acute_any=98.3%
+
+Files: hard45_frames.csv, val_far_ctx2_per_frame.npz, summary.json

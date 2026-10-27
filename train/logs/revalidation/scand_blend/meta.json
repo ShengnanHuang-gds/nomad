@@ -1,0 +1,9 @@
+{
+  "n_frames": 200,
+  "n_test_trajs": 111,
+  "n_train_trajs": 0,
+  "meters_per_unit": 0.38,
+  "data_folder": "C:/Users/61078/Desktop/nomad/recon_gnm/scand",
+  "dataset_name": "scand",
+  "note": "zero-shot GoStanford heads/B/E on HF reconstructed scand; images 128x128"
+}

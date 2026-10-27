@@ -1,0 +1,11 @@
+=== Afternoon batch 2026-10-26 15:59 ===
+
+nomad_dino_wp_hist_ctx2_2026_10_24_20_53_44 | med 8.89 | kap all +2.80 turn +3.61 | deploy-sup 0.36305014565587046
+nomad_dino_wp_hist_ctx2_turnhard_2026_10_26_10_04_05 | med 9.16 | kap all +2.93 turn +3.91 | deploy-sup n/a
+nomad_dino_wp_hist3_turnhard_2026_10_26_11_54_24 | med 8.87 | kap all +2.93 turn +3.92 | deploy-sup n/a
+nomad_dino_wp_ctx2_hard45_2026_10_26_13_55_17 | med 9.09 | kap all +2.82 turn +3.72 | deploy-sup n/a
+nomad_dino_wp_ctx2_curvtier_2026_10_26_14_29_06 | med 9.59 | kap all +2.64 turn +3.38 | deploy-sup n/a
+nomad_dino_wp_hist3_th_cont_2026_10_26_15_02_45 | med 8.44 | kap all +2.86 turn +3.80 | deploy-sup n/a
+nomad_dino_wp_ctx2_ft_hist3th_2026_10_26_15_24_38 | med 8.99 | kap all +2.92 turn +3.89 | deploy-sup n/a
+
+See constrained_fallback/ and per-run eval_kappa_wp_scale/

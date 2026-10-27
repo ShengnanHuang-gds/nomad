@@ -1,0 +1,5 @@
+=== Constrained goal fallback (use_all >= kappa - 0.02) ===
+kappa 2.62 goal 2.03
+unconstrained best: {'mode': 'kw_only', 'tau_kw': 9999.0, 'tau_theta': 15.0, 'frac_goal': 1.0, 'use_all': 2.0340113716199997, 'use_hard': 2.8642007087667785, 'score': 10.626613497920335}
+feasible best: {'mode': 'kw_only', 'tau_kw': 8.0, 'tau_theta': 15.0, 'frac_goal': 0.134, 'use_all': 2.725649481825531, 'use_hard': 1.0813444977005322, 'feasible': True}
+feasible policy use_all 2.73 hard 1.08 frac_goal 0.13

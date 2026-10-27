@@ -1,0 +1,5 @@
+=== Multi-horizon GT spread (Val far) ===
+n=2721
+all_far: median d28=11.6 p90=31.3 | d48 med=7.9 p90=21.9
+turn_strict: median d28=19.9 p90=37.0 | d48 med=14.2 p90=26.3
+non_turn: median d28=3.6 p90=11.1 | d48 med=2.5 p90=9.0

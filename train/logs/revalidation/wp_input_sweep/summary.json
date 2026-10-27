@@ -1,0 +1,62 @@
+[
+  {
+    "label": "deploy 2-frame",
+    "run_dir": "logs/nomad_d/nomad_dino_wp_hist_ctx2_2026_10_24_20_53_44",
+    "mean": 18.642353057861328,
+    "median": 8.886978149414062,
+    "gt45": 10.2,
+    "blend": {
+      "all": 2.7953815374523403,
+      "turn 0.30m/45deg": 3.605176209398305,
+      "B masked spread": 4.1566186354279075
+    }
+  },
+  {
+    "label": "turnhard 2-frame",
+    "run_dir": "logs/nomad_d/nomad_dino_wp_hist_ctx2_turnhard_2026_10_26_10_04_05",
+    "mean": 18.749805450439453,
+    "median": 9.156349182128906,
+    "gt45": 10.0,
+    "blend": {
+      "all": 2.925652830861509,
+      "turn 0.30m/45deg": 3.909248513802509,
+      "B masked spread": 4.111256976904024
+    }
+  },
+  {
+    "label": "hist3 plain",
+    "run_dir": "logs\\nomad_d\\nomad_dino_wp_hist3_2026_10_26_11_13_47",
+    "mean": 18.820749282836914,
+    "median": 8.923530578613281,
+    "gt45": 11.600000000000001,
+    "blend": {
+      "all": 2.8434096975252032,
+      "turn 0.30m/45deg": 3.726504273197502,
+      "B masked spread": 4.165756944360768
+    }
+  },
+  {
+    "label": "hist3+turnhard",
+    "run_dir": "logs\\nomad_d\\nomad_dino_wp_hist3_turnhard_2026_10_26_11_54_24",
+    "mean": 18.789207458496094,
+    "median": 8.865585327148438,
+    "gt45": 10.6,
+    "blend": {
+      "all": 2.9344996815547346,
+      "turn 0.30m/45deg": 3.919328380420075,
+      "B masked spread": 3.9590153953136116
+    }
+  },
+  {
+    "label": "hist3+light turn",
+    "run_dir": "logs\\nomad_d\\nomad_dino_wp_hist3_turnlight_2026_10_26_12_33_54",
+    "mean": 19.024215698242188,
+    "median": 8.586952209472656,
+    "gt45": 11.4,
+    "blend": {
+      "all": 2.814326660335064,
+      "turn 0.30m/45deg": 3.69002645926371,
+      "B masked spread": 4.019451135858838
+    }
+  }
+]

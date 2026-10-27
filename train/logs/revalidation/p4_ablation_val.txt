@@ -1,0 +1,13 @@
+P4 Val ablation (seed 1234)
+
+=== full_5110 ===
+ctx2: n=5110 far=7.97 turn_med=13.02 turn_p90=53.12 gt45=7.08% nonturn=4.99
+p4_mh: n=5110 far=7.97 turn_med=13.32 turn_p90=58.87 gt45=8.45% nonturn=4.94
+p4b_masked: n=5110 far=7.76 turn_med=12.79 turn_p90=54.41 gt45=7.65% nonturn=4.90
+p4_ctrl15: n=5110 far=7.97 turn_med=12.68 turn_p90=55.62 gt45=7.63% nonturn=5.24
+
+=== mh_2721 ===
+ctx2: n=2721 far=7.11 turn_med=9.54 turn_p90=34.88 gt45=3.27% nonturn=5.15
+p4_mh: n=2721 far=6.30 turn_med=8.74 turn_p90=33.19 gt45=3.20% nonturn=4.66
+p4b_masked: n=2721 far=7.08 turn_med=9.80 turn_p90=35.98 gt45=3.60% nonturn=5.16
+p4_ctrl15: n=2721 far=7.20 turn_med=9.52 turn_p90=34.78 gt45=3.79% nonturn=5.23

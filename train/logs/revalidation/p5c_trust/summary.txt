@@ -1,0 +1,19 @@
+=== P5c trust tau (OOF ridge -> blend_suppress) ===
+n=1000 mean s_hat=0.027 s*_surrogate=0.447
+Surrogate use: OOF tau +2.60 cm | oracle s* +3.80 cm
+
+Rollout use_cm [95% CI] all:
+  kappa blend                  +2.69 [+2.32, +3.08]
+  goal head (direct)           +1.95 [+1.47, +2.39]
+  trust OOF ridge              +2.69 [+2.32, +3.08]
+  trust surrogate-oracle s*    +3.59 [+3.17, +4.02]
+  suppress oracle w35-55       +3.04 [+2.65, +3.47]
+
+[hard45] n=120
+  kappa blend                  +0.21 [-1.37, +1.78]
+  trust OOF ridge              +0.21 [-1.36, +1.80]
+  suppress oracle w35-55       +3.05 [+1.06, +5.04]
+[turn] n=593
+  kappa blend                  +3.50 [+2.89, +4.03]
+  trust OOF ridge              +3.49 [+2.89, +4.02]
+  suppress oracle w35-55       +4.05 [+3.41, +4.65]

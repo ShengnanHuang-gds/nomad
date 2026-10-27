@@ -1,0 +1,11 @@
+selected plain a=0.7 c=0 m=0.7
+  [all] true             use +3.04 [+2.59, +3.55]  kept 100%
+  [all] direct (plain)   use +1.95 [+1.48, +2.43]  kept 64%
+  [all] selected         use +1.89 [+1.44, +2.37]  kept 62%
+  [turn 0.30m/45deg] true             use +4.17 [+3.44, +4.92]  kept 100%
+  [turn 0.30m/45deg] direct (plain)   use +2.72 [+2.00, +3.50]  kept 65%
+  [turn 0.30m/45deg] selected         use +2.58 [+1.91, +3.33]  kept 62%
+  [B masked spread] true             use +3.90 [+2.94, +4.87]  kept 100%
+  [B masked spread] direct (plain)   use +2.72 [+1.76, +3.71]  kept 70%
+  [B masked spread] selected         use +2.65 [+1.69, +3.71]  kept 68%
+  paired selected - direct (plain): -0.06 [-0.25, +0.10] cm

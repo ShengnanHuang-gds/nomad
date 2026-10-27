@@ -1,0 +1,14 @@
+{
+  "split": "train",
+  "n_trajs": 2720,
+  "n_pairs_all": 3796420,
+  "n_hard": 2272041,
+  "n_hard_turn": 2158846,
+  "n_hard_bearing": 1023029,
+  "n_hard_both": 909834,
+  "n_hard_far": 1198320,
+  "n_hard_far_turn": 1089503,
+  "n_hard_far_bearing": 662878,
+  "frac_hard": 0.5984693474378493,
+  "csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\hard_pairs\\hard_pairs_train.csv"
+}

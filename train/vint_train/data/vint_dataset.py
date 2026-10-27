@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import pickle
+import shutil
 import yaml
 from typing import Any, Dict, List, Optional, Tuple
 import tqdm
@@ -155,7 +156,14 @@ class ViNT_Dataset(Dataset):
                 dynamic_ncols=True,
                 desc=f"Building LMDB cache for {self.dataset_name}"
             )
-            with lmdb.open(cache_filename, map_size=2**40) as image_cache:
+            # 1 TiB map_size crashes LMDB on Windows. Cap by free disk: Windows LMDB
+            # refuses map_size larger than available space (seattle failed at 8 GiB / ~7 GiB free).
+            try:
+                free = shutil.disk_usage(os.path.dirname(cache_filename) or ".").free
+            except OSError:
+                free = 4 * 1024**3
+            map_size = min(8 * 1024**3, max(256 * 1024**2, free - 1024**3))
+            with lmdb.open(cache_filename, map_size=int(map_size)) as image_cache:
                 with image_cache.begin(write=True) as txn:
                     for traj_name, time in tqdm_iterator:
                         image_path = get_data_path(self.data_folder, traj_name, time)
@@ -212,7 +220,8 @@ class ViNT_Dataset(Dataset):
         """
         index_to_data_path = os.path.join(
             self.data_split_folder,
-            f"dataset_dist_{self.min_dist_cat}_to_{self.max_dist_cat}_context_{self.context_type}_n{self.context_size}_slack_{self.end_slack}.pkl",
+            f"dataset_dist_{self.min_dist_cat}_to_{self.max_dist_cat}_context_{self.context_type}_n{self.context_size}"
+            f"_slack_{self.end_slack}_pred_{self.len_traj_pred}.pkl",
         )
         try:
             # load the index_to_data if it already exists (to save time)

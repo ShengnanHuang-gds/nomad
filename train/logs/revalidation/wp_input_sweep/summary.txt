@@ -1,0 +1,7 @@
+=== More history experiments (locked 1000) ===
+
+deploy 2-frame: avg 18.64 med 8.89 | >45deg 10.2% | blend all +2.80 | curvy-block +3.61
+turnhard 2-frame: avg 18.75 med 9.16 | >45deg 10.0% | blend all +2.93 | curvy-block +3.91
+hist3 plain: avg 18.82 med 8.92 | >45deg 11.6% | blend all +2.84 | curvy-block +3.73
+hist3+turnhard: avg 18.79 med 8.87 | >45deg 10.6% | blend all +2.93 | curvy-block +3.92
+hist3+light turn: avg 19.02 med 8.59 | >45deg 11.4% | blend all +2.81 | curvy-block +3.69

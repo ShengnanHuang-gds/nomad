@@ -5,6 +5,7 @@ import pdb
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class NoMaD(nn.Module):
@@ -48,6 +49,60 @@ class DenseNetwork(nn.Module):
         x = x.reshape((-1, self.embedding_dim))
         output = self.network(x)
         return output
+
+
+class GoalPosHead(nn.Module):
+    """Predict the goal position in the robot frame (meters) and a per-axis std.
+
+    Same shape as DenseNetwork with 4 outputs: mu_x, mu_y, raw_sigma_x, raw_sigma_y.
+    """
+
+    def __init__(self, embedding_dim, min_sigma=0.05, init_sigma_bias=0.5):
+        super(GoalPosHead, self).__init__()
+        self.embedding_dim = embedding_dim
+        self.min_sigma = min_sigma
+        self.network = nn.Sequential(
+            nn.Linear(self.embedding_dim, self.embedding_dim // 4),
+            nn.ReLU(),
+            nn.Linear(self.embedding_dim // 4, self.embedding_dim // 16),
+            nn.ReLU(),
+            nn.Linear(self.embedding_dim // 16, 4),
+        )
+        # softplus(0.5) + 0.05 is about 1 m, so NLL starts from a wide sigma after the MSE warmup.
+        nn.init.constant_(self.network[-1].bias[2:], init_sigma_bias)
+
+    def forward(self, x):
+        output = self.network(x.reshape((-1, self.embedding_dim)))
+        mu = output[:, :2]
+        sigma = F.softplus(output[:, 2:]) + self.min_sigma
+        return mu, sigma
+
+
+class GoalDirectionHead(nn.Module):
+    """Predict the goal bearing in the robot frame as a von Mises distribution.
+
+    Same shape as DenseNetwork with 3 outputs: c, s, raw_kappa.
+    Returns the unit direction (cos, sin) and the concentration kappa.
+    """
+
+    def __init__(self, embedding_dim, min_kappa=1e-3, init_kappa_bias=1.0):
+        super(GoalDirectionHead, self).__init__()
+        self.embedding_dim = embedding_dim
+        self.min_kappa = min_kappa
+        self.network = nn.Sequential(
+            nn.Linear(self.embedding_dim, self.embedding_dim // 4),
+            nn.ReLU(),
+            nn.Linear(self.embedding_dim // 4, self.embedding_dim // 16),
+            nn.ReLU(),
+            nn.Linear(self.embedding_dim // 16, 3),
+        )
+        nn.init.constant_(self.network[-1].bias[2:], init_kappa_bias)
+
+    def forward(self, x):
+        output = self.network(x.reshape((-1, self.embedding_dim)))
+        direction = F.normalize(output[:, :2], dim=-1, eps=1e-6)
+        kappa = F.softplus(output[:, 2]) + self.min_kappa
+        return direction, kappa
 
 
 

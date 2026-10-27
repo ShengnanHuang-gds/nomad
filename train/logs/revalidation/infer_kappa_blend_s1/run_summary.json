@@ -1,0 +1,21 @@
+{
+  "latency": {
+    "n": 50,
+    "num_samples": 1,
+    "use_online_dino": true,
+    "wp_scale": 1.0,
+    "device": "cuda:0",
+    "wall_ms_mean": 106.84745999998995,
+    "wall_ms_median": 104.9465500000224,
+    "wall_ms_p90": 114.06913999926473,
+    "hz_mean": 9.359136847989593,
+    "stages_ms_mean": {
+      "dino_curr_ms": 5.041407999997318,
+      "dino_goal_ms": 4.840169999970385,
+      "b_distance_ms": 19.131603999994695,
+      "heads_blend_ms": 2.9111140000350133,
+      "e_diffusion_ms": 74.8677559999669,
+      "total_ms": 106.7929439999898
+    }
+  }
+}

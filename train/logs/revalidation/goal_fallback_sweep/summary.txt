@@ -1,0 +1,7 @@
+=== Goal fallback kw/theta ===
+{'mode': 'kw_only', 'tau_kw': 9999.0, 'tau_theta': 15.0, 'frac_goal': 1.0, 'use_all': 2.0340113716199997, 'use_hard': 2.8642007087667785, 'score': 10.626613497920335}
+ALL kappa +2.62 goal +2.03 policy +2.03
+[all] policy +2.03
+[turn 0.30m/45deg] policy +2.76
+[B masked spread] policy +2.96
+[hard45] kappa -1.41 goal +2.86 policy +2.86

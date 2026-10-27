@@ -1,0 +1,51 @@
+{
+  "n_far": 5110,
+  "pct_turn_strict": 53.83561643835616,
+  "n_hard45": 362,
+  "pct_hard45_of_far": 7.084148727984345,
+  "pct_hard45_within_turn": 12.57724463831334,
+  "pct_hard45_within_nonturn": 0.6782534972445952,
+  "pct_turn_given_hard45": 95.58011049723757,
+  "n_hard30": 659,
+  "pct_hard30_of_far": 12.896281800391389,
+  "pct_hard45_also_acute_any": 93.0939226519337,
+  "pct_turn_strict_also_hard45": 12.57724463831334,
+  "tiers": [
+    {
+      "tier": "0_15",
+      "n": 3557,
+      "pct_far": 69.60861056751467,
+      "pct_turn": 42.08602755130728,
+      "pct_acute_any": 39.07787461343829
+    },
+    {
+      "tier": "15_30",
+      "n": 894,
+      "pct_far": 17.495107632093934,
+      "pct_turn": 72.03579418344519,
+      "pct_acute_any": 74.83221476510067
+    },
+    {
+      "tier": "30_45",
+      "n": 297,
+      "pct_far": 5.812133072407045,
+      "pct_turn": 88.88888888888889,
+      "pct_acute_any": 86.1952861952862
+    },
+    {
+      "tier": "45_90",
+      "n": 246,
+      "pct_far": 4.814090019569472,
+      "pct_turn": 93.90243902439025,
+      "pct_acute_any": 90.65040650406505
+    },
+    {
+      "tier": "ge_90",
+      "n": 116,
+      "pct_far": 2.2700587084148727,
+      "pct_turn": 99.13793103448276,
+      "pct_acute_any": 98.27586206896552
+    }
+  ],
+  "ckpt": "logs/nomad_d/nomad_dino_wp_hist_ctx2_2026_10_24_20_53_44/dino_dir_best.pth"
+}

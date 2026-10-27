@@ -1,0 +1,13 @@
+{
+  "intercept": -0.8383683899559534,
+  "coef": {
+    "turn_strict": 0.3597132402187129,
+    "path_winding_8": 0.5443537093908942,
+    "abs_endpoint_dyaw_deg": 0.046370233982560585,
+    "past_yaw_rate": 0.5465697951421414,
+    "goal_bearing_err_deg": 0.5381344656140687,
+    "chord_arc_ratio": 0.20379029470522608,
+    "hidden_turn": -0.23825907714236913
+  },
+  "train_acc": 0.817
+}

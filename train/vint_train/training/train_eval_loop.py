@@ -166,6 +166,7 @@ def train_eval_loop_nomad(
     use_wandb: bool = True,
     eval_fraction: float = 0.25,
     eval_freq: int = 1,
+    goal_pos_oracle: bool = False,
 ):
     """
     Train and evaluate the model for several epochs (vint or gnm models)
@@ -217,13 +218,15 @@ def train_eval_loop_nomad(
                 num_images_log=num_images_log,
                 use_wandb=use_wandb,
                 alpha=alpha,
+                goal_pos_oracle=goal_pos_oracle,
             )
             lr_scheduler.step()
 
         numbered_path = os.path.join(project_folder, f"ema_{epoch}.pth")
         torch.save(ema_model.averaged_model.state_dict(), numbered_path)
-        numbered_path = os.path.join(project_folder, f"ema_latest.pth")
-        print(f"Saved EMA model to {numbered_path}")
+        latest_ema_path = os.path.join(project_folder, f"ema_latest.pth")
+        torch.save(ema_model.averaged_model.state_dict(), latest_ema_path)
+        print(f"Saved EMA model to {latest_ema_path}")
 
         numbered_path = os.path.join(project_folder, f"{epoch}.pth")
         torch.save(model.state_dict(), numbered_path)
@@ -262,24 +265,25 @@ def train_eval_loop_nomad(
                     wandb_log_freq=wandb_log_freq,
                     use_wandb=use_wandb,
                     eval_fraction=eval_fraction,
+                    goal_pos_oracle=goal_pos_oracle,
                 )
-        wandb.log({
-            "lr": optimizer.param_groups[0]["lr"],
-        }, commit=False)
+        if use_wandb:
+            wandb.log({
+                "lr": optimizer.param_groups[0]["lr"],
+            }, commit=False)
 
         if lr_scheduler is not None:
             lr_scheduler.step()
 
-        # log average eval loss
-        wandb.log({}, commit=False)
+        if use_wandb:
+            # log average eval loss
+            wandb.log({}, commit=False)
+            wandb.log({
+                "lr": optimizer.param_groups[0]["lr"],
+            }, commit=False)
 
-        wandb.log({
-            "lr": optimizer.param_groups[0]["lr"],
-        }, commit=False)
-
-        
-    # Flush the last set of eval logs
-    wandb.log({})
+    if use_wandb:
+        wandb.log({})
     print()
 
 def load_model(model, model_type, checkpoint: dict) -> None:

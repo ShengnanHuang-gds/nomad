@@ -30,3 +30,11 @@
 - 同目录 `turn_vs_straight.csv`：严格转弯593帧，占净收益88.058%。
 - 区分正收益总和与带符号净收益总和；严格转弯和直行不是互补分组。本页不绘制未经逐帧数据支持的完整集中曲线。
 - 与第3页同一Oracle归因：预测WP→真实WP，其余保持不变；不等同于部署效果。
+
+## 第 5 页：P1b Hard120 难例分析（独立单页文件）
+- 文件：`slide05_hard120_analysis_cn.pptx`，仅包含第 5 页。
+- `train/logs/revalidation/wp_hard120/summary.txt`：WP误差≥45°的120帧；严格转弯占93.3%；Goal误差<15°仅占18.3%。
+- 同目录 `enrichment_H_vs_control.csv`，采用 `C_match` 中位数：未来8步累计转角108.485/69.431°；历史平均步间转角14.101/7.349°；Goal误差50.400/15.228°；WP κ 8.906/35.795（困难/对照）。
+- `train/analyze_wp_hard120.py:path_kinematics`：past_yaw_rate实际为过去最多3步绝对yaw变化的均值，不能标成deg/s。
+- κ低表示分布更分散；组间差异不证明因果；每个指标独立刻度。
+- 数据限制：CSV中n_C字段与设计及当前脚本不一致，未报告对照样本数，也未据此计算新统计量；中位数与summary.txt一致，当前没有原始NPZ可复算。详见幻灯片备注。

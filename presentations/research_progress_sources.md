@@ -1,4 +1,4 @@
-# 中文组会汇报来源（当前完成第 1–2 页）
+# 中文组会汇报来源
 
 研究材料核对基准：main 提交 c1b3750。
 
@@ -96,9 +96,11 @@
 - 按报告精度计算绝对增加0.38cm、相对增长14.84375%；仅指条件收益指标，不是导航成功率或绝对ADE相对改善。
 - 只作仓库汇总的阶段回顾；尚缺所有阶段原始逐帧配对与重复种子结果，不宣称严格同批随机采样或统计显著，也不混用P0/P5的其他基线。
 
-## 第 12 页：实验分析与复现流程（独立单页文件）
-- 文件：`slide12_experiment_workflow_cn.pptx`，仅包含第12页；流程图全部可编辑。
-- `train/cache_dino_features.py`、`train_goal_dino.py`、`eval_waypoint_head.py`、`eval_blend_ablation.py`、`eval_frame_sets.py`：缓存、训练与固定样本评估。
-- `analyze_wp_oracle_gain.py`、`analyze_wp_hard120.py`、`analyze_p4_ablation_val.py`、`mine_hard_pairs.py`：归因、难例与训练集样本挖掘。
-- `train/logs/revalidation/recon_blend_suppress/meta.json`、`scand_blend/meta.json`：RECON98帧、SCAND200帧的小样本重建图像评估记录；不直接跨域横比或宣称广泛泛化。
-- 本页描述现有脚本与记录能力，不声称本次任务已完整重跑实验。固定样本不等于独立测试：部分融合扫参使用了locked，后续仍需独立集、重复种子和配对验证。详见备注。
+
+## 第 12 页：核心发现与局限（独立单页文件）
+- 用户已删除原“实验分析与复现流程”页；本页由原计划第13页前移，后续收尾计划页为第13页。未合并文件。
+- 文件：`slide12_key_findings_cn.pptx`，仅包含新第12页。
+- `train/logs/revalidation/oracle_factorial/factorial_use.csv`：当前栈中WP方向的离线恢复空间大于Goal方向；真实未来信息不可作为部署条件。
+- `wp_oracle_attribution/summary.txt`、`wp_hard120/summary.txt`：严重错误、转弯与集中收益；相关证据不代表因果。
+- `P2_conclusions_revised.md`、`wp_input_sweep/summary.json`、`P4_ablation_status.md`、`p5ab_summary.txt`：历史与针对性训练取得进展；额外复杂方案未稳定超过参考。
+- `wp_hard_oversample/summary_cn.txt`：2.94与2.93的微小差异尚无可靠重复验证。条件收益不等同于导航成功率，仍需独立测试、跨域与实机验证。

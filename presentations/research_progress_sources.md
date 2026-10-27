@@ -66,3 +66,13 @@
 - 同目录 `P4_ablation_status.md`：locked use ctx2=2.80、P4=2.40cm；无辅助续训15ep对照2.80cm。
 - masked P4b在full Val中位误差7.76°、转弯P90为54.41°；未报告未经核对的P4b locked结果。
 - 区分筛选子集、完整Val与locked；箭头均为同集合ctx2→原始P4；后续mh46是不同设置，未混用。
+
+## 第 9 页：P5 置信度融合与门控（独立单页文件）
+- 文件：`slide09_confidence_gating_cn.pptx`，仅包含第9页。
+- `train/logs/revalidation/p5ab_summary.txt`：P5a相对份额Cohen d≈-0.04，P5c平均抑制强度约0.027。
+- `p5b_harmful_predictor/summary.json`：OOF AUC=0.520051；ADE反事实κ/策略/真实害益择优=2.619989/2.619989/3.803194cm。
+- `p5c_trust/summary.json`：rollout κ/trust OOF/代理最优抑制=2.694341/2.691593/3.591327cm。
+- `kappa_fusion_summary.txt`：同批rollout κ/固定分歧门控/GT误差门控=2.80/2.24/3.16cm。
+- 不跨行排名，不混用2.62/2.69/2.80基线；离线参考定义不同且不可直接部署。
+- 检查`train/run_p5b_harmful_predictor.py`等脚本后确认部分输入来自GT未来运动派生特征；本页明确其为离线探索，未声称全部特征在线可用。
+- 约束fallback的2.73相对同批2.62有改善，但属于locked扫参结果，未混入本页在线验证结论；详见幻灯片备注。

@@ -62,10 +62,22 @@ def main():
         help="Add kappa suppress (oracle GT wp_err + deploy goal-wp disagree), same rollout as kappa blend",
     )
     parser.add_argument("--attr-npz", default=ATTR_NPZ)
+    parser.add_argument(
+        "--waypoint-npz",
+        default="",
+        help="locked_per_frame.npz from eval_waypoint_head (--eval-subdir); default run-dir/eval_waypoint/",
+    )
+    parser.add_argument(
+        "--wp-dir-mode",
+        choices=("auto", "vm", "yaw_integrated"),
+        default="auto",
+        help="Only used when recomputing wp dirs (no --waypoint-npz)",
+    )
+    parser.add_argument("--out-subdir", default="eval_blend_ablation", help="Under run-dir for blend outputs")
     args = parser.parse_args()
 
     device = torch.device(args.device)
-    out_dir = os.path.join(args.run_dir, "eval_blend_ablation")
+    out_dir = os.path.join(args.run_dir, args.out_subdir)
     os.makedirs(out_dir, exist_ok=True)
 
     config_b = load_config(args.config_b)
@@ -84,7 +96,7 @@ def main():
     steps = (take("b_dist") / meters).astype(np.float32)
     goal = (take("target") / meters).astype(np.float32)
 
-    cache_npz = os.path.join(args.run_dir, "eval_waypoint", "locked_per_frame.npz")
+    cache_npz = args.waypoint_npz.strip() or os.path.join(args.run_dir, "eval_waypoint", "locked_per_frame.npz")
     if os.path.isfile(cache_npz):
         cached = np.load(cache_npz)
         wp_dir = cached["wp_dir"].astype(np.float32)
@@ -96,7 +108,7 @@ def main():
         wp_head, _ = load_dino_head(os.path.join(args.run_dir, args.checkpoint), device)
         _p, rows_t, _meta = load_cache(CACHE_ROOT, "test_paired")
         feats_t = np.load(os.path.join(CACHE_ROOT, "test_paired", "features.npy"), mmap_mode="r")
-        wp_dir, wp_kappa = head_predict(wp_head, far, rows_t, feats_t, device)
+        wp_dir, wp_kappa = head_predict(wp_head, far, rows_t, feats_t, device, wp_dir_mode=args.wp_dir_mode)
         end = endpoints(dataset, far)
 
     print(

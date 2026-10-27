@@ -175,6 +175,7 @@ def load_dino_head(path, device):
     context = run_args.get("context", 0)
     multi = (run_args.get("multi_horizon") or "").strip()
     aux_horizons = tuple(int(x) for x in multi.split(",") if x.strip()) if multi else ()
+    yaw_aux_steps = int(run_args.get("yaw_aux_steps", 0) or 0)
     head = PairTokenHead(
         meta["dim"],
         meta["tokens"],
@@ -185,8 +186,9 @@ def load_dino_head(path, device):
         context,
         n_sectors=run_args.get("n_sectors", 0),
         aux_horizons=aux_horizons,
+        yaw_aux_steps=yaw_aux_steps,
     ).to(device)
-    head.load_state_dict(state["head"])
+    head.load_state_dict(state["head"], strict=True)
     head.eval()
     head.requires_grad_(False)
     print(f"DINO head epoch {state['epoch']}, val far median {state['far_median_deg']:.1f} deg ({path})")

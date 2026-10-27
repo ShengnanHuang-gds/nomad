@@ -33,6 +33,7 @@ from eval_position_noise import boot_mean, load_model, subset_index
 from eval_testtime import DINO_TEST_PREDICTIONS, angle_err, rollout
 from revalidate import CACHE_ROOT, dino_and_b, tune_items
 from train_e_dino import DINO_BEST, load_dino_head, read_tokens
+from yaw_traj import wp_direction_from_head
 from train_goal_dino import load_cache
 from vint_train.data.data_utils import get_data_path
 
@@ -63,7 +64,7 @@ def _head_context(head):
 
 
 @torch.no_grad()
-def head_predict(head, items, rows, features, device, batch_size=256):
+def head_predict(head, items, rows, features, device, batch_size=256, wp_dir_mode="auto"):
     context = _head_context(head)
     dirs, kappas = [], []
     for start in range(0, len(items), batch_size):
@@ -79,7 +80,7 @@ def head_predict(head, items, rows, features, device, batch_size=256):
                 )
             ctx = torch.stack(past, dim=1)
         out = head(curr, goal, ctx)
-        d, k = out[0], out[1]
+        d, k = wp_direction_from_head(head, out, wp_dir_mode)
         dirs.append(d.cpu().numpy())
         kappas.append(k.cpu().numpy())
     return np.concatenate(dirs), np.concatenate(kappas)
@@ -283,10 +284,21 @@ def main():
     parser.add_argument("--device", default="cuda:0")
     parser.add_argument("--oracle-factorial", action="store_true", help="P0: distance x bearing factorial on locked far")
     parser.add_argument("--oracle-out-dir", default="logs/revalidation/oracle_factorial")
+    parser.add_argument(
+        "--wp-dir-mode",
+        choices=("auto", "vm", "yaw_integrated"),
+        default="auto",
+        help="WP unit direction: vm=out[0]; yaw_integrated=integrate(yaw); auto=yaw if head has yaw_aux",
+    )
+    parser.add_argument(
+        "--eval-subdir",
+        default="eval_waypoint",
+        help="Under run-dir for csv/npz (use eval_waypoint_wpvm vs eval_waypoint_wpyaw for ablations)",
+    )
     args = parser.parse_args()
 
     device = torch.device(args.device)
-    out_dir = os.path.join(args.run_dir, "eval_waypoint")
+    out_dir = os.path.join(args.run_dir, args.eval_subdir)
     os.makedirs(out_dir, exist_ok=True)
     config_b = load_config(args.config_b)
     dataset = make_split_dataset(config_b, "test")
@@ -309,7 +321,7 @@ def main():
         b_frozen = load_frozen_nomad(config_b, B_CHECKPOINT, device)
         est = dino_and_b(items, dataset, b_frozen, goal_head, rows, feats, device)
         del b_frozen, goal_head
-        wp_dir, wp_kappa = head_predict(wp_head, items, rows, feats, device)
+        wp_dir, wp_kappa = head_predict(wp_head, items, rows, feats, device, wp_dir_mode=args.wp_dir_mode)
         end = endpoints(dataset, items)
         print_bearings("tuning", est["dir"], wp_dir, end, est["target"])
         pos = build_positions(est["dir"], est["kappa"], wp_dir, wp_kappa, est["steps"], end, est["target"])
@@ -333,7 +345,7 @@ def main():
     take = lambda key: pred[key][fm][order]
     _p, rows_t, _meta = load_cache(CACHE_ROOT, "test_paired")
     feats_t = np.load(os.path.join(CACHE_ROOT, "test_paired", "features.npy"), mmap_mode="r")
-    wp_dir_t, wp_kappa_t = head_predict(wp_head, far, rows_t, feats_t, device)
+    wp_dir_t, wp_kappa_t = head_predict(wp_head, far, rows_t, feats_t, device, wp_dir_mode=args.wp_dir_mode)
     end_t = endpoints(dataset, far)
     goal_t = (take("target") / meters).astype(np.float32)
     print_bearings("locked", take("dino_dir"), wp_dir_t, end_t, goal_t)

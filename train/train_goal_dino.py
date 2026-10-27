@@ -36,6 +36,7 @@ from tqdm import tqdm
 
 from eval_by_distance import load_config
 from train_goal_dir import FAR_STEPS, cos_error, direction_loss, log_i0
+from yaw_traj import integrated_yaw_unit_direction, yaw_tensor_from_out
 from vint_train.models.nomad.pair_token_head import PairTokenHead
 
 
@@ -137,6 +138,22 @@ def load_cache(cache_dir, name):
     return path, {key: row for row, key in enumerate(keys)}, meta
 
 
+def _future_dyaw_deg(traj, curr, spacing, n_steps):
+    """Per-step yaw change (degrees) for k=1..n_steps along GT trajectory."""
+    yaw = traj["yaw"]
+    n = len(yaw)
+    out = np.zeros(n_steps, dtype=np.float32)
+    curr = int(curr)
+    for k in range(1, n_steps + 1):
+        i0 = min(curr + (k - 1) * spacing, n - 1)
+        i1 = min(curr + k * spacing, n - 1)
+        y0 = float(np.ravel(yaw[i0])[0])
+        y1 = float(np.ravel(yaw[i1])[0])
+        dy = (y1 - y0 + np.pi) % (2 * np.pi) - np.pi
+        out[k - 1] = np.degrees(dy)
+    return out
+
+
 def _local_bearing_step(pos, curr, c, s, step, min_goal_m):
     gi = min(int(curr) + int(step), len(pos) - 1)
     d = pos[gi] - pos[curr]
@@ -157,6 +174,7 @@ def build_pairs(
     multi_horizon_aux=(),
     multi_horizon_strict=False,
     hard_frame_set=None,
+    yaw_aux_steps=0,
 ):
     """Every valid (current, goal) pair: rows into the cache, target in meters, distance in steps.
 
@@ -195,7 +213,9 @@ def build_pairs(
         [],
         [],
     )
+    target_yaw_rows = []
     multi_horizon_aux = tuple(int(x) for x in multi_horizon_aux)
+    yaw_aux_steps = int(yaw_aux_steps)
     frame_hard_rows = []
     n_curr = 0
     for traj_name, entries in tqdm(by_traj.items(), desc=f"pairs {split}", leave=False):
@@ -241,6 +261,9 @@ def build_pairs(
                     aux_stack = np.stack(aux_pts, axis=0)
                     aux_valid_stack = np.array(aux_valid, dtype=bool)
                 local = np.tile(end, (len(k), 1))
+                dyaw_stack = None
+                if yaw_aux_steps > 0:
+                    dyaw_stack = _future_dyaw_deg(traj, curr, spacing, yaw_aux_steps)
             curr_rows.append(np.full(len(k), rows[(traj_name, curr)]))
             goal_rows.append(np.array([rows[(traj_name, curr + int(j))] for j in k]))
             past = [rows[(traj_name, curr - j)] for j in range(1, context + 1)]
@@ -253,6 +276,8 @@ def build_pairs(
             if multi_horizon_aux:
                 target_aux_rows.append(np.tile(aux_stack[None], (len(k), 1, 1)))
                 aux_valid_rows.append(np.tile(aux_valid_stack[None], (len(k), 1)))
+            if yaw_aux_steps > 0 and target == "endpoint":
+                target_yaw_rows.append(np.tile(dyaw_stack[None], (len(k), 1)))
             frame_hard_rows.append(
                 hard_frame_set is not None and (traj_name, int(curr)) in hard_frame_set
             )
@@ -273,6 +298,9 @@ def build_pairs(
     }
     if hard_frame_set is not None:
         out["frame_hard"] = np.array(frame_hard_rows, dtype=bool)
+    if yaw_aux_steps > 0:
+        out["target_yaw"] = np.concatenate(target_yaw_rows).astype(np.float32)
+        out["yaw_aux_steps"] = yaw_aux_steps
     if multi_horizon_aux:
         out["target_aux"] = np.concatenate(target_aux_rows).astype(np.float32)
         out["aux_valid"] = np.concatenate(aux_valid_rows)
@@ -355,19 +383,26 @@ class PairBatches(Dataset):
             batch.append(torch.from_numpy(self.pairs["winding"][idx].astype(np.float32)))
         if "turn_strict" in self.pairs:
             batch.append(torch.from_numpy(self.pairs["turn_strict"][idx].astype(np.float32)))
+        if "target_yaw" in self.pairs:
+            yaw_t = self.pairs["target_yaw"][idx].copy()
+            yaw_t[mirrored] *= -1.0
+            batch.append(torch.from_numpy(yaw_t))
         return tuple(batch)
 
 
 def _parse_batch(batch, device):
     curr, goal, target, steps = batch[:4]
-    ctx, winding_t, turn_strict_t, target_aux, aux_valid_t = None, None, None, None, None
+    ctx, winding_t, turn_strict_t, target_aux, aux_valid_t, target_yaw_t = None, None, None, None, None, None
     for t in batch[4:]:
         if t.ndim == 4:
             ctx = t.to(device, non_blocking=True).float()
         elif t.ndim == 3 and t.shape[-1] == 2:
             target_aux = t.to(device, non_blocking=True).float()
         elif t.ndim == 2:
-            aux_valid_t = t.to(device, non_blocking=True).bool()
+            if t.dtype == torch.bool:
+                aux_valid_t = t.to(device, non_blocking=True).bool()
+            else:
+                target_yaw_t = t.to(device, non_blocking=True).float()
         elif t.ndim == 1:
             if winding_t is None:
                 winding_t = t.to(device, non_blocking=True)
@@ -383,6 +418,7 @@ def _parse_batch(batch, device):
         turn_strict_t,
         target_aux,
         aux_valid_t,
+        target_yaw_t,
     )
 
 
@@ -416,6 +452,9 @@ def run_epoch(
     curvature_q=(None, None),
     curvature_weights=(1.0, 1.5, 3.0),
     multi_horizon_lambda=0.0,
+    yaw_aux_lambda=0.0,
+    yaw_aux_steps=0,
+    yaw_integrate_lambda=0.0,
 ):
     """Direction loss + optional sector CE. Sector GT from target xy (online)."""
     training = optimizer is not None
@@ -426,8 +465,8 @@ def run_epoch(
     sector_n = 0
     with torch.set_grad_enabled(training):
         for batch in tqdm(batches, desc=desc, leave=False):
-            curr, goal, target, steps_dev, ctx, winding_t, turn_strict_t, target_aux, aux_valid_t = _parse_batch(
-                batch, device
+            curr, goal, target, steps_dev, ctx, winding_t, turn_strict_t, target_aux, aux_valid_t, target_yaw_t = (
+                _parse_batch(batch, device)
             )
             weight = steps_dev.float() / FAR_STEPS
             if training and turn_strict_weight > 1.0 and turn_strict_t is not None:
@@ -481,7 +520,26 @@ def run_epoch(
                     aux_terms.append(la)
                 if aux_terms:
                     loss = loss + multi_horizon_lambda * (sum(aux_terms) / len(aux_terms))
-            sector_out = out[3] if len(out) > 3 and not isinstance(out[2], list) else (out[2] if len(out) > 2 and not isinstance(out[2], list) else None)
+            yaw_pred = yaw_tensor_from_out(head, out)
+            if training and yaw_aux_lambda > 0.0 and yaw_pred is not None and target_yaw_t is not None:
+                yaw_gt = torch.deg2rad(target_yaw_t)
+                yaw_loss = torch.nn.functional.smooth_l1_loss(
+                    yaw_pred.float(), yaw_gt, reduction="none"
+                ).mean(dim=1)
+                loss = loss + yaw_aux_lambda * (yaw_loss * weight).mean()
+            if training and yaw_integrate_lambda > 0.0 and yaw_pred is not None:
+                d_int = integrated_yaw_unit_direction(yaw_pred.float())
+                li, _ = direction_loss(d_int, kappa, target, weight, use_nll=False)
+                loss = loss + yaw_integrate_lambda * li
+            sector_out = None
+            if sector_lambda > 0.0:
+                for item in out[2:]:
+                    if not isinstance(item, torch.Tensor) or item.ndim != 2:
+                        continue
+                    if yaw_aux_steps > 0 and item.shape[1] == yaw_aux_steps:
+                        continue
+                    sector_out = item
+                    break
             if sector_lambda > 0.0 and sector_out is not None:
                 logits = sector_out.float()
                 labels, bearing_abs = sector_labels(target, sector_mid_deg)
@@ -622,6 +680,24 @@ def main():
         action="store_true",
         help="Only frames with hard_turn in CSV (with far filter if enabled).",
     )
+    parser.add_argument(
+        "--yaw-aux-steps",
+        type=int,
+        default=0,
+        help="If >0, train-only auxiliary per-step GT dyaw (deg) along trajectory; endpoint target only.",
+    )
+    parser.add_argument(
+        "--yaw-aux-lambda",
+        type=float,
+        default=0.3,
+        help="Weight on smooth_l1(rad) between yaw aux head and GT step dyaw (train only).",
+    )
+    parser.add_argument(
+        "--yaw-integrate-lambda",
+        type=float,
+        default=0.25,
+        help="1-cos on integrated yaw polyline dir vs endpoint target (train only; matches deploy WP dir).",
+    )
     args = parser.parse_args()
 
     rng = np.random.default_rng(args.seed)
@@ -656,6 +732,9 @@ def main():
         raise ValueError("--multi-horizon requires --target endpoint")
     if multi_aux and any(h <= 0 for h in multi_aux):
         raise ValueError(f"invalid --multi-horizon steps: {multi_aux}")
+    yaw_aux_steps = int(args.yaw_aux_steps)
+    if yaw_aux_steps > 0 and args.target != "endpoint":
+        raise ValueError("--yaw-aux-steps requires --target endpoint")
     mh_strict = bool(args.multi_horizon_strict)
     hard_frame_set = None
     hard_csv = args.hard_pairs_csv.strip()
@@ -680,6 +759,7 @@ def main():
         multi_aux,
         mh_strict,
         hard_frame_set,
+        yaw_aux_steps,
     )
     val_pairs = build_pairs(
         config,
@@ -692,6 +772,7 @@ def main():
         multi_aux,
         mh_strict,
         None,
+        yaw_aux_steps,
     )
     if hard_frame_set is not None and "frame_hard" in train_pairs:
         fh = train_pairs["frame_hard"]
@@ -725,7 +806,13 @@ def main():
         args.context,
         n_sectors=args.n_sectors,
         aux_horizons=multi_aux,
+        yaw_aux_steps=yaw_aux_steps,
     ).to(device)
+    if yaw_aux_steps > 0:
+        print(
+            f"yaw traj: {yaw_aux_steps} step dyaw | aux lambda={args.yaw_aux_lambda} | "
+            f"integrate-dir lambda={args.yaw_integrate_lambda} | deploy WP dir=integrate(yaw), kappa from vm head"
+        )
     if multi_aux:
         mode = "strict drop" if mh_strict else "masked aux (L8 on all endpoint frames)"
         print(
@@ -778,9 +865,14 @@ def main():
         curvature_q=curvature_q,
         curvature_weights=curvature_weights,
         multi_horizon_lambda=(args.multi_horizon_lambda if multi_aux else 0.0),
+        yaw_aux_lambda=(args.yaw_aux_lambda if yaw_aux_steps > 0 else 0.0),
+        yaw_aux_steps=yaw_aux_steps,
+        yaw_integrate_lambda=(args.yaw_integrate_lambda if yaw_aux_steps > 0 else 0.0),
     )
     val_kw = dict(hard_kw)
     val_kw["multi_horizon_lambda"] = 0.0
+    val_kw["yaw_aux_lambda"] = 0.0
+    val_kw["yaw_integrate_lambda"] = 0.0
     val_kw.update(
         turn_winding_deg=0.0,
         turn_weight=1.0,

@@ -1,0 +1,2 @@
+nomad_dino_wp_yawtraj_ctx2_18	C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\nomad_d\nomad_dino_wp_yawtraj_ctx2_18_2026_10_27_13_43_23
+nomad_dino_wp_yawtraj_scratch30	C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\nomad_d\nomad_dino_wp_yawtraj_scratch30_2026_10_27_14_31_16

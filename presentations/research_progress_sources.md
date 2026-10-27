@@ -104,3 +104,10 @@
 - `wp_oracle_attribution/summary.txt`、`wp_hard120/summary.txt`：严重错误、转弯与集中收益；相关证据不代表因果。
 - `P2_conclusions_revised.md`、`wp_input_sweep/summary.json`、`P4_ablation_status.md`、`p5ab_summary.txt`：历史与针对性训练取得进展；额外复杂方案未稳定超过参考。
 - `wp_hard_oversample/summary_cn.txt`：2.94与2.93的微小差异尚无可靠重复验证。条件收益不等同于导航成功率，仍需独立测试、跨域与实机验证。
+
+## UniNav 介绍第 1 页：整体架构（独立单页，暂未编入总页码）
+- 文件：`uninav01_architecture_cn.pptx`；中文架构图为可编辑简化重绘，不与已有页合并。
+- 原文：Zhou等，UniNav: A Unified World-Action Diffusion Model for Visual Navigation，arXiv:2608.03244v1，用户上传PDF。
+- PDF第3–4页§3.1–3.3、图2：历史与目标为条件；未来视频、完整轨迹(Δx,Δy,Δψ)与相机几何tokens联合去噪。VAE与DA3冻结，Wan2.1主Transformer及新增模块微调。
+- 已知输入与加噪预测目标分开表示；推理不使用真实未来图像；轨迹不是只预测yaw后等长积分。
+- 图省略register tokens、位置编码与分支输出头；相机几何分支主要表达训练监督。Fast的独立训练与非对称注意力留后页讲解。

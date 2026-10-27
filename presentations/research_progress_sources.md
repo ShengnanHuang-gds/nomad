@@ -50,3 +50,11 @@
 - `p2_val_bearing/summary.txt`（同目录）：Val n=5110，e60/ctx0/ctx2的全量中位角误差8.58/8.50/7.97°；严格转弯n=2751的P90为57.84/59.80/53.12°，>45°占比14.5/14.9/12.6%。
 - `P2_conclusions_revised.md`：locked use_cm为2.56/2.68/2.80cm；locked配对Delta-U cluster bootstrap仍为TODO。
 - Val误差与locked收益分开展示，不与P0的2.62基线混比，不声称下游收益统计显著。
+
+## 第 7 页：P3 早期转弯加权（独立单页文件）
+- 文件：`slide07_turn_weighting_cn.pptx`，仅包含第7页。
+- `train/logs/revalidation/P3_training_batch.md`：B严格转弯×2、C×3、D累计转角三分位1/1.5/3；30ep、ctx2、e60初始化。
+- 同目录 `p3_morning_metrics.csv`、`p3_morning_table.txt`：与ctx2参考比较Val全量中位误差、转弯中位误差、转弯P90、全量>45°比例。
+- `train/analyze_p3_morning_table.py`确认val_gt45_pct分母是全部far帧，不是转弯帧。
+- B/C/D的转弯中位数改善，但P90与全量>45°占比未优于ctx2；并未宣称所有尾部指标都恶化（C的P95有改善）。
+- CSV参考标SeedA、B/C/D标Seed0；未提供多种子统计或这些模型的locked收益。本页不与后续turnhard混用。

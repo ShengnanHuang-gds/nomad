@@ -88,3 +88,10 @@
 - `wp_hard_oversample/summary_cn.txt`：困难采样权重×3方案2.94/3.98cm；全量WP误差>45°占比约11%，turnhard约10%；未单独重评Hard120。
 - `train/run_wp_ctx2_turnhard_train.py`、`run_hard_oversample_train.py`：核对组合加权配方与相对采样权重。hard_os3同时从turnhard续训，不能将差异纯归因于采样而忽略续训。
 - 0.01cm为汇总精度下差异，未证明统计显著。未报告存在摘要/JSON冲突的B-spread参考值。
+
+## 第 11 页：整体结果回顾（独立单页文件）
+- 文件：`slide11_overall_results_cn.pptx`，仅包含第11页；使用可编辑的原生PowerPoint柱状图，纵轴从0开始。
+- `train/logs/revalidation/P2_conclusions_revised.md`：e60/ctx0/ctx2的locked κ融合收益为2.56/2.68/2.80cm。
+- `README_report_index.md`、`wp_input_sweep/summary.json`、`wp_hard_oversample/summary_cn.txt`：turnhard/hard_os3报告值2.93/2.94cm。
+- 按报告精度计算绝对增加0.38cm、相对增长14.84375%；仅指条件收益指标，不是导航成功率或绝对ADE相对改善。
+- 只作仓库汇总的阶段回顾；尚缺所有阶段原始逐帧配对与重复种子结果，不宣称严格同批随机采样或统计显著，也不混用P0/P5的其他基线。

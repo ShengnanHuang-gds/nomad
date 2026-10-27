@@ -58,3 +58,11 @@
 - `train/analyze_p3_morning_table.py`确认val_gt45_pct分母是全部far帧，不是转弯帧。
 - B/C/D的转弯中位数改善，但P90与全量>45°占比未优于ctx2；并未宣称所有尾部指标都恶化（C的P95有改善）。
 - CSV参考标SeedA、B/C/D标Seed0；未提供多种子统计或这些模型的locked收益。本页不与后续turnhard混用。
+
+## 第 8 页：P4 多时域方向监督（独立单页文件）
+- 文件：`slide08_multi_horizon_cn.pptx`，仅包含第8页。
+- `train/logs/revalidation/P4_multi_horizon.md`：ctx2初始化，15ep；2/4步辅助监督lambda=.25，8步主目标，推理不变。
+- 同目录 `p4_ablation_val.txt`：mh_2721筛选子集内ctx2/P4中位误差7.11/6.30°，转弯P90为34.88/33.19°；full_5110中位误差7.97/7.97°，转弯P90为53.12/58.87°。
+- 同目录 `P4_ablation_status.md`：locked use ctx2=2.80、P4=2.40cm；无辅助续训15ep对照2.80cm。
+- masked P4b在full Val中位误差7.76°、转弯P90为54.41°；未报告未经核对的P4b locked结果。
+- 区分筛选子集、完整Val与locked；箭头均为同集合ctx2→原始P4；后续mh46是不同设置，未混用。

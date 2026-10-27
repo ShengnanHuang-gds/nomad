@@ -33,8 +33,13 @@
 
 ## 第 5 页：P1b Hard120 难例分析（独立单页文件）
 - 文件：`slide05_hard120_analysis_cn.pptx`，仅包含第 5 页。
-- `train/logs/revalidation/wp_hard120/summary.txt`：WP误差≥45°的120帧；严格转弯占93.3%；Goal误差<15°仅占18.3%。
+- `train/logs/revalidation/wp_hard120/summary.txt`：WP误差≥45°的120帧；严格转弯占93.3%。
 - 同目录 `enrichment_H_vs_control.csv`，采用 `C_match` 中位数：未来8步累计转角108.485/69.431°；历史平均步间转角14.101/7.349°；Goal误差50.400/15.228°；WP κ 8.906/35.795（困难/对照）。
 - `train/analyze_wp_hard120.py:path_kinematics`：past_yaw_rate实际为过去最多3步绝对yaw变化的均值，不能标成deg/s。
 - κ低表示分布更分散；组间差异不证明因果；每个指标独立刻度。
 - 数据限制：CSV中n_C字段与设计及当前脚本不一致，未报告对照样本数，也未据此计算新统计量；中位数与summary.txt一致，当前没有原始NPZ可复算。详见幻灯片备注。
+
+### 第5页修订
+- 移除18.3%卡片，改为120帧与93.3%两个信息块。
+- 补充严格转弯GT判定：绝对横向位移≥0.30m或绝对航向变化≥45°（eval_frame_sets.py）。
+- κ说明：Head输出的方向集中度，同时用于标准κ融合加权；不是角误差，也不是另一条独立预测权重。

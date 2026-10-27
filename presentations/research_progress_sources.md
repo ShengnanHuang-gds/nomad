@@ -128,3 +128,8 @@
 - 模态序列与寄存向量共享Transformer；分支头预测与各目标空间匹配的flow更新量，不是一次得到最终干净图像/轨迹。迭代后视频经VAE解码，轨迹直接为连续数值。
 - 主网络和新增模块训练，VAE与DA3冻结；视觉沿用时空位置编码，非视觉采用原文所述identity位置编码，未自行补造实现。
 - 正文未披露视觉token数量、隐藏维度和camera-token维度；图不填未经证实的数字。公式与损失留后页，完整口径见备注。
+
+### UniNav精读第2页补充：模块来源与术语小字
+- 视频VAE及视频主干来源：Wang,A.等（2025），*Wan: Open and Advanced Large-Scale Video Generative Models*，arXiv:2503.20314，https://arxiv.org/abs/2503.20314 。来源依据为UniNav §3.2、§4.1与其参考文献，未将Wan默认尺寸冒充UniNav配置。
+- 几何教师来源：Lin,H.等（2025），*Depth Anything 3: Recovering the Visual Space from Any Views*，arXiv:2511.10647，https://arxiv.org/abs/2511.10647 。
+- 页内补充VAE中文含义与压缩/重建作用、冻结状态、切块/嵌入含义、D为每token的数字个数、轨迹3维→D维映射、DA3全称和作者年份；完整题名与链接保留在备注及本文档。

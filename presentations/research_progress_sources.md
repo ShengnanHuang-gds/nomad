@@ -43,3 +43,10 @@
 - 移除18.3%卡片，改为120帧与93.3%两个信息块。
 - 补充严格转弯GT判定：绝对横向位移≥0.30m或绝对航向变化≥45°（eval_frame_sets.py）。
 - κ说明：Head输出的方向集中度，同时用于标准κ融合加权；不是角误差，也不是另一条独立预测权重。
+
+## 第 6 页：P2 历史感知 WP（独立单页文件）
+- 文件：`slide06_history_aware_wp_cn.pptx`，仅包含第 6 页。
+- `train/logs/revalidation/P2_protocol.md`：ctx0/ctx2相同初始化和预算；ctx2额外使用2帧历史。
+- `p2_val_bearing/summary.txt`（同目录）：Val n=5110，e60/ctx0/ctx2的全量中位角误差8.58/8.50/7.97°；严格转弯n=2751的P90为57.84/59.80/53.12°，>45°占比14.5/14.9/12.6%。
+- `P2_conclusions_revised.md`：locked use_cm为2.56/2.68/2.80cm；locked配对Delta-U cluster bootstrap仍为TODO。
+- Val误差与locked收益分开展示，不与P0的2.62基线混比，不声称下游收益统计显著。

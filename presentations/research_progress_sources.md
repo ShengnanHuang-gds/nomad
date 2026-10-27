@@ -80,3 +80,11 @@
 ### 第9页通俗表达修订
 - 页面改为四项“尝试—结果”，移除AUC、OOF、rollout、反事实、Oracle等术语与跨批次大表；技术来源与原始数值保留于备注。
 - 仅展示固定方向分歧门控同批次的2.80→2.24cm；保留部分模型使用未来轨迹信息的离线分析限制。
+
+## 第 10 页：最新航点训练优化（独立单页文件）
+- 文件：`slide10_latest_optimisation_cn.pptx`，仅包含第10页；正文以中文解释各方案。
+- `train/logs/revalidation/wp_input_sweep/summary.json`：ctx2全量/转弯2.80/3.61；turnhard2.93/3.91；hist3plain2.84/3.73；hist3turnhard2.93/3.92（均四舍五入）。
+- `wp_mh46/summary_cn.txt`：从turnhard初始化的4/6步辅助监督2.85/3.79cm。
+- `wp_hard_oversample/summary_cn.txt`：困难采样权重×3方案2.94/3.98cm；全量WP误差>45°占比约11%，turnhard约10%；未单独重评Hard120。
+- `train/run_wp_ctx2_turnhard_train.py`、`run_hard_oversample_train.py`：核对组合加权配方与相对采样权重。hard_os3同时从turnhard续训，不能将差异纯归因于采样而忽略续训。
+- 0.01cm为汇总精度下差异，未证明统计显著。未报告存在摘要/JSON冲突的B-spread参考值。

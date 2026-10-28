@@ -128,3 +128,9 @@
 - 视频VAE及视频主干来源：Wang,A.等（2025），*Wan: Open and Advanced Large-Scale Video Generative Models*，arXiv:2503.20314，https://arxiv.org/abs/2503.20314 。来源依据为UniNav §3.2、§4.1与其参考文献，未将Wan默认尺寸冒充UniNav配置。
 - 几何教师来源：Lin,H.等（2025），*Depth Anything 3: Recovering the Visual Space from Any Views*，arXiv:2511.10647，https://arxiv.org/abs/2511.10647 。
 - 页内补充VAE中文含义与压缩/重建作用、冻结状态、切块/嵌入含义、D为每token的数字个数、轨迹3维→D维映射、DA3全称和作者年份；完整题名与链接保留在备注及本文档。
+
+### 第7页修订：原损失与转弯加权公式
+- 原：L=sum(b_i*l_i)/sum(b_i)；新：L=sum(b_i*alpha_i*l_i)/sum(b_i*alpha_i)。b_i为steps_dev/FAR_STEPS，alpha_i为训练时额外转弯权重。
+- `train/train_goal_dir.py:direction_loss`确认加权和除以权重和；预热l_i=1-cos(theta_i)，后续l_i=-kappa_i*cos(theta_i)+log I0(kappa_i)，省略常数项。
+- B/C严格转弯alpha=2/3、其余1；D按训练帧累计转角三分位alpha=1/1.5/3。页面将“曲率分档”更正为“累计转角分档”。
+- 保留原Val表与结论，只训练时增加alpha；原生可编辑分式、变量定义和单样本损失均加入页面。单页与合并版第7页同步。

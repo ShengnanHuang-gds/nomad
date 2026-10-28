@@ -134,3 +134,8 @@
 - `train/train_goal_dir.py:direction_loss`确认加权和除以权重和；预热l_i=1-cos(theta_i)，后续l_i=-kappa_i*cos(theta_i)+log I0(kappa_i)，省略常数项。
 - B/C严格转弯alpha=2/3、其余1；D按训练帧累计转角三分位alpha=1/1.5/3。页面将“曲率分档”更正为“累计转角分档”。
 - 保留原Val表与结论，只训练时增加alpha；原生可编辑分式、变量定义和单样本损失均加入页面。单页与合并版第7页同步。
+
+### 第7页补充：累计转角分档直接写入页面
+- 页内新增S=|Δψ1|+…+|Δψ8|，未来8步各步转角wrap后取绝对值再相加，左右转均累计。
+- 按训练帧累计转角S的33.333/66.667分位点划分低、中、高，alpha分别1/1.5/3；不是固定角度阈值。
+- 对应`train_goal_dino.py`中的train_pairs winding、np.percentile和curvature tier加权。保留此前原/新总损失公式、单样本损失及全部Val表。

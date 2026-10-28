@@ -62,19 +62,15 @@
 - masked P4b在full Val中位误差7.76°、转弯P90为54.41°；未报告未经核对的P4b locked结果。
 - 区分筛选子集、完整Val与locked；箭头均为同集合ctx2→原始P4；后续mh46是不同设置，未混用。
 
-## 第 9 页：P5 置信度融合与门控（独立单页文件）
-- 文件：`slide09_confidence_gating_cn.pptx`，仅包含第9页。
-- `train/logs/revalidation/p5ab_summary.txt`：P5a相对份额Cohen d≈-0.04，P5c平均抑制强度约0.027。
-- `p5b_harmful_predictor/summary.json`：OOF AUC=0.520051；ADE反事实κ/策略/真实害益择优=2.619989/2.619989/3.803194cm。
-- `p5c_trust/summary.json`：rollout κ/trust OOF/代理最优抑制=2.694341/2.691593/3.591327cm。
-- `kappa_fusion_summary.txt`：同批rollout κ/固定分歧门控/GT误差门控=2.80/2.24/3.16cm。
-- 不跨行排名，不混用2.62/2.69/2.80基线；离线参考定义不同且不可直接部署。
-- 检查`train/run_p5b_harmful_predictor.py`等脚本后确认部分输入来自GT未来运动派生特征；本页明确其为离线探索，未声称全部特征在线可用。
-- 约束fallback的2.73相对同批2.62有改善，但属于locked扫参结果，未混入本页在线验证结论；详见幻灯片备注。
-
-### 第9页通俗表达修订
-- 页面改为四项“尝试—结果”，移除AUC、OOF、rollout、反事实、Oracle等术语与跨批次大表；技术来源与原始数值保留于备注。
-- 仅展示固定方向分歧门控同批次的2.80→2.24cm；保留部分模型使用未来轨迹信息的离线分析限制。
+## 第 9 页：航点降权的计算细节（重写后的独立单页）
+- 文件：`slide09_confidence_gating_cn.pptx`；按用户最新要求只更新单页，不同步合并版。
+- `train/eval_by_distance.py:ade_fde`、`eval_position_noise.py:mean_ade_fde`、`eval_testtime.py:rollout`：预测与真实未来8点统一米制，逐点欧氏距离平均，再对采样轨迹平均；各条件分别评估得到e_b/e_g。
+- `run_p5b_harmful_predictor.py`：有害标签y=1[e_b>e_g]；按轨迹5组轮换，逻辑回归预测有害概率；该批选择阈值.60，未切换样本，AUC.520。
+- `p5ab_summary.txt`：P5a中r_w中位数有害.701、有益.719，作为组间统计，不代表完整置信度校准结论。
+- `run_p5c_trust.py:optimal_s_surrogate`：s在0..1的21点上只计算两端ADE线性插值，不是21次真实策略评估；最优通常为0/1。后续岭回归预测抑制并重跑策略。
+- 核查发现P5c回归输入中心化但无截距，也没有给标签中心化后恢复均值；训练样本未截断预测均值固定为0。旧“模型学会不抑制/门控失败”的结论撤回，需修正后重评。这里未修改训练代码或重新运行实验。
+- `adaptive_blend.py`及`kappa_fusion_summary.txt`：theta=预测两方向夹角；s=clip((theta-35)/20,0,1)，45度时减半、55度起只用Goal；κ'_wp=(1-s)κ_wp，归一化融合后乘B距离。同批use2.80→2.24cm。阈值来自GT误差扫参，不保证适用于预测分歧。
+- 02/03部分输入含真实未来轨迹派生特征，属离线分析；阈值选择与批次差异、具体公式等详见幻灯片备注。不能据此宣称实机有效或所有门控无效。
 
 ## 第 10 页：最新航点训练优化（独立单页文件）
 - 文件：`slide10_latest_optimisation_cn.pptx`，仅包含第10页；正文以中文解释各方案。

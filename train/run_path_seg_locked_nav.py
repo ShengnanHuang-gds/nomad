@@ -2,6 +2,7 @@
 import csv
 import json
 import os
+import shutil
 import subprocess
 import sys
 
@@ -9,14 +10,18 @@ import cv2  # noqa: F401
 import numpy as np
 import torch
 
+from eval_by_distance import load_paired_frames
+from eval_frame_sets import PAIRED_FRAMES
+
 PY = r"C:\Users\61078\anaconda3\envs\nomad_train\python.exe" if os.path.isfile(r"C:\Users\61078\anaconda3\envs\nomad_train\python.exe") else sys.executable
 CWD = os.path.dirname(os.path.abspath(__file__))
 AB_OUT = os.path.join(CWD, "logs/revalidation/path_seg_displacement_ab")
 BASE_WP = os.path.join(CWD, "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth")
-LOCKED_CSV = os.path.join(CWD, "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv")
 E_RUN = os.path.join(CWD, "logs/nomad/nomad_e_ft_pathact8")
 DINO_PRED = os.path.join(CWD, "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/eval_dino_dir_best/predictions.npz")
+DINO_HEAD = os.path.join(CWD, "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth")
 EVAL_OUT = os.path.join(AB_OUT, "locked_nav")
+FRAMES = os.path.join(CWD, PAIRED_FRAMES)
 
 
 def py_env():
@@ -25,6 +30,11 @@ def py_env():
     prev = env.get("PYTHONPATH", "")
     env["PYTHONPATH"] = root if not prev else root + os.pathsep + prev
     return env
+
+
+def locked_far_items():
+    moments = load_paired_frames(FRAMES)
+    return [(name, t, [g[4] for g in goals if g[0] == "20-40"][0]) for name, t, goals in moments]
 
 
 def run_dir(tag):
@@ -46,27 +56,27 @@ def val_summary(run_dir, label):
     }
 
 
-def eval_full_deploy(wp, sub):
+def eval_full_deploy(wp, sub, wp_run_dir=None):
     os.makedirs(EVAL_OUT, exist_ok=True)
-    subprocess.run(
-        [
-            PY, "-u", "eval_e_dino.py",
-            "--paired-frames", LOCKED_CSV,
-            "--run-dir", E_RUN,
-            "--checkpoint", "ema_latest.pth",
-            "--wp-head", wp,
-            "--goal-pos-mode", "blend_path",
-            "--path-source", "wp_poly",
-            "--path-units", "dataset",
-        ],
-        cwd=CWD,
-        check=True,
-        env=py_env(),
-    )
+    wp_run_dir = wp_run_dir or os.path.dirname(wp)
+    cmd = [
+        PY, "-u", "eval_e_dino.py",
+        "--run-dir", E_RUN,
+        "--checkpoint", "ema_latest.pth",
+        "--config-e-dino", "config/nomad_e_dino_path.yaml",
+        "--config-b", "config/nomad_b40.yaml",
+        "--checkpoint-b", "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+        "--goal-pos-mode", "blend_path",
+        "--path-source", "wp_poly",
+        "--path-units", "dataset",
+        "--path-gate", "none",
+        "--dino-head", DINO_HEAD,
+        "--wp-head", wp,
+        "--wp-run-dir", wp_run_dir,
+    ]
+    subprocess.run(cmd, cwd=CWD, check=True, env=py_env())
     out = os.path.join(E_RUN, "eval_ema_latest")
-    tag_path = os.path.join(EVAL_OUT, f"{sub}_eval_dir.txt")
-    with open(tag_path, "w", encoding="utf-8") as f:
-        f.write(out + chr(10))
+    shutil.copy2(os.path.join(out, "paired_far.csv"), os.path.join(EVAL_OUT, f"{sub}_paired_far.csv"))
     for r in csv.DictReader(open(os.path.join(out, "paired_far.csv"), encoding="utf-8")):
         if r.get("frames") == "all" and r.get("model") == "E-dino":
             return float(r["ade_m"]) * 100.0
@@ -75,7 +85,7 @@ def eval_full_deploy(wp, sub):
 
 @torch.no_grad()
 def eval_fixed_mu(wp_new, label):
-    from eval_by_distance import load_config, load_paired_frames
+    from eval_by_distance import load_config
     from eval_e_dino import head_predict_wp_path, run_models
     from eval_goal_head import make_split_dataset, meters_per_unit
     from eval_position_noise import load_model
@@ -95,7 +105,7 @@ def eval_fixed_mu(wp_new, label):
     dataset = make_split_dataset(load_config("config/nomad_b40.yaml"), "test")
     meters = float(meters_per_unit(dataset))
     b_steps = (b_dist_m / meters).astype(np.float32)
-    far = load_paired_frames(LOCKED_CSV)
+    far = locked_far_items()
     _p, rows, _meta = load_cache(CACHE_ROOT, "test_paired")
     feats = np.load(os.path.join(CACHE_ROOT, "test_paired", "features.npy"), mmap_mode="r")
 
@@ -124,11 +134,16 @@ def main():
     ]
     out = {"val": [], "locked_nav": []}
     for name, wp, tag in heads:
+        rd = None
         if tag:
             rd = run_dir(tag)
             wp = os.path.join(rd, "dino_dir_best.pth")
             out["val"].append(val_summary(rd, name))
-        row = {"label": name, "ade_full_deploy_cm": eval_full_deploy(wp, name), "fixed_mu": eval_fixed_mu(wp, name)}
+        row = {
+            "label": name,
+            "ade_full_deploy_cm": eval_full_deploy(wp, name, wp_run_dir=rd or os.path.dirname(BASE_WP)),
+            "fixed_mu": eval_fixed_mu(wp, name),
+        }
         out["locked_nav"].append(row)
     path = os.path.join(EVAL_OUT, "summary.json")
     with open(path, "w", encoding="utf-8") as f:

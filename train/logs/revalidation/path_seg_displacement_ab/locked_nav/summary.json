@@ -1,0 +1,44 @@
+{
+  "val": [
+    {
+      "label": "A_control",
+      "best_epoch": 7,
+      "best_far_path_ade_cm": 15.373945236206055,
+      "best_path_ade_cm": 15.769299507141113,
+      "best_path_turn_deg": 30.844995498657227
+    },
+    {
+      "label": "B_seg025",
+      "best_epoch": 7,
+      "best_far_path_ade_cm": 15.372640609741211,
+      "best_path_ade_cm": 15.76768970489502,
+      "best_path_turn_deg": 30.540639877319336
+    }
+  ],
+  "locked_nav": [
+    {
+      "label": "baseline_pathact8",
+      "ade_full_deploy_cm": 17.75132252369076,
+      "fixed_mu": {
+        "label": "baseline_pathact8",
+        "ade_fixed_mu_cm": 17.739530607499184
+      }
+    },
+    {
+      "label": "A_control",
+      "ade_full_deploy_cm": 17.615179642662408,
+      "fixed_mu": {
+        "label": "A_control",
+        "ade_fixed_mu_cm": 17.427349528856574
+      }
+    },
+    {
+      "label": "B_seg025",
+      "ade_full_deploy_cm": 17.614707371592523,
+      "fixed_mu": {
+        "label": "B_seg025",
+        "ade_fixed_mu_cm": 17.633587057329713
+      }
+    }
+  ]
+}

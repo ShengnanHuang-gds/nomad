@@ -1,0 +1,106 @@
+{
+  "no2vc_5_0:40": {
+    "visible_ref": "【图像观察】门廊/拱门与侧墙在 t-2、t-1、curr 仍可见连续结构；目标帧为同走廊更远处的门洞视角。",
+    "match_quality": "【代码事实】legacy mutual_near≈0.935，双向一致配对 n=42。【图像观察】lime 线多沿竖直结构；地面/亮区 NN 可能漂移。【尚不能判断】是否等于真实 overlap。",
+    "hist_motion": "【代码事实】t-2→t 累计 |Δyaw|≈1.1°；未来八步 winding≈61° → motion_class=B（历史几乎未转，未来将弯）。",
+    "goal_cue": "【图像观察】goal index=59，间隔 19 步；含远端通道/门洞，与 curr 同场景族但更远。【研究推断】目标提供“往哪走”的远景，不等于已对齐局部弯折。",
+    "error_type": "【代码事实】path ADE≈23.3 cm，F4≈8.6 cm，B4≈37.9 cm，dir_err≈25°。【图像观察】pred 弯折幅度/方向弱于 GT，后段误差更大。",
+    "obs_vs_spec": "【观察】高 DINO 匹配 + 低历史转角。【推测】失败更像未来弯折几何或路径头未跟上，而非历史视野完全丢失。【尚不能判断】模型内部是否用到 goal。"
+  },
+  "no2vc_65_0:3": {
+    "visible_ref": "【图像观察】走廊尽头、左侧沙发/杂物区在 t-2 与 curr 部分共有；curr 更近楼梯口，共同参照变少。",
+    "match_quality": "【代码事实】legacy mutual_near≈0.705，双向一致 n=24，mean_cos≈0.62。【图像观察】连线稀疏，重复墙面/地面易误导 NN。",
+    "hist_motion": "【代码事实】hist |Δyaw|≈16.7°（≥12° 阈值）→ A；未来 winding≈123°。",
+    "goal_cue": "【图像观察】goal index=19，间隔 16；为右侧木柜/门局部特写，与 curr 视角差大。",
+    "error_type": "【代码事实】ADE≈52.2 cm，dir_err≈107°。【图像观察】pred 与 GT 弯折方向相反级。",
+    "obs_vs_spec": "【观察】低 legacy 匹配 + 大方向错。【推测】目标局部帧 + 历史-当前对齐弱可能共同不利。【尚不能判断】因果权重。"
+  },
+  "sim39hF_0_9:95": {
+    "visible_ref": "【图像观察】室内转弯场景，t-2 与 curr 墙线/家具布局仍有部分重叠但视角差明显（hist |Δyaw|≈54°）。",
+    "match_quality": "【代码事实】legacy≈0.845，双向一致 n=26。【图像观察】t-2|curr 连线较 t-1|curr 更散。",
+    "hist_motion": "【代码事实】A 类；未来 winding≈225°。",
+    "goal_cue": "【代码事实】goal 间隔 39 步。【图像观察】目标为更远处转弯后视角（需结合 case 图）。",
+    "error_type": "【代码事实】ADE≈42.2 cm，B4≈71 cm，dir_err≈105°；转弯形状与末端朝向均偏。",
+    "obs_vs_spec": "【观察】历史已大角变化仍保留一定 patch 相似度。【推测】失败不 solely 来自“无共同参照”。"
+  },
+  "no27vc_26_0:179": {
+    "visible_ref": "【图像观察】走廊/窗口在相邻帧仍部分连续；hist 累计转角≈54°，肉眼可见视角变化。",
+    "match_quality": "【代码事实】legacy≈0.844，双向一致 n=23。",
+    "hist_motion": "【代码事实】A；future winding≈213°。",
+    "goal_cue": "【代码事实】goal 间隔仅 11 步（较近）。【研究推断】近 goal 不一定更易——本例 ADE 仍高。",
+    "error_type": "【代码事实】ADE≈50.1 cm，dir_err≈147°；以转向/朝向为主。",
+    "obs_vs_spec": "【观察】近 goal + 高 legacy 仍大 dir_err。【反例】“goal 近 ⇒ 一定好”不成立。"
+  },
+  "sim12h_1_5:23": {
+    "visible_ref": "【图像观察】仿真走廊，历史帧与 curr 共有墙/地面纹理；hist |Δyaw|≈51°。",
+    "match_quality": "【代码事实】legacy≈0.719（sharp_bad 中偏低），双向一致 mean≈0.59。",
+    "hist_motion": "【代码事实】A；future winding≈199°。",
+    "goal_cue": "【代码事实】goal 间隔 39。",
+    "error_type": "【代码事实】ADE≈36.1 cm，dir_err≈80°。",
+    "obs_vs_spec": "【观察】匹配指标偏低的一组失败。【推测】可能与重复纹理有关，但未证明。"
+  },
+  "no29vc_35_0:47": {
+    "visible_ref": "【图像观察】t-2/t-1/curr 走廊与左侧大窗连续；goal 为转弯后另一段通道（人物/玻璃隔断），场景已切换。",
+    "match_quality": "【代码事实】legacy≈0.904，lime 在窗框/墙缘较密。【图像观察】历史-当前匹配位置大体合理。",
+    "hist_motion": "【代码事实】hist |Δyaw|≈21.6° → A；future winding≈193°。",
+    "goal_cue": "【图像观察】goal 展示弯后通道，提供转向后景象；与 curr 非同一视角。",
+    "error_type": "【代码事实】ADE≈30 cm，dir_err≈81°。【图像观察】GT 左弯、pred 右弯，符号级转向错误。",
+    "obs_vs_spec": "【观察】高匹配仍转向反号。【推测】更像路径/goal 条件利用或转弯时机，而非历史无参照。【尚不能判断】goal 左右歧义是否主因。"
+  },
+  "sim12h_1_6:21": {
+    "visible_ref": "【图像观察】门廊/墙线在 t-1 与 curr 重叠较多；t-2 视角差更大。",
+    "match_quality": "【代码事实】legacy≈0.824，双向一致 n=26。",
+    "hist_motion": "【代码事实】hist |Δyaw|≈38° → A（非 B）；future winding≈229°。",
+    "goal_cue": "【代码事实】goal 间隔 39。",
+    "error_type": "【代码事实】ADE≈14.4 cm（sharp_good）；前后段均有偏差但可接受。",
+    "obs_vs_spec": "【观察】大 future winding + 已发生 hist 旋转仍预测较好。【反例】“必须先靠 B 类才转好”不成立。"
+  },
+  "no28vcF_5_0:59": {
+    "visible_ref": "【图像观察】走廊结构在历史与 curr 间连续（结合 case 图）。",
+    "match_quality": "【代码事实】legacy≈0.841，双向一致 n=30。",
+    "hist_motion": "【代码事实】A，hist |Δyaw|≈38°。",
+    "goal_cue": "【代码事实】goal 间隔 22。",
+    "error_type": "【代码事实】ADE≈5.9 cm，dir_err≈11°。",
+    "obs_vs_spec": "【观察】成功样本；匹配指标与失败组差异不大。【尚不能判断】成功主因。"
+  },
+  "sim7hF_0_2:19": {
+    "visible_ref": "【图像观察】仿真场景墙/地面在历史与 curr 可对照。",
+    "match_quality": "【代码事实】legacy≈0.837，far 双向一致 mean≈0.80。",
+    "hist_motion": "【代码事实】A，hist |Δyaw|≈35°。",
+    "goal_cue": "【代码事实】goal 间隔 37。",
+    "error_type": "【代码事实】ADE≈10.1 cm，dir_err≈5°。",
+    "obs_vs_spec": "【观察】转向场景下预测与 GT 较一致。"
+  },
+  "sim10hF_0_13:16": {
+    "visible_ref": "【图像观察】历史与 curr 部分结构连续；hist net 与 abs 差异大（净转≈-91°，累计≈20°）。",
+    "match_quality": "【代码事实】legacy≈0.807。",
+    "hist_motion": "【代码事实】A；future winding≈137°。",
+    "goal_cue": "【代码事实】goal 间隔 20。",
+    "error_type": "【代码事实】ADE≈12.3 cm，F4 小 B4≈22.7 cm；后段弯折偏差更大。",
+    "obs_vs_spec": "【观察】整体尚可但后四步误差抬升。【推测】弯折后半 timing 仍敏感。"
+  },
+  "no6vc_77_0:157": {
+    "visible_ref": "【图像观察】走廊/门洞在帧间大体连续。",
+    "match_quality": "【代码事实】legacy≈0.845；far 双向一致 mean 较低≈0.56。",
+    "hist_motion": "【代码事实】hist |Δyaw|≈14° → A，但 future winding 仅≈17°（近直行）。【尚不能判断】标签 A 在此例语义有限。",
+    "goal_cue": "【代码事实】goal 间隔 39。",
+    "error_type": "【代码事实】ADE≈31.6 cm，B4≈53 cm；非 sharp 组却路径误差偏大。",
+    "obs_vs_spec": "【观察】未来弯折不大仍 ADE 高。【推测】可能距离/尺度或局部几何，不单是“急转”。"
+  },
+  "no13vc_4_0:87": {
+    "visible_ref": "【图像观察】场景稳定，历史与 curr 参照连续。",
+    "match_quality": "【代码事实】legacy≈0.940，双向一致 n=43（13 例中最高档）。",
+    "hist_motion": "【代码事实】C；hist |Δyaw|≈9.6°，future winding≈17°。",
+    "goal_cue": "【代码事实】goal 间隔 39。",
+    "error_type": "【代码事实】ADE≈5.4 cm。",
+    "obs_vs_spec": "【观察】近直行 + 高匹配 + 低 ADE 一致。【不能推广】到急转。"
+  },
+  "no15vc_45_1:47": {
+    "visible_ref": "【图像观察】帧间变化小，共同参照清晰。",
+    "match_quality": "【代码事实】legacy≈0.938，双向一致 n=40。",
+    "hist_motion": "【代码事实】C；hist |Δyaw|≈1.7°。",
+    "goal_cue": "【代码事实】goal 间隔 39。",
+    "error_type": "【代码事实】ADE≈13.7 cm，B4≈23.5 cm；中等误差。",
+    "obs_vs_spec": "【观察】匹配很高但 ADE 非最低。【反例】“匹配高 ⇒ 路径必好”。"
+  }
+}

@@ -1,0 +1,5 @@
+C:\Users\61078\anaconda3\envs\nomad_train\python.exe diagnose_path_local_dir_dist_locked1000.py --export-dir=logs/revalidation/pathact8_residual_export/full1000 --out-dir=logs/revalidation/path_local_dir_dist_2x2 --seed=0 --num-samples=8 --batch-size=8
+PYTHONPATH=../diffusion_policy (cwd=train)
+seed=0 num_samples=8 batch_size=8
+shared_noise_across_conditions=True
+near_zero_direction_threshold_m=1e-06

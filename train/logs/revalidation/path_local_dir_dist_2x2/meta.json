@@ -1,0 +1,235 @@
+{
+  "created_utc": "2026-11-03T10:52:38.570036+00:00",
+  "script": "diagnose_path_local_dir_dist_locked1000.py",
+  "git_commit": "cd47888fbdbc5c5b8233ccfdb8aaa5c32513b5ac",
+  "export_dir": "logs/revalidation/pathact8_residual_export/full1000",
+  "export_meta_sha256": "ca92b9c85e4bfcf4bd4deb4903007cfe33fb7132906daa4c085326b3c5635351",
+  "residual_export_sha256": "4c6fb5bc32628227cf38bef60737b3975c408984805c390c36da318fffbd7304",
+  "eval_command": "C:\\Users\\61078\\anaconda3\\envs\\nomad_train\\python.exe diagnose_path_local_dir_dist_locked1000.py --export-dir=logs/revalidation/pathact8_residual_export/full1000 --out-dir=logs/revalidation/path_local_dir_dist_2x2 --seed=0 --num-samples=8 --batch-size=8",
+  "seed": 0,
+  "num_samples": 8,
+  "batch_size": 8,
+  "shared_noise": true,
+  "near_zero_m": 1e-06,
+  "oracle_skip_points": {
+    "GP_kept_pred_because_gt_direction_undefined": 0,
+    "PG_kept_pred_because_pred_direction_undefined": 0
+  },
+  "checkpoint_hashes": {
+    "pathact8_ckpt": {
+      "path": "logs/nomad/nomad_e_ft_pathact8\\ema_latest.pth",
+      "exists": true,
+      "bytes": 76611670,
+      "sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6"
+    },
+    "wp_head": {
+      "path": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "exists": true,
+      "bytes": 13203914,
+      "sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d"
+    },
+    "dino_predictions": {
+      "path": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/eval_dino_dir_best/predictions.npz",
+      "exists": true,
+      "bytes": 157354,
+      "sha256": "efe5dcb3c4fcaf976aa227976575fb4d7eb30f7e9e9694a4264b1b651cb2febb"
+    },
+    "config_e_dino": {
+      "path": "config/nomad_e_dino_path.yaml",
+      "exists": true,
+      "bytes": 1412,
+      "sha256": "11844638d700b19cbccb3c3ea689051f1b4fed11efa1b9ff11287f2200f1c451"
+    },
+    "config_b": {
+      "path": "config/nomad_b40.yaml",
+      "exists": true,
+      "bytes": 1795,
+      "sha256": "91615ba82be870a56ac57484577af394458a3f58189d094e5217dce6daaa0b25"
+    },
+    "checkpoint_b": {
+      "path": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+      "exists": true,
+      "bytes": 76473631,
+      "sha256": "6858c2f68118d1f00a6d1927f07022476a4916f4167d99da71ab6cb96507f0a1"
+    },
+    "frames_csv": {
+      "path": "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+      "exists": true,
+      "bytes": 19632,
+      "sha256": "7e3cbe8d95b0ab3798304abc41b69dd4db2125471885606605f2e502548346a6"
+    }
+  },
+  "mean_ade_cm": {
+    "PP": 17.695410867687315,
+    "GP": 13.302945284172893,
+    "PG": 16.278731733560562,
+    "GG": 11.507667589467019
+  },
+  "pp_vs_export_nav_max_abs_diff": 10.34664535522461,
+  "export_mean_ade_edino_cm": 17.82892942428589,
+  "this_round_pp_cm": 17.695410867687315,
+  "main_table": [
+    {
+      "condition": "PP",
+      "path_direction_source": "预测路径",
+      "path_distance_source": "预测路径",
+      "ade_cm": 17.695410867687315,
+      "delta_vs_pp_cm": 0.0
+    },
+    {
+      "condition": "GP",
+      "path_direction_source": "真实方向",
+      "path_distance_source": "预测距离",
+      "ade_cm": 13.302945284172893,
+      "delta_vs_pp_cm": -4.392465583514422
+    },
+    {
+      "condition": "PG",
+      "path_direction_source": "预测方向",
+      "path_distance_source": "真实距离",
+      "ade_cm": 16.278731733560562,
+      "delta_vs_pp_cm": -1.4166791341267526
+    },
+    {
+      "condition": "GG",
+      "path_direction_source": "真实方向",
+      "path_distance_source": "真实距离",
+      "ade_cm": 11.507667589467019,
+      "delta_vs_pp_cm": -6.187743278220296
+    }
+  ],
+  "decomposition": {
+    "dir_only_from_pp_cm": -4.392465583514422,
+    "dist_only_from_pp_cm": -1.4166791341267526,
+    "dir_when_dist_is_gt_cm": -4.771064144093543,
+    "dist_when_dir_is_gt_cm": -1.7952776947058737,
+    "interaction_cm": -0.3785985605791211,
+    "interaction_formula": "I = ADE(GG) - ADE(PG) - ADE(GP) + ADE(PP)"
+  },
+  "bootstrap_paired_n": 10000,
+  "bootstrap_seed": 20261103,
+  "bootstrap": {
+    "GP_minus_PP": {
+      "mean_cm": -4.392465583514422,
+      "ci95_lo_cm": -4.8772187421168205,
+      "ci95_hi_cm": -3.9202065306156877
+    },
+    "PG_minus_PP": {
+      "mean_cm": -1.4166791341267526,
+      "ci95_lo_cm": -1.6524645219440572,
+      "ci95_hi_cm": -1.1854868973046542
+    },
+    "GG_minus_PG": {
+      "mean_cm": -4.771064144093543,
+      "ci95_lo_cm": -5.293125206418335,
+      "ci95_hi_cm": -4.266299787666648
+    },
+    "GG_minus_GP": {
+      "mean_cm": -1.7952776947058737,
+      "ci95_lo_cm": -2.0302905709831975,
+      "ci95_hi_cm": -1.5667131945164876
+    },
+    "interaction_frame": {
+      "mean_cm": -0.3785985605791211,
+      "ci95_lo_cm": -0.6163764381827787,
+      "ci95_hi_cm": -0.14472980716731426
+    }
+  },
+  "subsets": {
+    "all": {
+      "PP": {
+        "n": 1000,
+        "ade_cm": 17.695410867687315,
+        "delta_vs_pp_cm": 0.0
+      },
+      "GP": {
+        "n": 1000,
+        "ade_cm": 13.302945284172893,
+        "delta_vs_pp_cm": -4.392465583514422
+      },
+      "PG": {
+        "n": 1000,
+        "ade_cm": 16.278731733560562,
+        "delta_vs_pp_cm": -1.4166791341267526
+      },
+      "GG": {
+        "n": 1000,
+        "ade_cm": 11.507667589467019,
+        "delta_vs_pp_cm": -6.187743278220296
+      }
+    },
+    "strict_turn": {
+      "PP": {
+        "n": 593,
+        "ade_cm": 20.2258700040023,
+        "delta_vs_pp_cm": 0.0
+      },
+      "GP": {
+        "n": 593,
+        "ade_cm": 14.452692067241186,
+        "delta_vs_pp_cm": -5.773177936761114
+      },
+      "PG": {
+        "n": 593,
+        "ade_cm": 18.732778494313838,
+        "delta_vs_pp_cm": -1.4930915096884618
+      },
+      "GG": {
+        "n": 593,
+        "ade_cm": 12.648602268496814,
+        "delta_vs_pp_cm": -7.577267735505485
+      }
+    },
+    "strict_straight": {
+      "PP": {
+        "n": 179,
+        "ade_cm": 13.712281506383718,
+        "delta_vs_pp_cm": 0.0
+      },
+      "GP": {
+        "n": 179,
+        "ade_cm": 11.679541165602274,
+        "delta_vs_pp_cm": -2.0327403407814444
+      },
+      "PG": {
+        "n": 179,
+        "ade_cm": 11.877092976102283,
+        "delta_vs_pp_cm": -1.8351885302814352
+      },
+      "GG": {
+        "n": 179,
+        "ade_cm": 9.68246435455187,
+        "delta_vs_pp_cm": -4.029817151831848
+      }
+    },
+    "middle": {
+      "PP": {
+        "n": 228,
+        "ade_cm": 14.241103358207303,
+        "delta_vs_pp_cm": 0.0
+      },
+      "GP": {
+        "n": 228,
+        "ade_cm": 11.587109735333605,
+        "delta_vs_pp_cm": -2.6539936228736973
+      },
+      "PG": {
+        "n": 228,
+        "ade_cm": 13.35173001627258,
+        "delta_vs_pp_cm": -0.8893733419347232
+      },
+      "GG": {
+        "n": 228,
+        "ade_cm": 9.97318124905098,
+        "delta_vs_pp_cm": -4.2679221091563235
+      }
+    }
+  },
+  "score_definition": {
+    "ade_edino_m": "eval_position_noise.mean_ade_fde: for each frame, mean L2 step error in meters averaged over horizon, then averaged over num_samples diffusion draws. pred [S,H,2] and gt [H,2] in dataset units; scaled by meters_per_unit (eval_by_distance.ade_fde).",
+    "per_step_consistency": "mean_k(mean_s L2(s,k)) == mean_s(mean_k L2(s,k)) == ade (linearity of mean).",
+    "gt_in_condition": "False: E-dino cond is encode_cond(images) + append_goal_pos(e_dino_pos); e_dino_pos = [mu_x, mu_y, path_flat] from DINO/WP/B only, not GT actions.",
+    "path_cond": "Same as eval_e_dino blend_path + wp_poly: kappa-blend dir * b_steps, wp_poly path with path_units flag (dataset=use head xy; meters=divide head xy by meters_per_unit when head outputs meters — pathact8 head outputs dataset units)."
+  },
+  "note_oracle": "Oracle path input swaps for diagnosis only; not deployable gain. PP is this-round baseline with shared-noise 4-condition protocol."
+}

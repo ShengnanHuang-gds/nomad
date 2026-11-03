@@ -36,8 +36,23 @@ from tqdm import tqdm
 
 from eval_by_distance import load_config
 from train_goal_dir import FAR_STEPS, cos_error, direction_loss, log_i0
-from yaw_traj import integrated_yaw_unit_direction, yaw_tensor_from_out
+from yaw_traj import (
+    integrated_yaw_unit_direction,
+    past_odom_yaw_feat,
+    path_tensor_from_out,
+    yaw_tensor_from_out,
+)
 from vint_train.models.nomad.pair_token_head import PairTokenHead
+import yaml
+
+
+def go_stanford_meters_per_unit(config):
+    data_config = config["datasets"]["go_stanford"]
+    spacing = int(data_config.get("waypoint_spacing", 1))
+    metric_path = os.path.join(os.path.dirname(__file__), "vint_train", "data", "data_config.yaml")
+    with open(metric_path, "r", encoding="utf-8") as f:
+        metric = float(yaml.safe_load(f)["go_stanford"]["metric_waypoint_spacing"])
+    return metric * spacing
 
 
 def sector_labels(target_xy, mid_deg=15.0):
@@ -76,6 +91,8 @@ def load_head_checkpoint(head, ckpt_head):
 CACHE_DIR = "logs/dino_cache/dinov2_vits14_reg"
 DFT_VAL_LIST = "logs/nomad_d/nomad_dft_2026_10_13_15_42_07/val_trajectories.txt"
 MIN_STEPS, MAX_STEPS = 4, 39
+# Same sharp-turn cut as analyze_yaw_integrate_oracle (path winding over the 8-step horizon).
+TURN90_DEG = 90.0
 DEFAULT_HARD_PAIRS_CSV = "logs/revalidation/hard_pairs/hard_pairs_train.csv"
 
 
@@ -175,6 +192,8 @@ def build_pairs(
     multi_horizon_strict=False,
     hard_frame_set=None,
     yaw_aux_steps=0,
+    path_steps=0,
+    odom_dim=0,
 ):
     """Every valid (current, goal) pair: rows into the cache, target in meters, distance in steps.
 
@@ -200,7 +219,7 @@ def build_pairs(
     if context > config["context_size"]:
         raise ValueError(f"--context {context} exceeds context_size {config['context_size']}")
     spacing = int(data_config.get("waypoint_spacing", 1))
-    meters_per_unit = float(data_config.get("metric_waypoint_spacing", 0.25)) * spacing
+    meters_per_unit = go_stanford_meters_per_unit(config)
     curr_rows, goal_rows, ctx_rows, targets, steps, owner, windings, turn_flags, target_aux_rows, aux_valid_rows = (
         [],
         [],
@@ -214,8 +233,12 @@ def build_pairs(
         [],
     )
     target_yaw_rows = []
+    target_path_rows = []
+    odom_rows = []
     multi_horizon_aux = tuple(int(x) for x in multi_horizon_aux)
     yaw_aux_steps = int(yaw_aux_steps)
+    path_steps = int(path_steps)
+    odom_dim = int(odom_dim)
     frame_hard_rows = []
     n_curr = 0
     for traj_name, entries in tqdm(by_traj.items(), desc=f"pairs {split}", leave=False):
@@ -264,6 +287,18 @@ def build_pairs(
                 dyaw_stack = None
                 if yaw_aux_steps > 0:
                     dyaw_stack = _future_dyaw_deg(traj, curr, spacing, yaw_aux_steps)
+                path_stack = None
+                if path_steps > 0:
+                    pts = []
+                    for st in range(1, path_steps + 1):
+                        gi = min(int(curr) + int(st) * spacing, len(pos) - 1)
+                        d = pos[gi] - pos[curr]
+                        local_pt = np.array(
+                            [d[0] * c + d[1] * s, -d[0] * s + d[1] * c],
+                            dtype=np.float32,
+                        )
+                        pts.append(local_pt / max(meters_per_unit, 1e-6))
+                    path_stack = np.stack(pts, axis=0)
             curr_rows.append(np.full(len(k), rows[(traj_name, curr)]))
             goal_rows.append(np.array([rows[(traj_name, curr + int(j))] for j in k]))
             past = [rows[(traj_name, curr - j)] for j in range(1, context + 1)]
@@ -278,6 +313,11 @@ def build_pairs(
                 aux_valid_rows.append(np.tile(aux_valid_stack[None], (len(k), 1)))
             if yaw_aux_steps > 0 and target == "endpoint":
                 target_yaw_rows.append(np.tile(dyaw_stack[None], (len(k), 1)))
+            if path_steps > 0 and target == "endpoint":
+                target_path_rows.append(np.tile(path_stack[None], (len(k), 1, 1)))
+            if odom_dim > 0:
+                odom = past_odom_yaw_feat(yaw, curr, spacing)[:odom_dim]
+                odom_rows.append(np.tile(odom[None], (len(k), 1)))
             frame_hard_rows.append(
                 hard_frame_set is not None and (traj_name, int(curr)) in hard_frame_set
             )
@@ -301,6 +341,12 @@ def build_pairs(
     if yaw_aux_steps > 0:
         out["target_yaw"] = np.concatenate(target_yaw_rows).astype(np.float32)
         out["yaw_aux_steps"] = yaw_aux_steps
+    if path_steps > 0:
+        out["target_path"] = np.concatenate(target_path_rows).astype(np.float32)
+        out["path_steps"] = path_steps
+    if odom_dim > 0:
+        out["odom"] = np.concatenate(odom_rows).astype(np.float32)
+        out["odom_dim"] = odom_dim
     if multi_horizon_aux:
         out["target_aux"] = np.concatenate(target_aux_rows).astype(np.float32)
         out["aux_valid"] = np.concatenate(aux_valid_rows)
@@ -387,20 +433,42 @@ class PairBatches(Dataset):
             yaw_t = self.pairs["target_yaw"][idx].copy()
             yaw_t[mirrored] *= -1.0
             batch.append(torch.from_numpy(yaw_t))
+        if "target_path" in self.pairs:
+            path = self.pairs["target_path"][idx].copy()
+            path[mirrored, :, 1] *= -1.0
+            batch.append(torch.from_numpy(path))
+        if "odom" in self.pairs:
+            odom = self.pairs["odom"][idx].copy()
+            odom[mirrored] *= -1.0
+            batch.append(torch.from_numpy(odom))
         return tuple(batch)
 
 
 def _parse_batch(batch, device):
     curr, goal, target, steps = batch[:4]
-    ctx, winding_t, turn_strict_t, target_aux, aux_valid_t, target_yaw_t = None, None, None, None, None, None
+    ctx, winding_t, turn_strict_t, target_aux, aux_valid_t, target_yaw_t, target_path, odom_t = (
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    )
     for t in batch[4:]:
         if t.ndim == 4:
             ctx = t.to(device, non_blocking=True).float()
         elif t.ndim == 3 and t.shape[-1] == 2:
-            target_aux = t.to(device, non_blocking=True).float()
+            if t.shape[1] >= 6:
+                target_path = t.to(device, non_blocking=True).float()
+            else:
+                target_aux = t.to(device, non_blocking=True).float()
         elif t.ndim == 2:
             if t.dtype == torch.bool:
                 aux_valid_t = t.to(device, non_blocking=True).bool()
+            elif t.shape[1] <= 4:
+                odom_t = t.to(device, non_blocking=True).float()
             else:
                 target_yaw_t = t.to(device, non_blocking=True).float()
         elif t.ndim == 1:
@@ -419,6 +487,8 @@ def _parse_batch(batch, device):
         target_aux,
         aux_valid_t,
         target_yaw_t,
+        target_path,
+        odom_t,
     )
 
 
@@ -455,19 +525,37 @@ def run_epoch(
     yaw_aux_lambda=0.0,
     yaw_aux_steps=0,
     yaw_integrate_lambda=0.0,
+    path_lambda=0.0,
+    path_dir_lambda=0.0,
+    path_smooth_lambda=0.0,
+    freeze_dir=False,
+    meters_per_unit=0.12,
 ):
     """Direction loss + optional sector CE. Sector GT from target xy (online)."""
     training = optimizer is not None
     head.train(training)
     errors, far, loss_sum, nll_sum, count = [], [], 0.0, 0.0, 0
+    int_errors, yaw_step_mae, windings, vm_errors = [], [], [], []
+    path_ades, path_turns = [], []
     hard_count = 0
     sector_correct = 0
     sector_n = 0
     with torch.set_grad_enabled(training):
         for batch in tqdm(batches, desc=desc, leave=False):
-            curr, goal, target, steps_dev, ctx, winding_t, turn_strict_t, target_aux, aux_valid_t, target_yaw_t = (
-                _parse_batch(batch, device)
-            )
+            (
+                curr,
+                goal,
+                target,
+                steps_dev,
+                ctx,
+                winding_t,
+                turn_strict_t,
+                target_aux,
+                aux_valid_t,
+                target_yaw_t,
+                target_path,
+                odom_t,
+            ) = _parse_batch(batch, device)
             weight = steps_dev.float() / FAR_STEPS
             if training and turn_strict_weight > 1.0 and turn_strict_t is not None:
                 weight = weight * torch.where(turn_strict_t > 0.5, turn_strict_weight, 1.0)
@@ -495,9 +583,14 @@ def run_epoch(
                 weight = weight * torch.where(hard, hard_weight, 1.0)
                 hard_count += int(hard.sum().item())
             with torch.autocast("cuda", dtype=torch.bfloat16):
-                out = head(curr, goal, ctx)
+                out = head(curr, goal, ctx, odom=odom_t)
             direction, kappa = out[0].float(), out[1].float()
-            loss, cos_err = direction_loss(direction, kappa, target, weight, use_nll)
+            dir_loss, cos_err = direction_loss(direction, kappa, target, weight, use_nll)
+            loss = torch.zeros((), device=device, dtype=dir_loss.dtype)
+            if training and not freeze_dir:
+                loss = loss + dir_loss
+            elif not training:
+                loss = loss + dir_loss
             if (
                 training
                 and multi_horizon_lambda > 0.0
@@ -521,16 +614,44 @@ def run_epoch(
                 if aux_terms:
                     loss = loss + multi_horizon_lambda * (sum(aux_terms) / len(aux_terms))
             yaw_pred = yaw_tensor_from_out(head, out)
+            path_pred = path_tensor_from_out(head, out)
+            if path_pred is not None and target_path is not None:
+                pred_xy = path_pred.float()
+                tgt_xy = target_path.float()
+                path_ade_cm = pred_xy.sub(tgt_xy).norm(dim=-1).mean(dim=-1) * float(meters_per_unit) * 100.0
+                path_ades.append(path_ade_cm.detach().cpu().numpy())
+                if pred_xy.shape[1] >= 3:
+                    dxy = pred_xy[:, 1:] - pred_xy[:, :-1]
+                    u = dxy / dxy.norm(dim=-1, keepdim=True).clamp(min=1e-6)
+                    cang = (u[:, :-1] * u[:, 1:]).sum(-1).clamp(-1, 1)
+                    path_turns.append(torch.rad2deg(cang.acos()).sum(dim=-1).detach().cpu().numpy())
+                if training and path_lambda > 0.0:
+                    path_l1 = torch.nn.functional.smooth_l1_loss(
+                        pred_xy, tgt_xy, reduction="none"
+                    ).mean(dim=(1, 2))
+                    loss = loss + path_lambda * (path_l1 * weight).mean()
+                    if path_smooth_lambda > 0.0 and pred_xy.shape[1] >= 3:
+                        d2 = pred_xy[:, 2:] - 2.0 * pred_xy[:, 1:-1] + pred_xy[:, :-2]
+                        smooth = d2.pow(2).mean(dim=(1, 2))
+                        loss = loss + path_smooth_lambda * (smooth * weight).mean()
+                    if path_dir_lambda > 0.0:
+                        d_path = torch.nn.functional.normalize(pred_xy[:, -1], dim=-1)
+                        lp, _ = direction_loss(d_path, kappa, target, weight, use_nll=False)
+                        loss = loss + path_dir_lambda * lp
             if training and yaw_aux_lambda > 0.0 and yaw_pred is not None and target_yaw_t is not None:
                 yaw_gt = torch.deg2rad(target_yaw_t)
                 yaw_loss = torch.nn.functional.smooth_l1_loss(
                     yaw_pred.float(), yaw_gt, reduction="none"
                 ).mean(dim=1)
                 loss = loss + yaw_aux_lambda * (yaw_loss * weight).mean()
-            if training and yaw_integrate_lambda > 0.0 and yaw_pred is not None:
+            d_int = None
+            if yaw_pred is not None and training and yaw_integrate_lambda > 0.0:
                 d_int = integrated_yaw_unit_direction(yaw_pred.float())
                 li, _ = direction_loss(d_int, kappa, target, weight, use_nll=False)
                 loss = loss + yaw_integrate_lambda * li
+            elif yaw_pred is not None:
+                with torch.no_grad():
+                    d_int = integrated_yaw_unit_direction(yaw_pred.float())
             sector_out = None
             if sector_lambda > 0.0:
                 for item in out[2:]:
@@ -556,23 +677,67 @@ def run_epoch(
                 scheduler.step()
             cos_err = cos_err.detach()
             nll_sum += (-kappa.detach() * cos_err + log_i0(kappa.detach())).sum().item()
-            errors.append(torch.rad2deg(torch.acos(cos_err)).cpu().numpy())
+            deploy_cos = cos_err
+            if path_pred is not None:
+                d_path = torch.nn.functional.normalize(path_pred[:, -1].float(), dim=-1)
+                deploy_cos = cos_error(d_path.detach(), target).clamp(-1.0, 1.0)
+                vm_errors.append(torch.rad2deg(torch.acos(cos_err.clamp(-1.0, 1.0))).cpu().numpy())
+            errors.append(torch.rad2deg(torch.acos(deploy_cos.clamp(-1.0, 1.0))).cpu().numpy())
             far.append((steps_dev >= FAR_STEPS).cpu().numpy())
+            if winding_t is not None:
+                windings.append(winding_t.detach().cpu().numpy())
+            if d_int is not None:
+                cos_i = cos_error(d_int.detach(), target)
+                int_errors.append(torch.rad2deg(torch.acos(cos_i.clamp(-1.0, 1.0))).cpu().numpy())
+            if yaw_pred is not None and target_yaw_t is not None:
+                step_mae = torch.rad2deg((yaw_pred.float() - torch.deg2rad(target_yaw_t)).abs()).mean(dim=1)
+                yaw_step_mae.append(step_mae.detach().cpu().numpy())
             loss_sum += loss.item() * len(steps_dev)
             count += len(steps_dev)
     errors, far = np.concatenate(errors), np.concatenate(far)
     out_metrics = {
         "loss": loss_sum / count,
         "median_deg": float(np.median(errors)),
+        "p90_deg": float(np.percentile(errors, 90)),
         "far_median_deg": float(np.median(errors[far])),
         "far_mean_deg": float(errors[far].mean()),
         "vm_nll": nll_sum / count,
         "samples": count,
     }
+    if vm_errors:
+        verr = np.concatenate(vm_errors)
+        out_metrics["vm_median_deg"] = float(np.median(verr))
+        out_metrics["vm_far_median_deg"] = float(np.median(verr[far]))
+    if windings:
+        wind = np.concatenate(windings)
+        turn = wind >= TURN90_DEG
+        out_metrics["turn90_n"] = int(turn.sum())
+        if turn.any():
+            out_metrics["turn90_median_deg"] = float(np.median(errors[turn]))
+            out_metrics["turn90_p90_deg"] = float(np.percentile(errors[turn], 90))
+    if int_errors:
+        ierr = np.concatenate(int_errors)
+        out_metrics["yawint_median_deg"] = float(np.median(ierr))
+        out_metrics["yawint_p90_deg"] = float(np.percentile(ierr, 90))
+        out_metrics["yawint_far_median_deg"] = float(np.median(ierr[far]))
+        if windings and turn.any():
+            out_metrics["yawint_turn90_median_deg"] = float(np.median(ierr[turn]))
+            out_metrics["yawint_turn90_p90_deg"] = float(np.percentile(ierr[turn], 90))
+    if yaw_step_mae:
+        yerr = np.concatenate(yaw_step_mae)
+        out_metrics["yaw_step_mae_median_deg"] = float(np.median(yerr))
     if hard_bearing_deg > 0.0 and hard_weight != 1.0 and count > 0:
         out_metrics["hard_frac"] = hard_count / count
     if sector_n > 0:
         out_metrics["sector_acc"] = sector_correct / sector_n
+    if path_ades:
+        pad = np.concatenate(path_ades)
+        out_metrics["path_ade_cm"] = float(pad.mean())
+        out_metrics["path_ade_median_cm"] = float(np.median(pad))
+        out_metrics["far_path_ade_cm"] = float(pad[far].mean()) if far.any() else float(pad.mean())
+        if path_turns:
+            pturn = np.concatenate(path_turns)
+            out_metrics["path_turn_deg"] = float(pturn.mean())
     return out_metrics
 
 
@@ -640,7 +805,13 @@ def main():
         default="",
         help="Comma weights low,mid,high; uses train frame-winding tertiles (e.g. 1,1.5,3)",
     )
-    parser.add_argument("--top-k-checkpoints", type=int, default=3, help="Keep top-K val far_median checkpoints")
+    parser.add_argument("--top-k-checkpoints", type=int, default=3, help="Keep top-K val checkpoints")
+    parser.add_argument(
+        "--select-metric",
+        choices=("far", "all", "path"),
+        default="far",
+        help="far/all: VM heading median. path: val far path ADE (cm).",
+    )
     parser.add_argument(
         "--multi-horizon",
         default="",
@@ -698,12 +869,86 @@ def main():
         default=0.25,
         help="1-cos on integrated yaw polyline dir vs endpoint target (train only; matches deploy WP dir).",
     )
+    parser.add_argument(
+        "--path-steps",
+        type=int,
+        default=0,
+        help="If >0, supervise K-step robot-frame (x,y) polyline; deploy uses last-point direction. endpoint only.",
+    )
+    parser.add_argument(
+        "--path-lambda",
+        type=float,
+        default=1.0,
+        help="Weight on smooth_l1 of the polyline points (train).",
+    )
+    parser.add_argument(
+        "--path-dir-lambda",
+        type=float,
+        default=1.0,
+        help="1-cos on last polyline point vs endpoint (train; matches deploy WP dir).",
+    )
+    parser.add_argument(
+        "--path-smooth-lambda",
+        type=float,
+        default=0.0,
+        help="Weight on second-difference smoothness of the polyline (train).",
+    )
+    parser.add_argument(
+        "--freeze-dir",
+        action="store_true",
+        help="Freeze VM direction/kappa (and sector) heads; train encoder + path_head only.",
+    )
+    parser.add_argument("--encoder-lr", type=float, default=0.0, help="If >0, transformer LR (path_head uses --lr)")
+    parser.add_argument(
+        "--path-mlp",
+        type=int,
+        default=0,
+        help="If >0, path_head is LN-MLP with this hidden size instead of a single Linear.",
+    )
+    parser.add_argument(
+        "--path-residual",
+        type=int,
+        default=0,
+        help="If >0, add a zero-init MLP residual on top of Linear path_head.",
+    )
+    parser.add_argument(
+        "--path-spatial",
+        default="",
+        help="Path readout: empty=CLS; lcr=left/center/right mean of current patch tokens",
+    )
+    parser.add_argument(
+        "--odom-dim",
+        type=int,
+        default=0,
+        help="If >0, concat past yaw (1 and 2 spacings, scaled by 45deg) onto path_head input.",
+    )
+    parser.add_argument(
+        "--path-rot",
+        action="store_true",
+        help="Rotate frozen path by a scalar from odom (do not concat odom into path_head).",
+    )
+    parser.add_argument(
+        "--freeze-encoder",
+        action="store_true",
+        help="With --freeze-dir, also freeze the transformer; train path residual/head only.",
+    )
+    parser.add_argument("--output-dir", default="", help="Write into this directory instead of a new timestamped run")
+    parser.add_argument("--start-epoch", type=int, default=0, help="First epoch index when continuing a stopped run")
+    parser.add_argument(
+        "--schedule-epochs",
+        type=int,
+        default=0,
+        help="Cosine length in epochs. 0 means start-epoch + epochs, so a resumed run keeps the original budget.",
+    )
     args = parser.parse_args()
 
     rng = np.random.default_rng(args.seed)
     torch.manual_seed(args.seed)
     device = torch.device("cuda:0")
-    output_dir = os.path.join("logs", "nomad_d", f"{args.run_name}_{time.strftime('%Y_%m_%d_%H_%M_%S')}")
+    if args.output_dir:
+        output_dir = args.output_dir
+    else:
+        output_dir = os.path.join("logs", "nomad_d", f"{args.run_name}_{time.strftime('%Y_%m_%d_%H_%M_%S')}")
     os.makedirs(output_dir, exist_ok=True)
     print(f"output: {os.path.abspath(output_dir)}")
     if args.hard_bearing_deg > 0:
@@ -735,6 +980,15 @@ def main():
     yaw_aux_steps = int(args.yaw_aux_steps)
     if yaw_aux_steps > 0 and args.target != "endpoint":
         raise ValueError("--yaw-aux-steps requires --target endpoint")
+    path_steps = int(args.path_steps)
+    if path_steps > 0 and args.target != "endpoint":
+        raise ValueError("--path-steps requires --target endpoint")
+    if int(args.odom_dim) > 0 and path_steps <= 0:
+        raise ValueError("--odom-dim requires --path-steps")
+    if int(args.odom_dim) > 2:
+        raise ValueError("--odom-dim currently supports 1 or 2 (past 1/2 spacing yaw)")
+    if args.path_rot and int(args.odom_dim) <= 0:
+        raise ValueError("--path-rot requires --odom-dim")
     mh_strict = bool(args.multi_horizon_strict)
     hard_frame_set = None
     hard_csv = args.hard_pairs_csv.strip()
@@ -760,6 +1014,8 @@ def main():
         mh_strict,
         hard_frame_set,
         yaw_aux_steps,
+        path_steps,
+        args.odom_dim,
     )
     val_pairs = build_pairs(
         config,
@@ -773,6 +1029,8 @@ def main():
         mh_strict,
         None,
         yaw_aux_steps,
+        path_steps,
+        args.odom_dim,
     )
     if hard_frame_set is not None and "frame_hard" in train_pairs:
         fh = train_pairs["frame_hard"]
@@ -795,6 +1053,12 @@ def main():
         f"{meta['dim']} | flip {flip} | context {args.context} | target {args.target}\ncurrent frames: {len(train_pairs['starts'])} train, "
         f"{len(val_pairs['starts'])} val ({len(val_trajs)} trajectories) | pairs {len(train_pairs['curr'])} train"
     )
+    if int(args.odom_dim) > 0 and "odom" in train_pairs:
+        od = train_pairs["odom"][train_pairs["starts"]]
+        bits = [f"odom yaw dim {od.shape[1]}"]
+        for j in range(od.shape[1]):
+            bits.append(f"|feat{j}|*45 median {np.median(np.abs(od[:, j])) * 45.0:.1f} deg")
+        print(" | ".join(bits))
 
     head = PairTokenHead(
         meta["dim"],
@@ -807,11 +1071,34 @@ def main():
         n_sectors=args.n_sectors,
         aux_horizons=multi_aux,
         yaw_aux_steps=yaw_aux_steps,
+        path_steps=path_steps,
+        path_mlp=int(args.path_mlp),
+        path_residual=int(args.path_residual),
+        path_spatial=args.path_spatial,
+        odom_dim=int(args.odom_dim),
+        path_rot=bool(args.path_rot),
     ).to(device)
     if yaw_aux_steps > 0:
         print(
             f"yaw traj: {yaw_aux_steps} step dyaw | aux lambda={args.yaw_aux_lambda} | "
-            f"integrate-dir lambda={args.yaw_integrate_lambda} | deploy WP dir=integrate(yaw), kappa from vm head"
+            f"integrate-dir lambda={args.yaw_integrate_lambda} | "
+            f"select {args.select_metric} | "
+            + (
+                "integrated direction is trained"
+                if args.yaw_integrate_lambda > 0
+                else "integrated direction is not in the loss; score it only at val"
+            )
+        )
+    meters_per_unit = go_stanford_meters_per_unit(config)
+    if path_steps > 0:
+        print(
+            f"path polyline: {path_steps} (x,y) dataset-units (/{meters_per_unit:.3f} m) | "
+            f"mlp hidden={args.path_mlp or 'Linear'} residual={args.path_residual} | "
+            f"spatial={args.path_spatial or 'cls'} | odom_dim={args.odom_dim} | "
+            f"path_rot={bool(args.path_rot)} | "
+            f"l1 lambda={args.path_lambda} | last-point dir lambda={args.path_dir_lambda} | "
+            f"smooth lambda={args.path_smooth_lambda} | freeze_dir={args.freeze_dir} | "
+            f"select {args.select_metric}"
         )
     if multi_aux:
         mode = "strict drop" if mh_strict else "masked aux (L8 on all endpoint frames)"
@@ -842,15 +1129,60 @@ def main():
     steps_per_epoch = math.ceil(len(train_pairs["starts"]) / args.batch_size)
     if args.max_batches > 0:
         steps_per_epoch = min(steps_per_epoch, args.max_batches)
-    # Fine-tunes from a strong init use a smaller LR.
-    lr = args.lr if not args.init else args.lr * 0.3
-    optimizer = torch.optim.AdamW(head.parameters(), lr=lr, weight_decay=args.weight_decay)
-    total = steps_per_epoch * args.epochs
+    if args.freeze_dir:
+        frozen, path_params, enc_params = [], [], []
+        residual = int(args.path_residual) > 0
+        freeze_path = residual or bool(args.path_rot)
+        for name, p in head.named_parameters():
+            if name.startswith("out") or name.startswith("sector") or name.startswith("yaw_aux"):
+                p.requires_grad_(False)
+                frozen.append(name)
+            elif "path_rot" in name:
+                path_params.append(p)
+            elif "path_res" in name:
+                path_params.append(p)
+            elif "path_head" in name:
+                if freeze_path:
+                    p.requires_grad_(False)
+                    frozen.append(name)
+                else:
+                    path_params.append(p)
+            elif args.freeze_encoder:
+                p.requires_grad_(False)
+                frozen.append(name)
+            else:
+                enc_params.append(p)
+        if not path_params:
+            raise ValueError("--freeze-dir needs trainable path_head, path_res, or path_rot")
+        groups = [{"params": path_params, "lr": args.lr}]
+        if enc_params:
+            enc_lr = args.encoder_lr if args.encoder_lr > 0 else 1e-4
+            groups.append({"params": enc_params, "lr": enc_lr})
+        else:
+            enc_lr = 0.0
+        optimizer = torch.optim.AdamW(groups, weight_decay=args.weight_decay)
+        print(
+            f"freeze_dir: frozen {len(frozen)} tensors | path lr={args.lr:.3e} | "
+            f"encoder lr={enc_lr:.3e} residual={residual}"
+        )
+    else:
+        lr = args.lr if not args.init else args.lr * 0.3
+        optimizer = torch.optim.AdamW(head.parameters(), lr=lr, weight_decay=args.weight_decay)
+    sched_epochs = args.schedule_epochs if args.schedule_epochs > 0 else args.start_epoch + args.epochs
+    total = steps_per_epoch * sched_epochs
     warm = steps_per_epoch
     scheduler = torch.optim.lr_scheduler.LambdaLR(
         optimizer,
         lambda s: (s + 1) / warm if s < warm else 0.5 * (1.0 + math.cos(math.pi * (s - warm) / max(1, total - warm))),
     )
+    done_steps = args.start_epoch * steps_per_epoch
+    while scheduler.last_epoch < done_steps:
+        scheduler.step()
+    if args.start_epoch > 0:
+        print(
+            f"resume at epoch {args.start_epoch} / schedule {sched_epochs} | "
+            f"lr now {optimizer.param_groups[0]['lr']:.3e}"
+        )
     val_batches = loader(cache_path, val_pairs, val_chosen, 512, False, 0, 2, args.context)
     hard_kw = dict(
         hard_bearing_deg=args.hard_bearing_deg,
@@ -868,11 +1200,19 @@ def main():
         yaw_aux_lambda=(args.yaw_aux_lambda if yaw_aux_steps > 0 else 0.0),
         yaw_aux_steps=yaw_aux_steps,
         yaw_integrate_lambda=(args.yaw_integrate_lambda if yaw_aux_steps > 0 else 0.0),
+        path_lambda=(args.path_lambda if path_steps > 0 else 0.0),
+        path_dir_lambda=(args.path_dir_lambda if path_steps > 0 else 0.0),
+        path_smooth_lambda=(args.path_smooth_lambda if path_steps > 0 else 0.0),
+        freeze_dir=bool(args.freeze_dir),
+        meters_per_unit=meters_per_unit,
     )
     val_kw = dict(hard_kw)
     val_kw["multi_horizon_lambda"] = 0.0
     val_kw["yaw_aux_lambda"] = 0.0
     val_kw["yaw_integrate_lambda"] = 0.0
+    val_kw["path_lambda"] = 0.0
+    val_kw["path_dir_lambda"] = 0.0
+    val_kw["path_smooth_lambda"] = 0.0
     val_kw.update(
         turn_winding_deg=0.0,
         turn_weight=1.0,
@@ -880,9 +1220,28 @@ def main():
         curvature_q=(None, None),
     )
 
-    best, log_rows = math.inf, []
+    best, best_yawint, log_rows = math.inf, math.inf, []
     top_k = []
-    for epoch in range(args.epochs):
+    if args.select_metric == "path":
+        select_key = "far_path_ade_cm"
+    elif args.select_metric == "all":
+        select_key = "median_deg"
+    else:
+        select_key = "far_median_deg"
+    yawint_key = "yawint_median_deg" if args.select_metric == "all" else "yawint_far_median_deg"
+    log_path = os.path.join(output_dir, "train_log.csv")
+    if args.start_epoch > 0 and os.path.isfile(log_path):
+        with open(log_path, newline="", encoding="utf-8") as f:
+            log_rows = list(csv.DictReader(f))
+        for row in log_rows:
+            if row.get("best") == "True":
+                best = float(row[f"val_{select_key}"])
+            if row.get("best_yawint") == "True" and row.get(f"val_{yawint_key}"):
+                best_yawint = float(row[f"val_{yawint_key}"])
+        print(f"kept {len(log_rows)} logged epochs | best vm {best:.2f} | best yawint {best_yawint:.2f}")
+    for _replay in range(args.start_epoch):
+        rng.permutation(draw(train_pairs, rng, args.hard_frame_boost))
+    for epoch in range(args.start_epoch, args.start_epoch + args.epochs):
         start = time.time()
         use_nll = epoch >= args.warmup_epochs
         chosen = rng.permutation(draw(train_pairs, rng, args.hard_frame_boost))[
@@ -899,22 +1258,29 @@ def main():
         val = run_epoch(head, val_batches, device, use_nll=True, desc="val", **val_kw)
         state = {"epoch": epoch, "head": head.state_dict(), "args": vars(args), "meta": meta, **val}
         torch.save(state, os.path.join(output_dir, "dino_dir_last.pth"))
-        selected = val["far_median_deg"] < best
+        vm_score = val[select_key]
+        selected = vm_score < best
         if selected:
-            best = val["far_median_deg"]
+            best = vm_score
             torch.save(state, os.path.join(output_dir, "dino_dir_best.pth"))
+        selected_yawint = False
+        if yawint_key in val and val[yawint_key] < best_yawint:
+            best_yawint = val[yawint_key]
+            selected_yawint = True
+            torch.save(state, os.path.join(output_dir, "dino_dir_best_yawint.pth"))
         if args.top_k_checkpoints > 0:
-            top_k.append((val["far_median_deg"], epoch, state))
+            top_k.append((vm_score, epoch, state))
             top_k.sort(key=lambda x: x[0])
             top_k = top_k[: args.top_k_checkpoints]
             for rank, (score, ep, st) in enumerate(top_k, start=1):
-                torch.save(st, os.path.join(output_dir, f"dino_dir_top{rank}_ep{ep}_far{score:.2f}.pth"))
+                torch.save(st, os.path.join(output_dir, f"dino_dir_top{rank}_ep{ep}_{args.select_metric}{score:.2f}.pth"))
         row = {
             "epoch": epoch,
             "stage": stage,
             **{f"train_{k}": v for k, v in train.items()},
             **{f"val_{k}": v for k, v in val.items()},
             "best": selected,
+            "best_yawint": selected_yawint,
             "minutes": (time.time() - start) / 60,
         }
         log_rows.append(row)
@@ -929,12 +1295,43 @@ def main():
                 f" | sector acc train {train.get('sector_acc', float('nan')):.2f} "
                 f"/ val {val.get('sector_acc', float('nan')):.2f}"
             )
+        yaw_msg = ""
+        if "yawint_median_deg" in val:
+            yaw_msg = (
+                f" | yawint med {val['yawint_median_deg']:.2f}"
+                f" turn90 {val.get('yawint_turn90_median_deg', float('nan')):.2f}"
+                f"/{val.get('yawint_turn90_p90_deg', float('nan')):.2f}"
+                f" | yaw mae {val.get('yaw_step_mae_median_deg', float('nan')):.2f}"
+            )
+            if selected_yawint:
+                yaw_msg += " | best-yawint"
+        path_msg = ""
+        if "path_ade_cm" in val:
+            path_msg = (
+                f" | path ADE {val['path_ade_cm']:.1f}/{val.get('far_path_ade_cm', float('nan')):.1f} cm"
+                f" turn {val.get('path_turn_deg', float('nan')):.1f}"
+            )
+        elif "vm_median_deg" in val:
+            path_msg = (
+                f" | path-d8 med {val['median_deg']:.2f} vm {val['vm_median_deg']:.2f}"
+            )
+        turn_msg = ""
+        if "turn90_median_deg" in val:
+            turn_msg = f" | turn90 {val['turn90_median_deg']:.2f}/{val['turn90_p90_deg']:.2f}"
         print(
             f"[epoch {epoch} {stage}] median train {train['median_deg']:.1f} / val {val['median_deg']:.1f} | "
             f"far train {train['far_median_deg']:.1f} / val {val['far_median_deg']:.1f} deg | "
-            f"val NLL {val['vm_nll']:.3f}{' | best' if selected else ''}{hard_msg}{sec_msg} | {row['minutes']:.1f} min"
+            f"val NLL {val['vm_nll']:.3f}{turn_msg}{' | best' if selected else ''}{yaw_msg}{path_msg}{hard_msg}{sec_msg} | "
+            f"{row['minutes']:.1f} min"
         )
-    print(f"Best val far median {best:.1f} deg -> {os.path.join(output_dir, 'dino_dir_best.pth')}")
+    unit = "cm" if args.select_metric == "path" else "deg"
+    print(
+        f"Best val {select_key} {best:.2f} {unit} -> {os.path.join(output_dir, 'dino_dir_best.pth')}"
+    )
+    if best_yawint < math.inf:
+        print(
+            f"Best val {yawint_key} {best_yawint:.2f} deg -> {os.path.join(output_dir, 'dino_dir_best_yawint.pth')}"
+        )
 
 
 if __name__ == "__main__":

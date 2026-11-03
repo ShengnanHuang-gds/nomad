@@ -286,9 +286,9 @@ def main():
     parser.add_argument("--oracle-out-dir", default="logs/revalidation/oracle_factorial")
     parser.add_argument(
         "--wp-dir-mode",
-        choices=("auto", "vm", "yaw_integrated"),
+        choices=("auto", "vm", "yaw_integrated", "path"),
         default="auto",
-        help="WP unit direction: vm=out[0]; yaw_integrated=integrate(yaw); auto=yaw if head has yaw_aux",
+        help="WP unit direction: vm=out[0]; path=normalize(p_last); yaw_integrated=integrate(yaw); auto prefers path then yaw",
     )
     parser.add_argument(
         "--eval-subdir",
@@ -372,6 +372,7 @@ def main():
         os.path.join(out_dir, "locked_per_frame.npz"),
         ade_mask=am, names=np.array(list(pos_t)), traj=np.array([n for n, _t, _g in far]),
         wp_dir=wp_dir_t, wp_kappa=wp_kappa_t, endpoint=end_t,
+        wp_dir_mode=np.array(args.wp_dir_mode),
         **{f"ade_{i}": ade[k] for i, k in enumerate(pos_t)},
     )
     print(f"Saved to {os.path.abspath(out_dir)}")

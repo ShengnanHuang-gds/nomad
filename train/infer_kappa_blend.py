@@ -36,6 +36,7 @@ from eval_position_noise import diffuse, encode_cond, load_model
 from adaptive_blend import angle_between_deg, blend_suppress_torch, suppress_from_wp_turn
 from eval_waypoint_head import blend
 from train_e_dino import DINO_BEST, load_dino_head
+from yaw_traj import wp_direction_from_head
 from vint_train.data.data_utils import IMAGE_ASPECT_RATIO, get_data_path
 from vint_train.training.train_utils import append_goal_pos
 
@@ -141,7 +142,7 @@ class KappaBlendNavigator:
         g_out = self.goal_head(curr_tok, goal_tok)
         w_out = self.wp_head(curr_tok, goal_tok)
         g_dir, g_k = g_out[0], g_out[1]
-        w_dir, w_k = w_out[0], w_out[1]
+        w_dir, w_k = wp_direction_from_head(self.wp_head, w_out, "auto")
         if self.gate_turn_weight > 0 or self.gate_wp_lo < self.gate_wp_hi:
             wp_err = angle_between_deg(g_dir.detach().cpu().numpy(), w_dir.detach().cpu().numpy())
             turn = self.gate_turn_strict

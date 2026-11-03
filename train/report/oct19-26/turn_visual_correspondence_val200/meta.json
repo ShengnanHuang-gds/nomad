@@ -1,0 +1,83 @@
+{
+  "timestamp_utc": "2026-11-03T13:10:33.815472+00:00",
+  "git_commit": "8f46bdd",
+  "checkpoint": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+  "checkpoint_note": {
+    "model": "dinov2_vits14_reg",
+    "width": 224,
+    "height": 168,
+    "pool": 2,
+    "grid": [
+      6,
+      8
+    ],
+    "tokens": 49,
+    "dim": 384,
+    "flip": true,
+    "frames": 159201
+  },
+  "dino_cache": "logs/dino_cache/dinov2_vits14_reg\\train",
+  "dino_cache_meta": {
+    "model": "dinov2_vits14_reg",
+    "width": 224,
+    "height": 168,
+    "pool": 2,
+    "grid": [
+      6,
+      8
+    ],
+    "tokens": 49,
+    "dim": 384,
+    "flip": true,
+    "frames": 159201
+  },
+  "val_list": "logs/nomad_d/nomad_dft_2026_10_13_15_42_07/val_trajectories.txt",
+  "sample_seed": 20261103,
+  "max_frames": 200,
+  "n_sampled": 200,
+  "n_trajectories": 123,
+  "group_counts": {
+    "straight": 72,
+    "moderate_turn": 59,
+    "sharp_turn": 69
+  },
+  "sampling_rule": "DFT val trajectories only; endpoint-style frames with ctx t-1,t-2; goal token at curr+min(39,max_goal); stratified ~1/3 straight/moderate/sharp by path_winding_deg; max 1 frame per traj per 15 index steps when possible.",
+  "match_metric_definitions": {
+    "patch_tokens": "DINO cache tokens [1+48,384], 6x8 grid after pool=2; exclude CLS",
+    "hist_to_curr_mean_max_cos": "mean over hist patches of max cosine to any curr patch",
+    "curr_to_hist_mean_max_cos": "mean over curr patches of max cosine to any hist patch",
+    "mutual_mean_max_cos": "average of the two directional means above",
+    "not_overlap_rate": "These are descriptive NN similarities, not calibrated visible overlap."
+  },
+  "descriptive_trends": {
+    "sharp_good": {
+      "n": 35,
+      "match_near_mutual_mean": 0.8421259760856629,
+      "match_far_mutual_mean": 0.7850887315613883,
+      "path_ade_cm_mean": 8.042342570849828,
+      "gt_path_len_m_mean": 0.9985070552144731
+    },
+    "sharp_bad": {
+      "n": 34,
+      "match_near_mutual_mean": 0.83290613749448,
+      "match_far_mutual_mean": 0.7608814449871287,
+      "path_ade_cm_mean": 29.297534886528464,
+      "gt_path_len_m_mean": 0.8289280463667477
+    },
+    "sharp_midlen_good_vs_bad": {
+      "good_n": 18,
+      "bad_n": 17,
+      "good_match_near": 0.8290955589877235,
+      "bad_match_near": 0.8380839789614958
+    },
+    "all_near_vs_far_mutual_mean": {
+      "near": 0.8705564373731614,
+      "far": 0.8209838676452637,
+      "delta_near_minus_far": 0.0495725697278977
+    },
+    "counter_high_ade_with_median_or_higher_match": {
+      "count": 24,
+      "of_high_ade": 50
+    }
+  }
+}

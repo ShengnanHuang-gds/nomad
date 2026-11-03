@@ -1,0 +1,133 @@
+{
+  "timestamp_utc": "2026-11-03T12:34:33.066413+00:00",
+  "git_commit": "8f46bddff27f550474af63551ab6b8e7d85690f5",
+  "frames_csv": "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+  "n_frames": 1000,
+  "seed": 0,
+  "num_samples": 8,
+  "batch_size": 8,
+  "shared_noise_across_variants": true,
+  "paired_step_noise": true,
+  "paired_step_noise_note": "Initial noise chunks shared; each variant resets torch.Generator per batch chunk to base_seed+10007*chunk_index before reverse diffusion.",
+  "path_units": "dataset",
+  "wp_scale": 1.0,
+  "deploy_blend_sources": {
+    "far_goal_direction": "dino_dir from frozen DINO predictions.npz",
+    "wp_direction": "normalize(corrected 8-point path last step), dataset units",
+    "kappa": "wp_kappa from frozen pathact8 WP head (head_predict_wp_path), not recalibrated",
+    "distance_scale": "b_dist_m from predictions.npz -> b_steps = b_dist_m / meters_per_unit",
+    "blend": "eval_waypoint_head.blend(dino_dir, dino_kappa, wp_dir, wp_kappa, wp_scale)"
+  },
+  "fixed_mu_note": "mu_units frozen to baseline deploy_blend mu for all variants",
+  "checkpoints": {
+    "wp_base": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "wp_base_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+    "wp_corr_a": "logs/nomad_d/nomad_dino_wp_pathcorr_dist_2026_11_03_19_51_58/dino_dir_best.pth",
+    "wp_corr_a_sha256": "1a427fef3b27afd68cb899ce326e46ff1c19e6c4b3a5eb67c61682c191e916ac",
+    "wp_corr_b": "logs/nomad_d/nomad_dino_wp_pathcorr_dir_2026_11_03_20_01_27/dino_dir_best.pth",
+    "wp_corr_b_sha256": "5b1b35be477d7e51644a31ae91e5967bf02c92392381d8b6c7d196131b730e0e",
+    "e_checkpoint": "logs/nomad/nomad_e_ft_pathact8\\ema_latest.pth",
+    "e_checkpoint_sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6"
+  },
+  "best_epoch_from_ckpt": {
+    "baseline": null,
+    "A_dist": 6,
+    "B_dir": 5
+  },
+  "path_metrics": {
+    "baseline": {
+      "path_ade_cm_mean": 16.92735481262207,
+      "path_ade_front4_cm_mean": 7.196711540222168,
+      "path_ade_back4_cm_mean": 26.658002853393555,
+      "straight_path_ade_cm_mean": 13.937674522399902,
+      "turning_path_ade_cm_mean": 18.878808975219727
+    },
+    "A_dist": {
+      "path_ade_cm_mean": 16.8474178314209,
+      "path_ade_front4_cm_mean": 7.230734348297119,
+      "path_ade_back4_cm_mean": 26.464101791381836,
+      "straight_path_ade_cm_mean": 13.68539047241211,
+      "turning_path_ade_cm_mean": 18.834142684936523
+    },
+    "B_dir": {
+      "path_ade_cm_mean": 16.647329330444336,
+      "path_ade_front4_cm_mean": 7.158888816833496,
+      "path_ade_back4_cm_mean": 26.135772705078125,
+      "straight_path_ade_cm_mean": 13.163738250732422,
+      "turning_path_ade_cm_mean": 18.906085968017578
+    }
+  },
+  "primary_comparison_keys": [
+    "baseline|fixed_mu",
+    "A_dist|fixed_mu",
+    "B_dir|fixed_mu",
+    "B_dir|deploy_blend"
+  ],
+  "mu_max_abs_diff_A_deploy_vs_baseline_deploy": 3.814697265625e-06,
+  "historical_eval_note": "logs/revalidation/path_correction_ab/locked_eval/ is v1 (step noise not fully paired); do not compare directly.",
+  "nav_summary": [
+    {
+      "variant": "baseline",
+      "mu_protocol": "fixed_mu",
+      "nav_ade_cm_mean": 17.722055161185562,
+      "delta_vs_baseline_same_protocol_cm_mean": 0.0
+    },
+    {
+      "variant": "baseline",
+      "mu_protocol": "deploy_blend",
+      "nav_ade_cm_mean": 17.722055161185562,
+      "delta_vs_baseline_same_protocol_cm_mean": 0.0
+    },
+    {
+      "variant": "A_dist",
+      "mu_protocol": "fixed_mu",
+      "nav_ade_cm_mean": 17.700523944944145,
+      "delta_vs_baseline_same_protocol_cm_mean": -0.021531216241419314
+    },
+    {
+      "variant": "A_dist",
+      "mu_protocol": "deploy_blend",
+      "nav_ade_cm_mean": 17.70053240545094,
+      "delta_vs_baseline_same_protocol_cm_mean": -0.02152275573462248
+    },
+    {
+      "variant": "B_dir",
+      "mu_protocol": "fixed_mu",
+      "nav_ade_cm_mean": 17.70087516847998,
+      "delta_vs_baseline_same_protocol_cm_mean": -0.021179992705583572
+    },
+    {
+      "variant": "B_dir",
+      "mu_protocol": "deploy_blend",
+      "nav_ade_cm_mean": 17.715831889677794,
+      "delta_vs_baseline_same_protocol_cm_mean": -0.006223271507769823
+    }
+  ],
+  "bootstrap_nav_delta": {
+    "A_dist_fixed_mu_minus_baseline": {
+      "mean_cm": -0.01416569765853562,
+      "ci95_lo_cm": -0.0549458257009643,
+      "ci95_hi_cm": 0.027423636617948378,
+      "resample_unit": "trajectory (bootstrap over per-traj mean delta, n_boot=10000)"
+    },
+    "A_dist_deploy_blend_minus_baseline": {
+      "mean_cm": -0.014168418904037338,
+      "ci95_lo_cm": -0.054954413165060854,
+      "ci95_hi_cm": 0.0274242336997973,
+      "resample_unit": "trajectory (bootstrap over per-traj mean delta, n_boot=10000)"
+    },
+    "B_dir_fixed_mu_minus_baseline": {
+      "mean_cm": 0.03597546034548733,
+      "ci95_lo_cm": -0.05307419219319826,
+      "ci95_hi_cm": 0.12510766872606574,
+      "resample_unit": "trajectory (bootstrap over per-traj mean delta, n_boot=10000)"
+    },
+    "B_dir_deploy_blend_minus_baseline": {
+      "mean_cm": 0.05408056256222212,
+      "ci95_lo_cm": -0.06377723633427602,
+      "ci95_hi_cm": 0.16600478713486325,
+      "resample_unit": "trajectory (bootstrap over per-traj mean delta, n_boot=10000)"
+    }
+  },
+  "smoke_check": null
+}

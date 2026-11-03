@@ -64,6 +64,14 @@ def sector_labels(target_xy, mid_deg=15.0):
     return labels, bearing.abs()
 
 
+def path_polyline_segments(xy):
+    """K robot-frame points -> K segment (dx, dy): origin->p0, p_i->p_{i+1}."""
+    seg0 = xy[:, :1]
+    if xy.shape[1] > 1:
+        return torch.cat([seg0, xy[:, 1:] - xy[:, :-1]], dim=1)
+    return seg0
+
+
 def load_head_checkpoint(head, ckpt_head):
     """Load weights; expand or shrink ``kind`` when context frame count changes."""
     current = head.state_dict()
@@ -528,6 +536,8 @@ def run_epoch(
     path_lambda=0.0,
     path_dir_lambda=0.0,
     path_smooth_lambda=0.0,
+    path_seg_lambda=0.0,
+    path_seg_beta=1.0,
     freeze_dir=False,
     meters_per_unit=0.12,
 ):
@@ -638,6 +648,13 @@ def run_epoch(
                         d_path = torch.nn.functional.normalize(pred_xy[:, -1], dim=-1)
                         lp, _ = direction_loss(d_path, kappa, target, weight, use_nll=False)
                         loss = loss + path_dir_lambda * lp
+                if training and path_seg_lambda > 0.0:
+                    seg_p = path_polyline_segments(pred_xy)
+                    seg_t = path_polyline_segments(tgt_xy)
+                    seg_l1 = torch.nn.functional.smooth_l1_loss(
+                        seg_p, seg_t, beta=path_seg_beta, reduction="none"
+                    ).mean(dim=(1, 2))
+                    loss = loss + path_seg_lambda * (seg_l1 * weight).mean()
             if training and yaw_aux_lambda > 0.0 and yaw_pred is not None and target_yaw_t is not None:
                 yaw_gt = torch.deg2rad(target_yaw_t)
                 yaw_loss = torch.nn.functional.smooth_l1_loss(
@@ -892,6 +909,18 @@ def main():
         type=float,
         default=0.0,
         help="Weight on second-difference smoothness of the polyline (train).",
+    )
+    parser.add_argument(
+        "--path-seg-lambda",
+        type=float,
+        default=0.0,
+        help="Weight on SmoothL1 between predicted and GT segment displacements (train).",
+    )
+    parser.add_argument(
+        "--path-seg-beta",
+        type=float,
+        default=1.0,
+        help="SmoothL1 beta for --path-seg-lambda (dataset units).",
     )
     parser.add_argument(
         "--freeze-dir",
@@ -1203,6 +1232,8 @@ def main():
         path_lambda=(args.path_lambda if path_steps > 0 else 0.0),
         path_dir_lambda=(args.path_dir_lambda if path_steps > 0 else 0.0),
         path_smooth_lambda=(args.path_smooth_lambda if path_steps > 0 else 0.0),
+        path_seg_lambda=(args.path_seg_lambda if path_steps > 0 else 0.0),
+        path_seg_beta=float(args.path_seg_beta),
         freeze_dir=bool(args.freeze_dir),
         meters_per_unit=meters_per_unit,
     )
@@ -1213,6 +1244,7 @@ def main():
     val_kw["path_lambda"] = 0.0
     val_kw["path_dir_lambda"] = 0.0
     val_kw["path_smooth_lambda"] = 0.0
+    val_kw["path_seg_lambda"] = 0.0
     val_kw.update(
         turn_winding_deg=0.0,
         turn_weight=1.0,

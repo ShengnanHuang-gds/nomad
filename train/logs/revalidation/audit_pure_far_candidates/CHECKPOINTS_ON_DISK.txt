@@ -1,0 +1,19 @@
+# Checkpoints present locally (2026-11-03). Not in git.
+
+[nomad_e_dino_d2_2026_10_19_09_37_58]
+ema_29.pth       sha256 1C1EC5B12D0E546DD95D5BE19A319974922622860F95F2870717EDE76683C127  bytes 76487967
+ema_latest.pth   sha256 753DEB6FA86B88FB... (partial; full in audit_supplement manifest if needed)
+latest.pth       present
+ema_20.pth       MISSING (eval_ema_20/ exists; was used per eval_reval_ema_20.pth.txt)
+
+[nomad_e_dino_ft_oracle_true0]
+ema_latest.pth   sha256 1B222F619A7FF3400E438315AB884A83C9EF992E4A7FC71BBC2F8825FDA5326E  bytes 76496579
+latest.pth       present
+ema_9.pth        MISSING (eval_ema_9/ exists; queue + eval_stdout load ema_9.pth)
+ema_0.pth        MISSING (selection.json picked ema_0; eval_ema_0/ exists from revalidate queue)
+
+[nomad_e_dino_ft_oracle_true50]
+ema_latest.pth   sha256 6E37EC2CAA084546... (see local hash on copy machine)
+latest.pth       present
+ema_9.pth        MISSING (eval_ema_9/ exists)
+ema_0.pth        MISSING (eval_ema_0/ exists)

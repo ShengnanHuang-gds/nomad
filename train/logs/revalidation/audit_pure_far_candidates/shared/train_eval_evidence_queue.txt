@@ -1,0 +1,27 @@
+# Verbatim excerpts from repository queue scripts (evidence these commands were intended/run).
+# Paths relative to visualnav-transformer/train.
+
+=== From logs/queue_c16_then_eft.ps1 (ft_oracle runs) ===
+
+python -u train_e_dino.py --config config/nomad_e_dino_mu.yaml --init-from e_oracle --true-pos-prob 0 --epochs 10 --lr 3e-5 --warmup-epochs 1 --num-workers 1 --run-name nomad_e_dino_ft_oracle_true0 *> logs/nomad/e_ft_true0_stdout.txt
+
+python -u eval_e_dino.py --run-dir logs/nomad/nomad_e_dino_ft_oracle_true0 --checkpoint ema_9.pth --config-e-dino config/nomad_e_dino_mu.yaml *> logs/nomad/nomad_e_dino_ft_oracle_true0/eval_stdout.txt
+
+python -u train_e_dino.py --config config/nomad_e_dino_mu.yaml --init-from e_oracle --true-pos-prob 0.5 --epochs 10 --lr 3e-5 --warmup-epochs 1 --num-workers 1 --run-name nomad_e_dino_ft_oracle_true50 *> logs/nomad/e_ft_true50_stdout.txt
+
+python -u eval_e_dino.py --run-dir logs/nomad/nomad_e_dino_ft_oracle_true50 --checkpoint ema_9.pth --config-e-dino config/nomad_e_dino_mu.yaml *> logs/nomad/nomad_e_dino_ft_oracle_true50/eval_stdout.txt
+
+=== From logs/queue_priority.ps1 (revalidate + locked eval) ===
+
+python -u revalidate.py *> logs/revalidation_stdout.txt
+
+# Then for each entry in logs/revalidation/selection.json with kind=e:
+python -u eval_e_dino.py --run-dir $v.run_dir --checkpoint $v.checkpoint --config-e-dino $v.config *> "$($v.run_dir)/eval_reval_$($v.checkpoint).txt"
+
+# Produced e.g. nomad_e_dino_d2_.../eval_reval_ema_20.pth.txt and eval_ema_20/ outputs.
+
+=== d2 training command ===
+# 【未确认】No matching train stdout or queue line found in repo for nomad_e_dino_d2_2026_10_19_09_37_58.
+# Rebuild (根据代码重建，未经执行):
+#   python -u train_e_dino.py --config config/nomad_e_dino_mu.yaml --pos-dim 2 ...
+# Do not treat as historical fact without a log.

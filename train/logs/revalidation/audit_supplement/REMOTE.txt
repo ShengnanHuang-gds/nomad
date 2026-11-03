@@ -1,0 +1,12 @@
+Remote branch: report/oct19-26
+Repository: https://github.com/ShengnanHuang-gds/nomad.git
+
+Browse supplement:
+  train/logs/revalidation/audit_supplement/
+
+Existing far ADE audit (do not duplicate):
+  train/logs/revalidation/eval_audit_pathact8_far/
+
+Latest supplement commits: 33cf97b, b2f7eed (and any later push)
+
+Checkpoints: paths + SHA-256 in phase1_full_model/checkpoints_manifest.txt only (no .pth in git).

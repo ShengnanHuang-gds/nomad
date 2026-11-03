@@ -1,0 +1,16 @@
+checkpoint_b=logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth
+dino_head=logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth
+pos_dim=18
+goal_pos_mode=blend_path
+path_gate=none
+path_source=wp_poly
+init_ckpt=
+wp_head=logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth
+wp_scale=1.0
+cache=logs/dino_cache/dinov2_vits14_reg
+goal_mask_prob=0.5
+init_from=e_oracle
+checkpoint_e_oracle=logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth
+true_pos_prob=0.2
+lr=3e-05
+epochs=8

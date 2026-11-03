@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-11-03T14:55:38.617585+00:00",
+  "git_commit": "0a0f41a",
+  "checkpoint": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+  "v1_reference_dir": "logs\\revalidation\\turn_visual_correspondence_val200",
+  "command": "C:\\Users\\61078\\anaconda3\\python.exe run_turn_visual_correspondence_v2.py",
+  "display_line_rule": "Up to 10 curr patches: linspace over 48 grid cells, supplemented by rng seed 20261103+t; not ranked by match score.",
+  "legacy_metric_note": "legacy_mutual_mean_max_cos is the average of two directional mean-max cosines; not bidirectional-consistency rate."
+}

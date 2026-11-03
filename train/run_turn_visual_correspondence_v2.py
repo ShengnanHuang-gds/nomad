@@ -280,8 +280,6 @@ def draw_case_v2(rec, data_folder, feats, rows, out_png, out_legacy_png):
     sim_near = similarity_hist_curr(p_near.reshape(-1, p_near.shape[-1]), p_curr)
     sim_far = similarity_hist_curr(p_far.reshape(-1, p_far.shape[-1]), p_curr)
 
-    sim_far = similarity_hist_curr(p_near.reshape(-1, p_near.shape[-1]), p_curr)
-
     curr_show = select_curr_patches_for_display(seed=DISPLAY_SEED + rec["t"])
 
 

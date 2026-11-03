@@ -1,0 +1,9 @@
+{
+  "timestamp_utc": "2026-11-03T14:58:55.079992+00:00",
+  "git_commit": "0a0f41a",
+  "checkpoint": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+  "checkpoint_sha256_16": "c2197c133d08cd9b",
+  "command": "C:\\Users\\61078\\anaconda3\\python.exe run_goal_sensitivity_val13.py",
+  "determinism": "head_predict_wp_path twice per goal; allclose enforced",
+  "summary_verdict": "mostly_insensitive_in_these_13"
+}

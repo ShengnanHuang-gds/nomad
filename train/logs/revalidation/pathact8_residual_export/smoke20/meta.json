@@ -1,0 +1,148 @@
+{
+  "created_utc": "2026-11-03T08:08:49.704142+00:00",
+  "script": "export_pathact8_residual.py",
+  "git_commit": "b16fcc4c85a26d3bf921bf3545cc2d01e97c0575",
+  "argv": [
+    "export_pathact8_residual.py",
+    "--max-frames",
+    "20",
+    "--frames-csv",
+    "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+    "--out-dir",
+    "logs/revalidation/pathact8_residual_export/smoke20"
+  ],
+  "args": {
+    "run_dir": "logs/nomad/nomad_e_ft_pathact8",
+    "checkpoint": "ema_latest.pth",
+    "config_e_dino": "config/nomad_e_dino_path.yaml",
+    "config_b": "config/nomad_b40.yaml",
+    "checkpoint_b": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+    "dino_predictions": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/eval_dino_dir_best/predictions.npz",
+    "wp_head": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "path_units": "dataset",
+    "wp_scale": 1.0,
+    "frames_csv": "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+    "max_frames": 20,
+    "out_dir": "logs/revalidation/pathact8_residual_export/smoke20",
+    "num_samples": 8,
+    "batch_size": 8,
+    "seed": 0,
+    "dry_run": false
+  },
+  "deploy": {
+    "goal_pos_mode": "blend_path",
+    "path_source": "wp_poly",
+    "path_gate": "none",
+    "path_units": "dataset",
+    "wp_scale": 1.0
+  },
+  "num_samples": 8,
+  "batch_size": 8,
+  "seed": 0,
+  "n_frames": 20,
+  "horizon": 8,
+  "path_steps": 8,
+  "pos_dim": 18,
+  "meters_per_unit": 0.12,
+  "array_units": {
+    "gt_actions": "dataset (ViNT action units, same as eval load_observation)",
+    "wp_path_head": "dataset (raw WP path_head output)",
+    "wp_path_dataset": "dataset (aligned to path_steps)",
+    "wp_path_meters": "meters (wp_path_head * meters_per_unit)",
+    "path_cond": "dataset (fed to E-dino; eval path_units=dataset)",
+    "mu_units": "dataset (blend dir * b_steps)",
+    "e_dino_pos": "dataset (mu + flat path_cond)",
+    "nav_pred_samples": "dataset",
+    "nav_pred_mean": "dataset",
+    "target_m": "meters (from DINO predictions.npz)",
+    "b_dist_m": "meters"
+  },
+  "score_definition": {
+    "ade_edino_m": "eval_position_noise.mean_ade_fde: for each frame, mean L2 step error in meters averaged over horizon, then averaged over num_samples diffusion draws. pred [S,H,2] and gt [H,2] in dataset units; scaled by meters_per_unit (eval_by_distance.ade_fde).",
+    "per_step_consistency": "mean_k(mean_s L2(s,k)) == mean_s(mean_k L2(s,k)) == ade (linearity of mean).",
+    "gt_in_condition": "False: E-dino cond is encode_cond(images) + append_goal_pos(e_dino_pos); e_dino_pos = [mu_x, mu_y, path_flat] from DINO/WP/B only, not GT actions.",
+    "path_cond": "Same as eval_e_dino blend_path + wp_poly: kappa-blend dir * b_steps, wp_poly path with path_units flag (dataset=use head xy; meters=divide head xy by meters_per_unit when head outputs meters \u2014 pathact8 head outputs dataset units)."
+  },
+  "files": {
+    "pathact8_ckpt": {
+      "path": "logs/nomad/nomad_e_ft_pathact8\\ema_latest.pth",
+      "exists": true,
+      "bytes": 76611670,
+      "sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6"
+    },
+    "wp_head": {
+      "path": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "exists": true,
+      "bytes": 13203914,
+      "sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d"
+    },
+    "dino_predictions": {
+      "path": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/eval_dino_dir_best/predictions.npz",
+      "exists": true,
+      "bytes": 157354,
+      "sha256": "efe5dcb3c4fcaf976aa227976575fb4d7eb30f7e9e9694a4264b1b651cb2febb"
+    },
+    "config_e_dino": {
+      "path": "config/nomad_e_dino_path.yaml",
+      "exists": true,
+      "bytes": 1412,
+      "sha256": "11844638d700b19cbccb3c3ea689051f1b4fed11efa1b9ff11287f2200f1c451"
+    },
+    "config_b": {
+      "path": "config/nomad_b40.yaml",
+      "exists": true,
+      "bytes": 1795,
+      "sha256": "91615ba82be870a56ac57484577af394458a3f58189d094e5217dce6daaa0b25"
+    },
+    "checkpoint_b": {
+      "path": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+      "exists": true,
+      "bytes": 76473631,
+      "sha256": "6858c2f68118d1f00a6d1927f07022476a4916f4167d99da71ab6cb96507f0a1"
+    },
+    "frames_csv": {
+      "path": "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+      "exists": true,
+      "bytes": 19632,
+      "sha256": "7e3cbe8d95b0ab3798304abc41b69dd4db2125471885606605f2e502548346a6"
+    }
+  },
+  "mean_ade_edino_cm": 20.04641741514206,
+  "mean_path_cond_ade_cm": 17.89956283569336,
+  "post_export_checks": {
+    "ok": true,
+    "checks": [
+      {
+        "name": "sample_id_row",
+        "ok": true,
+        "detail": "n=20 traj/t/goal_time align with far list"
+      },
+      {
+        "name": "ade_recompute_mean_ade_fde",
+        "ok": true,
+        "detail": "max |ade_re - ade_m| = 0.00e+00 m"
+      },
+      {
+        "name": "per_step_mean_equals_ade",
+        "ok": true,
+        "detail": "max |mean_k(mean_s err) - ade_m| = 0.00e+00 m"
+      },
+      {
+        "name": "path_cond_matches_e_dino_pos",
+        "ok": true,
+        "detail": "max |rebuild e_dino_pos - stored| = 0.00e+00 (dataset units)"
+      },
+      {
+        "name": "gt_not_used_as_path_cond",
+        "ok": true,
+        "detail": "mean L2(path_cond vs gt) in dataset units = 5.0679 (should differ; GT not copied into cond)"
+      },
+      {
+        "name": "target_m_shape",
+        "ok": true,
+        "detail": "(20, 2)"
+      }
+    ]
+  },
+  "note": "Does not restore missing historical baseline checkpoints."
+}

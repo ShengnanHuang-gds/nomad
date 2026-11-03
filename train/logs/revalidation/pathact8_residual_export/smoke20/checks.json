@@ -1,0 +1,35 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "sample_id_row",
+      "ok": true,
+      "detail": "n=20 traj/t/goal_time align with far list"
+    },
+    {
+      "name": "ade_recompute_mean_ade_fde",
+      "ok": true,
+      "detail": "max |ade_re - ade_m| = 0.00e+00 m"
+    },
+    {
+      "name": "per_step_mean_equals_ade",
+      "ok": true,
+      "detail": "max |mean_k(mean_s err) - ade_m| = 0.00e+00 m"
+    },
+    {
+      "name": "path_cond_matches_e_dino_pos",
+      "ok": true,
+      "detail": "max |rebuild e_dino_pos - stored| = 0.00e+00 (dataset units)"
+    },
+    {
+      "name": "gt_not_used_as_path_cond",
+      "ok": true,
+      "detail": "mean L2(path_cond vs gt) in dataset units = 5.0679 (should differ; GT not copied into cond)"
+    },
+    {
+      "name": "target_m_shape",
+      "ok": true,
+      "detail": "(20, 2)"
+    }
+  ]
+}

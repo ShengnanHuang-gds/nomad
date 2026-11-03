@@ -1,0 +1,70 @@
+{
+  "ok": true,
+  "items": [
+    {
+      "name": "n_frames",
+      "ok": true,
+      "detail": "n=1000"
+    },
+    {
+      "name": "horizon",
+      "ok": true,
+      "detail": "H=8"
+    },
+    {
+      "name": "num_samples",
+      "ok": true,
+      "detail": "S=8"
+    },
+    {
+      "name": "finite_nav",
+      "ok": true,
+      "detail": "nav finite"
+    },
+    {
+      "name": "finite_gt",
+      "ok": true,
+      "detail": "gt finite"
+    },
+    {
+      "name": "finite_path",
+      "ok": true,
+      "detail": "path_cond finite"
+    },
+    {
+      "name": "ade_recompute",
+      "ok": true,
+      "detail": "max |recompute - ade_edino_m| = 0.00e+00 m"
+    },
+    {
+      "name": "mean_s_mean_k",
+      "ok": true,
+      "detail": "mean_s(mean_k dist)=0.178289 mean_k(mean_s dist)=0.178289 saved_mean=0.178289"
+    },
+    {
+      "name": "per_step_then_mean",
+      "ok": true,
+      "detail": "mean_k(per_step_mean_s)=0.178289"
+    },
+    {
+      "name": "hash_pathact8_ckpt",
+      "ok": true,
+      "detail": "full=d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6 smoke=d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6"
+    },
+    {
+      "name": "hash_wp_head",
+      "ok": true,
+      "detail": "full=c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d smoke=c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d"
+    },
+    {
+      "name": "e_dino_pos_rebuild",
+      "ok": true,
+      "detail": "mu+path_cond matches e_dino_pos"
+    },
+    {
+      "name": "path_cond_not_copy_gt",
+      "ok": true,
+      "detail": "mean L2(path_cond, gt) dataset units = 4.8818"
+    }
+  ]
+}

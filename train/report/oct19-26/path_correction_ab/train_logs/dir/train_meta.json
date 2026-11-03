@@ -1,0 +1,17 @@
+{
+  "correction_mode": "dir",
+  "init": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+  "init_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+  "train_frames": 120591,
+  "batches_per_epoch": 943,
+  "total_updates": 7544,
+  "trainable_params": 33928,
+  "batch_size": 128,
+  "epochs": 8,
+  "seed": 0,
+  "lr": 0.0001,
+  "weight_decay": 0.05,
+  "loss": "smooth_l1 path 8pts beta=1.0 dataset units, weight=steps/FAR_STEPS",
+  "select_metric": "far_path_ade_cm",
+  "frozen": "PairTokenHead entire base (encoder, out, path_head); DINO cache read-only"
+}

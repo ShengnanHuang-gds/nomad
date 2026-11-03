@@ -1,0 +1,160 @@
+{
+  "stats": {
+    "train_endpoint_frames": 123125,
+    "batch_size": 128,
+    "epochs": 8,
+    "batches_per_epoch": 962,
+    "total_optimizer_steps_per_group": 7696,
+    "correction_trainable_params_each": 33928,
+    "val_trajectories": 236,
+    "cache_flip": true
+  },
+  "init_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+  "checks_ok": true,
+  "checks": {
+    "ok": true,
+    "checks": [
+      {
+        "name": "dist_trainable_only_correction",
+        "ok": true,
+        "detail": "corr_params=33928"
+      },
+      {
+        "name": "dist_base_stays_eval",
+        "ok": true,
+        "detail": "base.training=False"
+      },
+      {
+        "name": "dist_zero_init_matches_base",
+        "ok": true,
+        "detail": "max|\u0394|=0.000e+00"
+      },
+      {
+        "name": "dist_direction_preserved",
+        "ok": true,
+        "detail": "max|sin|=0.000e+00"
+      },
+      {
+        "name": "dist_radius_may_change",
+        "ok": true,
+        "detail": "median radius err m=0.0000"
+      },
+      {
+        "name": "dist_near_origin_points",
+        "ok": true,
+        "detail": "count=0/256 (report only)"
+      },
+      {
+        "name": "dist_grad_only_correction",
+        "ok": true,
+        "detail": "base_grad=0 corr_grad=7.706e+01"
+      },
+      {
+        "name": "dist_exp_finite_at_s20",
+        "ok": true,
+        "detail": "exp(20)=4.852e+08"
+      },
+      {
+        "name": "dir_trainable_only_correction",
+        "ok": true,
+        "detail": "corr_params=33928"
+      },
+      {
+        "name": "dir_base_stays_eval",
+        "ok": true,
+        "detail": "base.training=False"
+      },
+      {
+        "name": "dir_zero_init_matches_base",
+        "ok": true,
+        "detail": "max|\u0394|=0.000e+00"
+      },
+      {
+        "name": "dir_radius_preserved",
+        "ok": true,
+        "detail": "max|r_diff| units=0.000e+00"
+      },
+      {
+        "name": "dir_nonzero_rot_changes_heading",
+        "ok": true,
+        "detail": "sanity rot"
+      },
+      {
+        "name": "dir_near_origin_points",
+        "ok": true,
+        "detail": "count=0/256 (report only)"
+      },
+      {
+        "name": "dir_grad_only_correction",
+        "ok": true,
+        "detail": "base_grad=0 corr_grad=1.693e+01"
+      },
+      {
+        "name": "same_corr_arch_params",
+        "ok": true,
+        "detail": "n=33928"
+      },
+      {
+        "name": "feature_path_head_input_dim",
+        "ok": true,
+        "detail": "path_head input D=256 (pathact8: CLS feat 256-d, see PairTokenHead._path_feat)"
+      }
+    ]
+  },
+  "train_commands": {
+    "A_dist": [
+      "C:\\Users\\61078\\anaconda3\\envs\\nomad_train\\python.exe",
+      "-u",
+      "train_path_correction_ab.py",
+      "--init",
+      "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "--batch-size",
+      "128",
+      "--epochs",
+      "8",
+      "--seed",
+      "0",
+      "--max-batches",
+      "0",
+      "--lr",
+      "1e-4",
+      "--weight-decay",
+      "0.05",
+      "--context",
+      "2",
+      "--path-steps",
+      "8",
+      "--correction-mode",
+      "dist",
+      "--run-name",
+      "nomad_dino_wp_pathcorr_dist"
+    ],
+    "B_dir": [
+      "C:\\Users\\61078\\anaconda3\\envs\\nomad_train\\python.exe",
+      "-u",
+      "train_path_correction_ab.py",
+      "--init",
+      "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "--batch-size",
+      "128",
+      "--epochs",
+      "8",
+      "--seed",
+      "0",
+      "--max-batches",
+      "0",
+      "--lr",
+      "1e-4",
+      "--weight-decay",
+      "0.05",
+      "--context",
+      "2",
+      "--path-steps",
+      "8",
+      "--correction-mode",
+      "dir",
+      "--run-name",
+      "nomad_dino_wp_pathcorr_dir"
+    ]
+  }
+}

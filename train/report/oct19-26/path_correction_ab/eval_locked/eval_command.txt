@@ -1,0 +1,2 @@
+C:\Users\61078\anaconda3\envs\nomad_train\python.exe eval_path_correction_locked_nav.py --wp-base logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth --wp-corr-a logs/nomad_d/nomad_dino_wp_pathcorr_dist_2026_11_03_19_51_58/dino_dir_best.pth --wp-corr-b logs/nomad_d/nomad_dino_wp_pathcorr_dir_2026_11_03_20_01_27/dino_dir_best.pth --out-dir logs/revalidation/path_correction_ab/locked_eval --seed 0 --num-samples 8 --batch-size 8
+PYTHONPATH=../diffusion_policy (cwd=train)

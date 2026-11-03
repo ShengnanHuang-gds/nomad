@@ -177,7 +177,7 @@ def main():
     ap.add_argument("--weight-decay", type=float, default=0.05)
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--no-flip", action="store_true")
-    ap.add_argument("--min-goal-m", type=float, default=0.0)
+    ap.add_argument("--min-goal-m", type=float, default=0.3)
     ap.add_argument("--output-dir", default="")
     args = ap.parse_args()
 
@@ -287,6 +287,8 @@ def main():
             f"ep {ep} train loss {tr['loss']:.4f} | val path {va['path_ade_cm']:.2f} "
             f"far {score:.2f} cm"
         )
+        with open(os.path.join(output_dir, "val_metrics.jsonl"), "a", encoding="utf-8") as vlf:
+            vlf.write(json.dumps({"epoch": ep, "train": tr, "val": va}) + "\n")
         st = {
             "epoch": ep,
             "correction": model.correction.state_dict(),

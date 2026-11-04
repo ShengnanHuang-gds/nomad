@@ -39,6 +39,7 @@ class PairTokenHead(nn.Module):
         self.path_mlp = int(path_mlp)
         self.path_residual = int(path_residual)
         self.path_spatial = (path_spatial or "").strip().lower()
+        self.use_step_query = self.path_spatial == "step_query" and self.path_steps > 0
         self.odom_dim = int(odom_dim)
         self.path_rot_on = bool(path_rot) and self.odom_dim > 0
         self.proj = nn.Sequential(nn.LayerNorm(dim_in), nn.Linear(dim_in, width))
@@ -69,7 +70,19 @@ class PairTokenHead(nn.Module):
             nn.init.zeros_(self.path_rot.bias)
         odom_in = 0 if self.path_rot_on else self.odom_dim
         path_in = width * (3 if self.path_spatial == "lcr" else 1) + odom_in
-        if self.path_steps > 0:
+        self.path_step_head = None
+        self.path_queries = None
+        self.path_query_kind = None
+        if self.use_step_query:
+            if self.path_mlp > 0 or self.path_residual > 0:
+                raise ValueError("step_query readout uses shared Linear(width->2) per query; set path_mlp/path_residual=0")
+            self.path_queries = nn.Parameter(torch.zeros(1, self.path_steps, width))
+            self.path_query_kind = nn.Parameter(torch.zeros(self.path_steps, width))
+            nn.init.trunc_normal_(self.path_queries, std=0.02)
+            nn.init.trunc_normal_(self.path_query_kind, std=0.02)
+            self.path_step_head = nn.Linear(width, 2)
+            self.path_head = None
+        elif self.path_steps > 0:
             out_dim = self.path_steps * 2
             if self.path_mlp > 0:
                 h = self.path_mlp
@@ -109,7 +122,12 @@ class PairTokenHead(nn.Module):
         if ctx is not None:
             for j in range(ctx.shape[1]):
                 parts.append(self.proj(ctx[:, j]) + self.pos + self.kind[2 + j])
-        x = self.encoder(torch.cat(parts, dim=1))
+        if self.use_step_query:
+            b = len(curr)
+            q = self.path_queries.expand(b, -1, -1) + self.path_query_kind.unsqueeze(0)
+            x = self.encoder(torch.cat(parts + [q], dim=1))
+        else:
+            x = self.encoder(torch.cat(parts, dim=1))
         feat = self.norm(x[:, 0])
         direction, kappa = self.out(feat)
         yaw_pred = self.yaw_aux(feat) if self.yaw_aux is not None else None
@@ -120,7 +138,12 @@ class PairTokenHead(nn.Module):
             extras.append(self.sector(feat))
         if yaw_pred is not None:
             extras.append(yaw_pred)
-        if self.path_head is not None:
+        if self.use_step_query:
+            qfeat = self.norm(x[:, -self.path_steps :])
+            path_xy = self.path_step_head(qfeat)
+            path_xy = self._rotate_path(path_xy, odom)
+            extras.append(path_xy)
+        elif self.path_head is not None:
             path_xy = self.path_head(self._path_feat(x, feat, odom))
             if self.path_res is not None:
                 path_xy = path_xy + self.path_res(feat)

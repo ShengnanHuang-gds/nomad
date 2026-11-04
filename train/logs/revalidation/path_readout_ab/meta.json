@@ -1,0 +1,7 @@
+{
+    "timestamp_utc":  "2026-11-04T00:41:22Z",
+    "checkpoint_A":  "logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_A_cls_2026_11_03_23_38_31/dino_dir_best.pth",
+    "init_checkpoint":  "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "note":  "Training completed; val eval re-run after eval script fixes",
+    "checkpoint_B":  "logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_B_stepq_2026_11_04_00_09_49/dino_dir_best.pth"
+}

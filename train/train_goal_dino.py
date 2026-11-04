@@ -943,7 +943,7 @@ def main():
     parser.add_argument(
         "--path-spatial",
         default="",
-        help="Path readout: empty=CLS; lcr=left/center/right mean of current patch tokens",
+        help="Path readout: empty=CLS; lcr=L/C/R patch pools; step_query=8 learnable step queries",
     )
     parser.add_argument(
         "--odom-dim",
@@ -1170,7 +1170,7 @@ def main():
                 path_params.append(p)
             elif "path_res" in name:
                 path_params.append(p)
-            elif "path_head" in name:
+            elif "path_head" in name or "path_step_head" in name or "path_quer" in name:
                 if freeze_path:
                     p.requires_grad_(False)
                     frozen.append(name)

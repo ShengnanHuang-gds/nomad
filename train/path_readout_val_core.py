@@ -78,9 +78,13 @@ def build_manifest(pairs: dict, chosen: np.ndarray, rows: dict) -> list[dict]:
     return manifest
 
 
+def _pair_idx(rec: dict) -> int:
+    return int(rec["pair_expand_idx"])
+
+
 def manifest_stats(manifest: list[dict], pairs: dict) -> dict:
-    steps = np.array([m["goal_step"] for m in manifest], dtype=np.int64)
-    wind = np.array([float(pairs["winding"][m["pair_expand_idx"]]) for m in manifest])
+    steps = np.array([int(m["goal_step"]) for m in manifest], dtype=np.int64)
+    wind = np.array([float(pairs["winding"][_pair_idx(m)]) for m in manifest])
     far = steps >= FAR_STEPS
     trajs = {m["traj_name"] for m in manifest}
     curr_keys = {(m["traj_name"], m["curr_t"]) for m in manifest}
@@ -97,7 +101,7 @@ def manifest_stats(manifest: list[dict], pairs: dict) -> dict:
         "far_n": int(far.sum()),
         "winding_ge_45_n": int((wind >= 45.0).sum()),
         "winding_ge_90_n": int((wind >= 90.0).sum()),
-        "turn_strict_n": int(sum(float(pairs["turn_strict"][m["pair_expand_idx"]]) > 0.5 for m in manifest)),
+        "turn_strict_n": int(sum(float(pairs["turn_strict"][_pair_idx(m)]) > 0.5 for m in manifest)),
     }
 
 
@@ -119,6 +123,10 @@ def predict_path_samples(head, val_batches, device, meters_per_unit: float) -> d
             parsed = _parse_batch(batch, device)
             curr, goal, _target, _steps, ctx = parsed[:5]
             target_path, odom_t = parsed[10], parsed[11]
+            if ctx is None:
+                raise RuntimeError("context missing during predict_path_samples")
+            if ctx.shape[1] != 2:
+                raise RuntimeError(f"expected 2 context frames, got ctx.shape={tuple(ctx.shape)}")
             if target_path is None:
                 raise RuntimeError("target_path missing in batch")
             pred_out = head(curr, goal, ctx, odom=odom_t)
@@ -153,9 +161,9 @@ def subset_mask(manifest, pairs, name: str) -> np.ndarray:
     if name == "all":
         return np.ones(n, dtype=bool)
     for i, rec in enumerate(manifest):
-        pi = rec["pair_expand_idx"]
+        pi = _pair_idx(rec)
         if name == "far":
-            m[i] = rec["goal_step"] >= FAR_STEPS
+            m[i] = int(rec["goal_step"]) >= FAR_STEPS
         elif name == "winding_ge_45":
             m[i] = float(pairs["winding"][pi]) >= 45.0
         elif name == "winding_ge_90":
@@ -224,7 +232,38 @@ def bootstrap_mean_diff(a: np.ndarray, b: np.ndarray, trajs: list[str], seed: in
     }
 
 
+def val_loader(cache_path, val_pairs, chosen, batch_size=512, context=2, flip=False, seed=0, workers=2):
+    return loader(
+        cache_path,
+        val_pairs,
+        chosen,
+        batch_size,
+        flip=flip,
+        seed=seed,
+        workers=workers,
+        context=context,
+    )
+
+
 def make_val_loader(cache_path, val_pairs, batch_size=512, context=2):
     chosen = draw(val_pairs, np.random.default_rng(VAL_RNG_SEED))
-    batches = loader(cache_path, val_pairs, chosen, batch_size, False, 0, context)
+    batches = val_loader(cache_path, val_pairs, chosen, batch_size, context=context)
     return chosen, batches
+
+
+def assert_batches_have_context(val_batches, device, expected_context: int = 2) -> dict:
+    """Fail fast if PairBatches did not attach temporal context tokens."""
+    first = next(iter(val_batches))
+    parsed = _parse_batch(first, device)
+    ctx = parsed[4]
+    if ctx is None:
+        raise RuntimeError("context tensor missing from batch (ctx is None); check loader context=")
+    if ctx.ndim != 4 or ctx.shape[1] != expected_context:
+        raise RuntimeError(
+            f"expected ctx shape [B,{expected_context},T,D], got {tuple(ctx.shape)}"
+        )
+    return {
+        "context_frames": int(ctx.shape[1]),
+        "batch_size_checked": int(ctx.shape[0]),
+        "token_shape": [int(x) for x in ctx.shape[2:]],
+    }

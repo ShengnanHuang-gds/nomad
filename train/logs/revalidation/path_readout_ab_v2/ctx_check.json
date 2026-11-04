@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "context_frames": 2,
+  "batch_size_checked": 512,
+  "token_shape": [
+    49,
+    384
+  ],
+  "context_arg": 2
+}

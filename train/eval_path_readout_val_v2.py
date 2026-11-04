@@ -17,6 +17,7 @@ from eval_by_distance import load_config
 from path_readout_val_core import (
     BOOTSTRAP_N,
     VAL_RNG_SEED,
+    assert_batches_have_context,
     bootstrap_mean_diff,
     build_manifest,
     checkpoint_info,
@@ -25,6 +26,7 @@ from path_readout_val_core import (
     predict_path_samples,
     subset_mask,
     summarize_subset,
+    val_loader,
 )
 from train_e_dino import load_dino_head
 from train_goal_dino import (
@@ -58,14 +60,15 @@ def write_errata_v1(v1_dir: str) -> None:
         )
 
 
-def write_report_zh(out_dir: str, summary: dict, boot: dict, mstats: dict) -> None:
-    a = summary.get("A_cls", {}).get("all", {}).get("all", {})
-    b = summary.get("B_step_query", {}).get("all", {}).get("all", {})
+def write_report_zh(out_dir: str, summary: dict, boot: dict, mstats: dict, ctx_info: dict) -> None:
+    a = summary.get("A_cls", {}).get("all", {})
+    b = summary.get("B_step_query", {}).get("all", {})
     lines = [
         "# 路径头读出 A/B 验证报告（v2）",
         "",
         "## 协议",
-        f"- 配对：`draw(val_pairs, np.random.default_rng({VAL_RNG_SEED}))`，与 `train_goal_dino` 验证一致；`flip=False`。",
+        f"- 配对：固定 `val_pair_manifest.csv`（原 draw seed={VAL_RNG_SEED}）；`flip=False`。",
+        f"- **context**：loader 显式 `context=2`；本跑 ctx 检查 {ctx_info}.",
         "- 转弯子集：GT 未来 8 步路径 **累计绝对 yaw**（`winding`），非 `turn_strict`。",
         "- far：`goal_step >= 20`（与训练 FAR_STEPS 一致，步数非米）。",
         "- 末端方向误差：预测/ GT 第 8 点相对当前原点的夹角；>45° / >90° 为比例。",
@@ -87,7 +90,7 @@ def write_report_zh(out_dir: str, summary: dict, boot: dict, mstats: dict) -> No
         "4. **是否值得 Locked 导航**：仅当转弯位置+方向均有稳定改善时再考虑；本报告不含导航 ADE。",
         "",
         "## 区分",
-        "- **代码事实**：v2 修复 draw 与末端方向比例。",
+        "- **代码事实**：v2 修复 draw 与末端方向比例；eb7b56e 曾误传 loader 位置参数导致 ctx=0，已修正。",
         "- **实验事实**：上表数字来自固定 ckpt 冻结前向。",
         "- **推断**：是否进下游需结合子集与 CI，不能由 path ADE 直接等同导航。",
     ]
@@ -100,6 +103,12 @@ def main():
     parser.add_argument("--meta", default="logs/revalidation/path_readout_ab/meta.json")
     parser.add_argument("--out", default="logs/revalidation/path_readout_ab_v2")
     parser.add_argument("--ref-init", default="")
+    parser.add_argument(
+        "--manifest",
+        default="",
+        help="Reuse existing val_pair_manifest.csv (same pair_expand_idx order)",
+    )
+    parser.add_argument("--context", type=int, default=2)
     args = parser.parse_args()
 
     train_dir = os.path.dirname(os.path.abspath(__file__))
@@ -136,21 +145,37 @@ def main():
     val_pairs = build_pairs(
         config, "train", rows, lambda t: t in val_trajs, 0.3, 2, "endpoint", path_steps=8
     )
-    chosen, val_batches = make_val_loader(cache_path, val_pairs, batch_size=512, context=2)
-    manifest = build_manifest(val_pairs, chosen, rows)
+    manifest_path = args.manifest or os.path.join(args.out, "val_pair_manifest.csv")
+    if os.path.isfile(manifest_path):
+        with open(manifest_path, newline="", encoding="utf-8") as f:
+            manifest = sorted(list(csv.DictReader(f)), key=lambda r: int(r["order"]))
+        chosen = np.array([int(r["pair_expand_idx"]) for r in manifest], dtype=np.int64)
+        val_batches = val_loader(
+            cache_path, val_pairs, chosen, batch_size=512, context=args.context
+        )
+    else:
+        chosen, val_batches = make_val_loader(
+            cache_path, val_pairs, batch_size=512, context=args.context
+        )
+        manifest = build_manifest(val_pairs, chosen, rows)
+        with open(os.path.join(args.out, "val_pair_manifest.csv"), "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=list(manifest[0].keys()))
+            w.writeheader()
+            w.writerows(manifest)
+
+    ctx_info = assert_batches_have_context(val_batches, device, args.context)
+    with open(os.path.join(args.out, "ctx_check.json"), "w", encoding="utf-8") as f:
+        json.dump({"ok": True, **ctx_info, "context_arg": args.context}, f, indent=2)
+
     mstats = manifest_stats(manifest, val_pairs)
     mstats["dft_val_list_traj_count"] = len(val_trajs)
     mstats["draw_seed"] = VAL_RNG_SEED
-
-    with open(os.path.join(args.out, "val_pair_manifest.csv"), "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(manifest[0].keys()))
-        w.writeheader()
-        w.writerows(manifest)
+    mstats["context_frames"] = args.context
     with open(os.path.join(args.out, "manifest_stats.json"), "w", encoding="utf-8") as f:
         json.dump(mstats, f, indent=2, ensure_ascii=False)
 
-    wind = np.array([float(val_pairs["winding"][m["pair_expand_idx"]]) for m in manifest])
-    far_m = np.array([m["goal_step"] >= 20 for m in manifest])
+    wind = np.array([float(val_pairs["winding"][int(m["pair_expand_idx"])]) for m in manifest])
+    far_m = np.array([int(m["goal_step"]) >= 20 for m in manifest])
     trajs = [m["traj_name"] for m in manifest]
 
     per_model = {}
@@ -231,7 +256,8 @@ def main():
     cmd = (
         f"cd {train_dir}\n"
         f"set PYTHONPATH=../diffusion_policy\n"
-        f"python -u eval_path_readout_val_v2.py --meta {args.meta} --out {args.out}\n"
+        f"python -u eval_path_readout_val_v2.py --meta {args.meta} --out {args.out} "
+        f"--manifest {manifest_path} --context {args.context}\n"
     )
     with open(os.path.join(args.out, "eval_command.txt"), "w", encoding="utf-8") as f:
         f.write(cmd)
@@ -239,7 +265,7 @@ def main():
     flat_summary = {}
     for label in summary_nested:
         flat_summary[label] = {sub: flatten_summary(summary_nested[label][sub]) for sub in summary_nested[label]}
-    write_report_zh(args.out, flat_summary, boot, mstats)
+    write_report_zh(args.out, flat_summary, boot, mstats, ctx_info)
     print("wrote", args.out)
 
 

@@ -49,5 +49,6 @@
   "winding_ge_90_n": 2313,
   "turn_strict_n": 4355,
   "dft_val_list_traj_count": 236,
-  "draw_seed": 1234
+  "draw_seed": 1234,
+  "context_frames": 2
 }

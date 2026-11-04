@@ -1,0 +1,3 @@
+cd C:\Users\61078\Desktop\nomad\visualnav-transformer\train
+set PYTHONPATH=../diffusion_policy
+python -u eval_path_readout_val_v2.py --meta logs/revalidation/path_readout_ab/meta.json --out logs/revalidation/path_readout_ab_v2

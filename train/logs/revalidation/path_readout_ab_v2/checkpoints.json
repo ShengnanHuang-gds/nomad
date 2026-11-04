@@ -1,0 +1,47 @@
+{
+  "checkpoints": [
+    {
+      "label": "A_cls",
+      "path": "C:/Users/61078/Desktop/nomad/visualnav-transformer/train/logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_A_cls_2026_11_03_23_38_31/dino_dir_best.pth",
+      "sha256": "20bc6350c7af7c4cae830a7f05d24836dacae1c8b3f1d2601c3bcc908b535d90",
+      "epoch": 8,
+      "far_median_deg": 9.091655731201172,
+      "path_spatial": "cls",
+      "path_steps": 8,
+      "context": 2,
+      "freeze_dir": true,
+      "note": "CLS path_head from continued pathact8 init."
+    },
+    {
+      "label": "B_step_query",
+      "path": "C:/Users/61078/Desktop/nomad/visualnav-transformer/train/logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_B_stepq_2026_11_04_00_09_49/dino_dir_best.pth",
+      "sha256": "e4438b22ec322419ebfb2367a0609a98beb090dc88c96fac03fe7b3f9ffdbe64",
+      "epoch": 8,
+      "far_median_deg": 9.115396499633789,
+      "path_spatial": "step_query",
+      "path_steps": 8,
+      "context": 2,
+      "freeze_dir": true,
+      "note": "step_query layers re-init; dir/kappa frozen from init."
+    },
+    {
+      "label": "ref_pathact8_init",
+      "path": "C:/Users/61078/Desktop/nomad/visualnav-transformer/train/logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+      "epoch": 8,
+      "far_median_deg": 9.178719520568848,
+      "path_spatial": "cls",
+      "path_steps": 8,
+      "context": 2,
+      "freeze_dir": true,
+      "note": "Pre-A/B pathact8 best checkpoint."
+    }
+  ],
+  "meta_ab": {
+    "timestamp_utc": "2026-11-04T00:41:22Z",
+    "checkpoint_A": "logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_A_cls_2026_11_03_23_38_31/dino_dir_best.pth",
+    "init_checkpoint": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "note": "Training completed; val eval re-run after eval script fixes",
+    "checkpoint_B": "logs/nomad_d/nomad_dino_wp_ctx2_pathreadout_B_stepq_2026_11_04_00_09_49/dino_dir_best.pth"
+  }
+}

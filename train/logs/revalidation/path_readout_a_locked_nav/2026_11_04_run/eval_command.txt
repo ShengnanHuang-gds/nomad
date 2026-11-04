@@ -1,0 +1,2 @@
+C:\Users\61078\anaconda3\python.exe eval_path_readout_a_locked_nav.py --out-dir logs/revalidation/path_readout_a_locked_nav/2026_11_04_run
+PYTHONPATH=../diffusion_policy (cwd=train)

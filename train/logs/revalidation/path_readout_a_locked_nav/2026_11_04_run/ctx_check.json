@@ -1,0 +1,22 @@
+{
+  "pathact8": {
+    "context_frames": 2,
+    "batch_size_checked": 8,
+    "ctx_shape": [
+      8,
+      2,
+      49,
+      384
+    ]
+  },
+  "A_cls": {
+    "context_frames": 2,
+    "batch_size_checked": 8,
+    "ctx_shape": [
+      8,
+      2,
+      49,
+      384
+    ]
+  }
+}

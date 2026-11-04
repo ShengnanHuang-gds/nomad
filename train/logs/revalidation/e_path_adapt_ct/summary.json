@@ -1,0 +1,39 @@
+{
+  "ref_init_e_nav_ade_cm": 12.295081873238086,
+  "C": {
+    "epoch": 0,
+    "val_nav_ade_cm": 12.241271587461233,
+    "checkpoint": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_path_adapt_C\\ema_0.pth",
+    "sha256": "ac8ef956a40767b5bbaf155dfc6d7550789edda3f52197ab120efbbc2186f0c3"
+  },
+  "T": {
+    "epoch": 0,
+    "val_nav_ade_cm": 12.370134678855539,
+    "checkpoint": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_path_adapt_T\\ema_0.pth",
+    "sha256": "ac8ef956a40767b5bbaf155dfc6d7550789edda3f52197ab120efbbc2186f0c3"
+  },
+  "improvement_C_minus_T_cm": -0.12886309139430524,
+  "bootstrap_C_minus_T": {
+    "mean": -0.12886309139430524,
+    "ci95_lo": -0.42654184417735225,
+    "ci95_hi": 0.12835429004713148
+  },
+  "minutes_total": 390.13845680952073,
+  "manifest_stats": {
+    "n": 500,
+    "seed": 20261104,
+    "far_steps_ge": 20,
+    "goal_step_min": 20,
+    "goal_step_max": 39,
+    "turn_strict_n": 174
+  },
+  "smoke": {
+    "max_mu_C_minus_T": 0.0,
+    "max_path_C_minus_T": 1.4079480171203613,
+    "max_GT_cond_C_minus_T": 0.0,
+    "wp_context_frames": 2,
+    "init_weight_max_diff": 0.0,
+    "frozen_head_tensors_with_grad": 0,
+    "passed": true
+  }
+}

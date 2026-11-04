@@ -1,0 +1,8 @@
+{
+  "n": 500,
+  "seed": 20261104,
+  "far_steps_ge": 20,
+  "goal_step_min": 20,
+  "goal_step_max": 39,
+  "turn_strict_n": 174
+}

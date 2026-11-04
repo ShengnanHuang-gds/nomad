@@ -1,0 +1,9 @@
+{
+  "max_mu_C_minus_T": 0.0,
+  "max_path_C_minus_T": 1.4079480171203613,
+  "max_GT_cond_C_minus_T": 0.0,
+  "wp_context_frames": 2,
+  "init_weight_max_diff": 0.0,
+  "frozen_head_tensors_with_grad": 0,
+  "passed": true
+}

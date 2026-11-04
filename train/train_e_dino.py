@@ -24,8 +24,11 @@ Run from train/:
 
 import argparse
 import csv
+import json
 import math
 import os
+import subprocess
+import sys
 import time
 
 import cv2  # noqa: F401 — before torch on Windows (nomad_train)
@@ -85,6 +88,27 @@ def path_xy_to_width(path_xy, pos_dim):
     elif path_xy.shape[1] > need:
         path_xy = path_xy[:, :need]
     return path_xy.reshape(path_xy.shape[0], -1)
+
+
+def forward_wp_head(wp_head, features, curr_rows, goal_rows, past_rows, device, wp_odom=None):
+    """Frozen WP head forward with optional ctx=2 history."""
+    curr = read_tokens(features, curr_rows).to(device).float()
+    goal = read_tokens(features, goal_rows).to(device).float()
+    ctx = None
+    wp_context = int(wp_head.kind.shape[0] - 2)
+    if wp_context > 0:
+        if past_rows is None:
+            raise ValueError(f"wp_head context={wp_context} requires past_rows")
+        past = past_rows[:, :wp_context].detach().cpu().numpy()
+        ctx = torch.stack(
+            [read_tokens(features, past[:, j]).to(device).float() for j in range(wp_context)],
+            dim=1,
+        )
+    if int(getattr(wp_head, "odom_dim", 0) or 0) > 0 and wp_odom is None:
+        raise ValueError("wp_head odom_dim>0 requires wp_odom")
+    w_out = wp_head(curr, goal, ctx, odom=wp_odom)
+    w_dir, w_k = wp_direction_from_head(wp_head, w_out, "auto")
+    return w_out, w_dir, w_k
 
 
 def build_blend_path(
@@ -380,6 +404,7 @@ def estimated_goal_pos(
     meters_per_unit=0.12,
     path_units="meters",
     wp_odom=None,
+    wp_path_head=None,
 ):
     """[mu_x, mu_y] or [mu_x, mu_y, sigma] in dataset units. Masked rows are zeroed by append_goal_pos.
 
@@ -387,6 +412,7 @@ def estimated_goal_pos(
     goal_pos_mode: goal = far DINO head only; blend = kappa-weighted goal + waypoint heads.
     path_source: ray = WP dir * 1..K; wp_poly = WP path_head xy / meters_per_unit.
     past_rows: optional [B, K] cache indices for curr-1..curr-K (needed when wp_head.context > 0).
+    wp_path_head: optional separate frozen head for blend_path polyline only; mu blend always uses wp_head.
     """
     no_mask = torch.zeros(len(batch_obs), dtype=torch.long, device=device)
     cond = loc_model("vision_encoder", obs_img=batch_obs, goal_img=batch_goal, input_goal_mask=no_mask)
@@ -400,20 +426,9 @@ def estimated_goal_pos(
     if goal_pos_mode in ("blend", "blend_path"):
         if wp_head is None:
             raise ValueError(f"goal_pos_mode={goal_pos_mode} requires wp_head")
-        ctx = None
-        wp_context = int(wp_head.kind.shape[0] - 2)
-        if wp_context > 0:
-            if past_rows is None:
-                raise ValueError(f"wp_head context={wp_context} requires past_rows")
-            past = past_rows[:, :wp_context].detach().cpu().numpy()
-            ctx = torch.stack(
-                [read_tokens(features, past[:, j]).to(device).float() for j in range(wp_context)],
-                dim=1,
-            )
-        if int(getattr(wp_head, "odom_dim", 0) or 0) > 0 and wp_odom is None:
-            raise ValueError("wp_head odom_dim>0 requires wp_odom")
-        w_out = wp_head(curr, goal, ctx, odom=wp_odom)
-        w_dir, w_k = wp_direction_from_head(wp_head, w_out, "auto")
+        w_out, w_dir, w_k = forward_wp_head(
+            wp_head, features, curr_rows, goal_rows, past_rows, device, wp_odom=wp_odom
+        )
         direction = blend_torch(direction, kappa, w_dir, w_k, wp_scale=wp_scale)
     elif goal_pos_mode != "goal":
         raise ValueError(f"unknown goal_pos_mode: {goal_pos_mode}")
@@ -424,15 +439,24 @@ def estimated_goal_pos(
         # dual_ambig: on dual-peak frames, replace with two 4-step sector-center paths.
         if w_dir is None:
             raise ValueError("blend_path missing wp direction")
+        path_head = wp_path_head if wp_path_head is not None else wp_head
+        path_out = w_out
+        if path_head is not wp_head:
+            path_out, path_w_dir, _path_w_k = forward_wp_head(
+                path_head, features, curr_rows, goal_rows, past_rows, device, wp_odom=wp_odom
+            )
+            w_dir_for_ray = path_w_dir if path_source != "wp_poly" else w_dir
+        else:
+            w_dir_for_ray = w_dir
         path_flat = build_blend_path(
-            w_dir,
+            w_dir_for_ray,
             pos_dim,
             path_gate=path_gate,
             kappa=kappa,
             w_k=w_k,
             wp_scale=wp_scale,
-            wp_out=w_out,
-            wp_head=wp_head,
+            wp_out=path_out,
+            wp_head=path_head,
             path_source=path_source,
             meters_per_unit=meters_per_unit,
             path_units=path_units,
@@ -450,11 +474,28 @@ def estimated_goal_pos(
 
 
 def train_one_epoch(
-    model, loc_model, ema, dino_head, wp_head, features, loader, optimizer, scheduler_noise, device, args, epoch
+    model,
+    loc_model,
+    ema,
+    dino_head,
+    wp_head,
+    wp_path_head,
+    features,
+    loader,
+    optimizer,
+    scheduler_noise,
+    device,
+    args,
+    epoch,
 ):
     model.vision_encoder.eval()
     model.dist_pred_net.eval()
     model.noise_pred_net.train()
+    dino_head.eval()
+    if wp_head is not None:
+        wp_head.eval()
+    if wp_path_head is not None:
+        wp_path_head.eval()
     loss_sum, count = 0.0, 0
     goal_mask_prob = args.goal_mask_prob
     num_batches = len(loader) if args.max_batches <= 0 else min(len(loader), args.max_batches)
@@ -493,6 +534,7 @@ def train_one_epoch(
                     args.pos_dim,
                     device,
                     wp_head=wp_head,
+                    wp_path_head=wp_path_head,
                     wp_scale=args.wp_scale,
                     goal_pos_mode=args.goal_pos_mode,
                     past_rows=past_rows,
@@ -526,6 +568,8 @@ def train_one_epoch(
 
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
+            if getattr(args, "grad_clip", False):
+                torch.nn.utils.clip_grad_norm_(model.noise_pred_net.parameters(), float(args.max_grad_norm))
             optimizer.step()
             ema.step(model)
 
@@ -552,7 +596,22 @@ def main():
     parser.add_argument("--warmup-epochs", type=int, default=-1, help="-1 = use config")
     parser.add_argument("--dino-head", default=DINO_BEST)
     parser.add_argument("--wp-head", default=WP_BEST, help="Waypoint DINO head (for --goal-pos-mode blend)")
+    parser.add_argument(
+        "--wp-path-head",
+        default="",
+        help="Optional separate frozen WP head for blend_path 16-d path only; mu blend always uses --wp-head",
+    )
     parser.add_argument("--wp-scale", type=float, default=1.0)
+    parser.add_argument(
+        "--exclude-val-list",
+        default="",
+        help="Text file of trajectory names to drop from the training index (one per line)",
+    )
+    parser.add_argument(
+        "--val-manifest-csv",
+        default="",
+        help="If set, run nav ADE val on this manifest after each epoch (true_pos_prob=0)",
+    )
     parser.add_argument(
         "--goal-pos-mode",
         choices=("goal", "blend", "blend_path"),
@@ -587,6 +646,7 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--print-every", type=int, default=100)
     parser.add_argument("--max-batches", type=int, default=0)
+    parser.add_argument("--start-epoch", type=int, default=0, help="First epoch index when resuming")
     parser.add_argument("--run-name", default="")
     args = parser.parse_args()
 
@@ -600,6 +660,8 @@ def main():
     if args.warmup_epochs >= 0:
         config["warmup_epochs"] = args.warmup_epochs
     args.goal_mask_prob = config["goal_mask_prob"] if args.goal_mask_prob < 0 else args.goal_mask_prob
+    args.grad_clip = bool(config.get("clipping", False))
+    args.max_grad_norm = float(config.get("max_norm", 1.0))
     args.pos_dim = args.pos_dim or int(config.get("goal_pos_dim", 3))
     if args.pos_dim != int(config.get("goal_pos_dim", args.pos_dim)):
         raise ValueError(f"--pos-dim {args.pos_dim} disagrees with {args.config} goal_pos_dim; eval reads the config")
@@ -621,13 +683,14 @@ def main():
         f"true_pos_prob {args.true_pos_prob} | goal_pos_mode {args.goal_pos_mode} | "
         f"path_gate {args.path_gate} | path_source {args.path_source} | path_units {args.path_units} | wp_scale {args.wp_scale} | "
         f"init_ckpt {args.init_ckpt or args.init_from} | "
-        f"lr {config['lr']} | epochs {config['epochs']} | warmup {config.get('warmup_epochs', 4)}"
+        f"lr {config['lr']} | epochs {config['epochs']} | warmup {config.get('warmup_epochs', 4)} | "
+        f"grad_clip {args.grad_clip} max_norm {args.max_grad_norm} | wd 1e-4"
     )
 
     cache_path, rows, meta = load_cache(args.cache_dir, "train")
     features = np.load(os.path.join(cache_path, "features.npy"), mmap_mode="r")
     dino_head, dino_meta = load_dino_head(args.dino_head, device)
-    wp_head = None
+    wp_head = wp_path_head = None
     if args.goal_pos_mode in ("blend", "blend_path"):
         wp_head, wp_meta = load_dino_head(args.wp_head, device)
         for key in ("model", "width", "height", "pool"):
@@ -635,6 +698,14 @@ def main():
                 raise RuntimeError(f"WP cache {key}={meta[key]} vs head {wp_meta[key]}")
         if args.path_source == "wp_poly" and int(getattr(wp_head, "path_steps", 0) or 0) <= 0:
             raise ValueError(f"path_source=wp_poly but WP head has no path_steps: {args.wp_head}")
+        if args.wp_path_head:
+            wp_path_head, wp_path_meta = load_dino_head(args.wp_path_head, device)
+            for key in ("model", "width", "height", "pool"):
+                if wp_path_meta[key] != meta[key]:
+                    raise RuntimeError(f"WP path cache {key}={meta[key]} vs head {wp_path_meta[key]}")
+            if int(getattr(wp_path_head, "path_steps", 0) or 0) <= 0:
+                raise ValueError(f"--wp-path-head missing path_steps: {args.wp_path_head}")
+            print(f"Decoupled cond: mu from {args.wp_head} | path from {args.wp_path_head}")
     for key in ("model", "width", "height", "pool"):
         if dino_meta[key] != meta[key]:
             raise RuntimeError(f"DINO cache {key}={meta[key]} vs head {dino_meta[key]}")
@@ -661,6 +732,13 @@ def main():
         goal_type=config.get("goal_type", "image"),
         dino_rows=rows,
     )
+    if args.exclude_val_list:
+        with open(args.exclude_val_list, encoding="utf-8") as vf:
+            val_trajs = {line.strip() for line in vf if line.strip()}
+        before = len(dataset.index_to_data)
+        dataset.index_to_data = [x for x in dataset.index_to_data if x[0] not in val_trajs]
+        dataset.dataset_index = np.arange(len(dataset.index_to_data))
+        print(f"exclude_val_list: dropped {before - len(dataset.index_to_data)} / {before} train index rows")
     loader = DataLoader(
         dataset,
         batch_size=config["batch_size"],
@@ -699,10 +777,15 @@ def main():
     model.dist_pred_net.requires_grad_(False)
     model.vision_encoder.eval()
     model.dist_pred_net.eval()
-    trainable = list(model.noise_pred_net.parameters())
-    print(f"Trainable UNet params: {sum(p.numel() for p in trainable) / 1e6:.2f}M")
+    trainable = [(n, p) for n, p in model.noise_pred_net.named_parameters() if p.requires_grad]
+    print(f"Trainable UNet params: {sum(p.numel() for _, p in trainable) / 1e6:.2f}M ({len(trainable)} tensors)")
+    for n, p in trainable[:8]:
+        print(f"  trainable: {n} {tuple(p.shape)}")
+    if len(trainable) > 8:
+        print(f"  ... ({len(trainable) - 8} more)")
+    print(f"optimizer: AdamW lr={config['lr']} weight_decay=1e-4")
 
-    optimizer = torch.optim.AdamW(trainable, lr=float(config["lr"]), weight_decay=1e-4)
+    optimizer = torch.optim.AdamW([p for _, p in trainable], lr=float(config["lr"]), weight_decay=1e-4)
     total_epochs = int(config["epochs"])
     cosine = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(total_epochs, 1))
     warmup_epochs = int(config.get("warmup_epochs", 4))
@@ -713,12 +796,36 @@ def main():
     else:
         lr_scheduler = cosine
     ema = EMAModel(model=model, power=0.75)
+    if args.start_epoch > 0 and args.init_ckpt:
+        ema_state = torch.load(args.init_ckpt, map_location="cpu", weights_only=False)
+        if isinstance(ema_state, dict) and "state_dict" in ema_state:
+            ema_state = ema_state["state_dict"]
+        ema.averaged_model.load_state_dict(ema_state, strict=True)
+        print(f"Loaded EMA from resume: {args.init_ckpt}")
 
+    log_path = os.path.join(output_dir, "train_log.csv")
     log_rows = []
-    for epoch in range(total_epochs):
+    if args.start_epoch > 0 and os.path.isfile(log_path):
+        log_rows = list(csv.DictReader(open(log_path, encoding="utf-8")))
+    train_root = os.path.dirname(os.path.abspath(__file__))
+    for _ in range(args.start_epoch):
+        lr_scheduler.step()
+    for epoch in range(args.start_epoch, total_epochs):
         start = time.time()
         train_loss = train_one_epoch(
-            model, loc_model, ema, dino_head, wp_head, features, loader, optimizer, noise_scheduler, device, args, epoch
+            model,
+            loc_model,
+            ema,
+            dino_head,
+            wp_head,
+            wp_path_head,
+            features,
+            loader,
+            optimizer,
+            noise_scheduler,
+            device,
+            args,
+            epoch,
         )
         lr_scheduler.step()
 
@@ -731,7 +838,56 @@ def main():
             "train_action_loss": train_loss,
             "lr": optimizer.param_groups[0]["lr"],
             "minutes": (time.time() - start) / 60,
+            "train_batches": len(loader) if args.max_batches <= 0 else min(len(loader), args.max_batches),
+            "train_samples_index": len(dataset),
         }
+        if args.val_manifest_csv:
+            val_json = os.path.join(output_dir, f"val_nav_epoch{epoch}.json")
+            val_cmd = [
+                sys.executable,
+                "-u",
+                os.path.join(train_root, "eval_e_path_adapt_val.py"),
+                "--checkpoint",
+                os.path.join(output_dir, f"ema_{epoch}.pth"),
+                "--manifest-csv",
+                args.val_manifest_csv,
+                "--dino-head",
+                args.dino_head,
+                "--wp-head",
+                args.wp_head,
+                "--config-e-dino",
+                args.config,
+                "--config-b",
+                args.config_b,
+                "--path-units",
+                args.path_units,
+                "--path-source",
+                args.path_source,
+                "--path-gate",
+                args.path_gate,
+                "--goal-pos-mode",
+                args.goal_pos_mode,
+                "--wp-scale",
+                str(args.wp_scale),
+                "--pos-dim",
+                str(args.pos_dim),
+                "--epoch",
+                str(epoch),
+                "--out-dir",
+                output_dir,
+                "--out-json",
+                val_json,
+            ]
+            if args.wp_path_head:
+                val_cmd.extend(["--wp-path-head", args.wp_path_head])
+            env = os.environ.copy()
+            dp = os.path.join(os.path.dirname(train_root), "diffusion_policy")
+            env["PYTHONPATH"] = dp if not env.get("PYTHONPATH") else dp + os.pathsep + env["PYTHONPATH"]
+            subprocess.run(val_cmd, cwd=train_root, check=True, env=env)
+            with open(val_json, encoding="utf-8") as vf:
+                val_out = json.load(vf)
+            row["val_nav_ade_cm"] = val_out["nav_ade_cm"]
+            row["val_nav_per_frame_csv"] = val_out.get("per_frame_csv", "")
         log_rows.append(row)
         with open(os.path.join(output_dir, "train_log.csv"), "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(row.keys()))
@@ -743,7 +899,8 @@ def main():
         f.write(f"checkpoint_b={args.checkpoint_b}\ndino_head={args.dino_head}\npos_dim={args.pos_dim}\n")
         f.write(f"goal_pos_mode={args.goal_pos_mode}\npath_gate={args.path_gate}\n")
         f.write(f"path_source={args.path_source}\ninit_ckpt={args.init_ckpt}\n")
-        f.write(f"wp_head={args.wp_head}\nwp_scale={args.wp_scale}\n")
+        f.write(f"wp_head={args.wp_head}\nwp_path_head={args.wp_path_head}\nwp_scale={args.wp_scale}\n")
+        f.write(f"exclude_val_list={args.exclude_val_list}\nval_manifest_csv={args.val_manifest_csv}\n")
         f.write(f"cache={args.cache_dir}\ngoal_mask_prob={args.goal_mask_prob}\n")
         f.write(f"init_from={args.init_from}\ncheckpoint_e_oracle={args.checkpoint_e_oracle}\n")
         f.write(f"true_pos_prob={args.true_pos_prob}\nlr={config['lr']}\nepochs={config['epochs']}\n")

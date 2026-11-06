@@ -1,0 +1,258 @@
+[
+  {
+    "group": "C",
+    "epoch": 0,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_0.pth",
+    "bytes": 76569951,
+    "sha256": "ac8ef956a40767b5bbaf155dfc6d7550789edda3f52197ab120efbbc2186f0c3"
+  },
+  {
+    "group": "C",
+    "epoch": 0,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/0.pth",
+    "bytes": 76567155,
+    "sha256": "8ab916738a9f7c20d55b1e05ccd45f498476db5e6d7c4f9e7970138bd83c3697"
+  },
+  {
+    "group": "C",
+    "epoch": 1,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_1.pth",
+    "bytes": 76569951,
+    "sha256": "73ee3896f1604f97783f1cdb492ba430af202f533aa6887d456360b32492a888"
+  },
+  {
+    "group": "C",
+    "epoch": 1,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/1.pth",
+    "bytes": 76567155,
+    "sha256": "aff79cb5fd8ce8a2e10ad0764a2976c2756ed3d0b74d03725168849c3f9d70cc"
+  },
+  {
+    "group": "C",
+    "epoch": 2,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_2.pth",
+    "bytes": 76569951,
+    "sha256": "eecafa13ce144a7e53972f883a2b72f0938820688ab54d32af22ee3419827807"
+  },
+  {
+    "group": "C",
+    "epoch": 2,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/2.pth",
+    "bytes": 76567155,
+    "sha256": "ac67762283fe0fddb4dcf6374a8c8c08d0b6387272802ae2157b22a7a0ff43d3"
+  },
+  {
+    "group": "C",
+    "epoch": 3,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_3.pth",
+    "bytes": 76569951,
+    "sha256": "9d98df7268e36c04812eea86cb268315e7f2b129d26d71956f26c2ab18ac0ef8"
+  },
+  {
+    "group": "C",
+    "epoch": 3,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/3.pth",
+    "bytes": 76567155,
+    "sha256": "5b354eba5edf4a5f5bc28a05bc5dab27517d10a4b04eea95e17ccbb919ed07cf"
+  },
+  {
+    "group": "C",
+    "epoch": 4,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_4.pth",
+    "bytes": 76569951,
+    "sha256": "5d1291ec40e8a442eca14c9794bf96a904196670e6fa4b3a2e8101ab93f86b21"
+  },
+  {
+    "group": "C",
+    "epoch": 4,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/4.pth",
+    "bytes": 76567155,
+    "sha256": "221f0957e48d28d0fc38ee5190461efe2d75d24bfc51b045208a1aaef8427b50"
+  },
+  {
+    "group": "C",
+    "epoch": 5,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_5.pth",
+    "bytes": 76569951,
+    "sha256": "4b30bf67f27c40a445975acea794de82b97fd7602920dbe1f9b8f04449a0d076"
+  },
+  {
+    "group": "C",
+    "epoch": 5,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/5.pth",
+    "bytes": 76567155,
+    "sha256": "3e15c491f0ffd7c529e914af2a0f92041de678d11ba4beefc661f78129c878c0"
+  },
+  {
+    "group": "C",
+    "epoch": 6,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_6.pth",
+    "bytes": 76569951,
+    "sha256": "14a86f986c63eb388b6e6083b3f1d11dc5cce8214b314cf1a4be6b00329ecba8"
+  },
+  {
+    "group": "C",
+    "epoch": 6,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/6.pth",
+    "bytes": 76567155,
+    "sha256": "f8333e8c3827209d07ee11e846aa637fb4e908f313b9551fc3d04096484f351d"
+  },
+  {
+    "group": "C",
+    "epoch": 7,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_C/ema_7.pth",
+    "bytes": 76569951,
+    "sha256": "696dad40040a49339fbef8e439e34782e5b3ab764592fdb4c4bee98086cd0dab"
+  },
+  {
+    "group": "C",
+    "epoch": 7,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_C/7.pth",
+    "bytes": 76567155,
+    "sha256": "cbfcfc7e73b2a443f5f32176997d6d89406cab32972ba6049bc900b55c3120f9"
+  },
+  {
+    "group": "T",
+    "epoch": 0,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_0.pth",
+    "bytes": 76569951,
+    "sha256": "ac8ef956a40767b5bbaf155dfc6d7550789edda3f52197ab120efbbc2186f0c3"
+  },
+  {
+    "group": "T",
+    "epoch": 0,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/0.pth",
+    "bytes": 76567155,
+    "sha256": "8ab916738a9f7c20d55b1e05ccd45f498476db5e6d7c4f9e7970138bd83c3697"
+  },
+  {
+    "group": "T",
+    "epoch": 1,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_1.pth",
+    "bytes": 76569951,
+    "sha256": "ddc574d03a09f14fe85420c0155902fb56626c1bdee29e47cb6f8ef3640b7d9e"
+  },
+  {
+    "group": "T",
+    "epoch": 1,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/1.pth",
+    "bytes": 76567155,
+    "sha256": "1d7537d553ce6cf3a6a4caaea52d61b5e097ab79f5a5f3a142c8a5a0fe53e32e"
+  },
+  {
+    "group": "T",
+    "epoch": 2,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_2.pth",
+    "bytes": 76569951,
+    "sha256": "09abdda1f836ef26818a909bc6863ce93613943ff04a351ee3402d21ea333f5c"
+  },
+  {
+    "group": "T",
+    "epoch": 2,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/2.pth",
+    "bytes": 76567155,
+    "sha256": "0510ea1675c93f111e6e4eba2eb85d6f555a9e39f49983a9da483c310f5bb907"
+  },
+  {
+    "group": "T",
+    "epoch": 3,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_3.pth",
+    "bytes": 76569951,
+    "sha256": "32d4bfd9d27945c1589f1c2d9fbe2312a2b0a1ccf4b7e687428372d345b64258"
+  },
+  {
+    "group": "T",
+    "epoch": 3,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/3.pth",
+    "bytes": 76567155,
+    "sha256": "b33b3e77cf119b80c708db15b14c3a02210f50fc376068c4e06fa8f1f77e2b22"
+  },
+  {
+    "group": "T",
+    "epoch": 4,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_4.pth",
+    "bytes": 76569951,
+    "sha256": "007182f15fe5ab55abea17a2f0fef90f0fdc8cd870437c811ed780a61339952e"
+  },
+  {
+    "group": "T",
+    "epoch": 4,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/4.pth",
+    "bytes": 76567155,
+    "sha256": "b1216c41c8a96c822400594ea050615915a21d55c76c9be7a82b07a6ba482208"
+  },
+  {
+    "group": "T",
+    "epoch": 5,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_5.pth",
+    "bytes": 76569951,
+    "sha256": "2535e90999402d196007fa93ab73075637e46e9ec72fdba3844fade3dfabb1c6"
+  },
+  {
+    "group": "T",
+    "epoch": 5,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/5.pth",
+    "bytes": 76567155,
+    "sha256": "61e1afca4e115f4f72720af49ba433ad49c1304f47f15929ba38b0d9d27d8eed"
+  },
+  {
+    "group": "T",
+    "epoch": 6,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_6.pth",
+    "bytes": 76569951,
+    "sha256": "92e83199e6864dc7843cb9a0fc104e0b64ab6a142ad8697f2385430608d5fc8e"
+  },
+  {
+    "group": "T",
+    "epoch": 6,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/6.pth",
+    "bytes": 76567155,
+    "sha256": "0f17cede656e4b35af676a645ac6b59d58edc4861d88da7fd5294344a27f6217"
+  },
+  {
+    "group": "T",
+    "epoch": 7,
+    "kind": "ema",
+    "path": "logs/nomad/nomad_e_path_adapt_T/ema_7.pth",
+    "bytes": 76569951,
+    "sha256": "318cc68229d47e3f0f890bd4ed88f082672fb5af2bb573e363f1b66109f86ed9"
+  },
+  {
+    "group": "T",
+    "epoch": 7,
+    "kind": "raw",
+    "path": "logs/nomad/nomad_e_path_adapt_T/7.pth",
+    "bytes": 76567155,
+    "sha256": "a474c3519e05d47518f585c3efde2b800bdd74a322988f2f57c4ac80d1b43d95"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "ref_init_ade": {
+    "nav_ade_cm": 12.295081873238086
+  },
+  "C_val_epoch0": {
+    "nav_ade_cm": 12.241271587461233,
+    "per_frame_csv": "logs\\nomad\\nomad_e_path_adapt_C\\val_nav_ade_epoch0.csv"
+  }
+}

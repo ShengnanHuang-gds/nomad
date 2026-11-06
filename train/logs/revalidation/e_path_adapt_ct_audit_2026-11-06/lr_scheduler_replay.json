@@ -1,0 +1,54 @@
+{
+  "fresh_run": [
+    {
+      "phase": "before_train_ep0",
+      "lr": 0.0
+    },
+    {
+      "phase": "after_step_end_ep0_logged",
+      "lr": 3e-05
+    },
+    {
+      "phase": "before_train_ep1",
+      "lr": 3e-05
+    },
+    {
+      "phase": "after_step_end_ep1_logged",
+      "lr": 3.11869838968974e-05
+    },
+    {
+      "phase": "after_step_end_ep2_logged",
+      "lr": 3e-05
+    },
+    {
+      "phase": "after_step_end_ep3_logged",
+      "lr": 2.6619755847574607e-05
+    },
+    {
+      "phase": "after_step_end_ep4_logged",
+      "lr": 2.1560862969838445e-05
+    },
+    {
+      "phase": "after_step_end_ep5_logged",
+      "lr": 1.55934919484487e-05
+    },
+    {
+      "phase": "after_step_end_ep6_logged",
+      "lr": 9.626120927058962e-06
+    },
+    {
+      "phase": "after_step_end_ep7_logged",
+      "lr": 4.567228049322796e-06
+    }
+  ],
+  "resume_start1": [
+    {
+      "phase": "resume_after_replay_1_scheduler_step",
+      "lr": 3e-05
+    },
+    {
+      "phase": "resume_before_train_ep1",
+      "lr": 3e-05
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+[
+  {
+    "epoch": 0,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 0,
+    "max_abs_diff": 0.0,
+    "l2_diff": 0.0
+  },
+  {
+    "epoch": 0,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 0,
+    "max_abs_diff": 0.0,
+    "l2_diff": 0.0
+  },
+  {
+    "epoch": 1,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.008775736205279827,
+    "l2_diff": 1.9871923053215168
+  },
+  {
+    "epoch": 1,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.009942804463207722,
+    "l2_diff": 2.3700792831201216
+  },
+  {
+    "epoch": 2,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.01289018988609314,
+    "l2_diff": 2.680932198584707
+  },
+  {
+    "epoch": 2,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.013581529259681702,
+    "l2_diff": 3.049026517198067
+  },
+  {
+    "epoch": 3,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.014681998640298843,
+    "l2_diff": 3.1040833077256496
+  },
+  {
+    "epoch": 3,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.01652972400188446,
+    "l2_diff": 3.441797372375082
+  },
+  {
+    "epoch": 4,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.018968895077705383,
+    "l2_diff": 3.4201301799713653
+  },
+  {
+    "epoch": 4,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.020745452493429184,
+    "l2_diff": 3.7077052670771784
+  },
+  {
+    "epoch": 5,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.0205596424639225,
+    "l2_diff": 3.5970785688088105
+  },
+  {
+    "epoch": 5,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.023550953716039658,
+    "l2_diff": 3.7864497037980995
+  },
+  {
+    "epoch": 6,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.024669453501701355,
+    "l2_diff": 3.687691475348017
+  },
+  {
+    "epoch": 6,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.025702085345983505,
+    "l2_diff": 3.798996993882257
+  },
+  {
+    "epoch": 7,
+    "kind": "ema",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.026431696489453316,
+    "l2_diff": 3.733248952943098
+  },
+  {
+    "epoch": 7,
+    "kind": "raw",
+    "keys_match": true,
+    "n_tensors": 645,
+    "n_changed": 148,
+    "max_abs_diff": 0.02724960818886757,
+    "l2_diff": 3.7855333861397176
+  }
+]

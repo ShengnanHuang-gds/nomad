@@ -1,0 +1,706 @@
+[
+  {
+    "group": "C",
+    "epoch": 0,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 1.1742115020751953e-05,
+    "vs_init_l2_diff": 5.115018816618972e-05,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 1.1742115020751953e-05,
+      "l2_diff": 5.115018816618972e-05
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 1.1742115020751953e-05,
+      "l2_diff": 5.115018816618972e-05
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 0,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 0,
+    "vs_init_max_abs_diff": 0.0,
+    "vs_init_l2_diff": 0.0,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 0,
+      "max_abs_diff": 0.0,
+      "l2_diff": 0.0
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 1,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.02020198106765747,
+    "vs_init_l2_diff": 1.6315004818892134,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.02020198106765747,
+      "l2_diff": 1.6315004818892134
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.0046631693840026855,
+      "l2_diff": 0.7042008604293137
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 1,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.024865150451660156,
+    "vs_init_l2_diff": 1.9386889847778581,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.024865150451660156,
+      "l2_diff": 1.9386889847778581
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 2,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.040733203291893005,
+    "vs_init_l2_diff": 2.4198933094554134,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.040733203291893005,
+      "l2_diff": 2.4198933094554134
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.005732923746109009,
+      "l2_diff": 0.8078497056053663
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 2,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.046037763357162476,
+    "vs_init_l2_diff": 2.7302315533357038,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.046037763357162476,
+      "l2_diff": 2.7302315533357038
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 3,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.057849541306495667,
+    "vs_init_l2_diff": 3.0325240966442792,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.057849541306495667,
+      "l2_diff": 3.0325240966442792
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.00611269474029541,
+      "l2_diff": 0.8739914769132084
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 3,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.06373089551925659,
+    "vs_init_l2_diff": 3.379501672017972,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.06373089551925659,
+      "l2_diff": 3.379501672017972
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 4,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.0743011087179184,
+    "vs_init_l2_diff": 3.5986370808040777,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.0743011087179184,
+      "l2_diff": 3.5986370808040777
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.0068454742431640625,
+      "l2_diff": 0.8357195887561478
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 4,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.08114658296108246,
+    "vs_init_l2_diff": 3.901105199569824,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.08114658296108246,
+      "l2_diff": 3.901105199569824
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 5,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.08668200671672821,
+    "vs_init_l2_diff": 4.016456687013984,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.08668200671672821,
+      "l2_diff": 4.016456687013984
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.005685195326805115,
+      "l2_diff": 0.7349929590437083
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 5,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.0922282338142395,
+    "vs_init_l2_diff": 4.249589309148855,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.0922282338142395,
+      "l2_diff": 4.249589309148855
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 6,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.09648115932941437,
+    "vs_init_l2_diff": 4.305205565063843,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.09648115932941437,
+      "l2_diff": 4.305205565063843
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.004385143518447876,
+      "l2_diff": 0.5740392957951157
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 6,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.10081355273723602,
+    "vs_init_l2_diff": 4.466924547208118,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.10081355273723602,
+      "l2_diff": 4.466924547208118
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "C",
+    "epoch": 7,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.10194393992424011,
+    "vs_init_l2_diff": 4.482593518626298,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.10194393992424011,
+      "l2_diff": 4.482593518626298
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.0026231110095977783,
+      "l2_diff": 0.4135577884589865
+    }
+  },
+  {
+    "group": "C",
+    "epoch": 7,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.1044720709323883,
+    "vs_init_l2_diff": 4.584579390816364,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.1044720709323883,
+      "l2_diff": 4.584579390816364
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 0,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 1.1742115020751953e-05,
+    "vs_init_l2_diff": 5.115018816618972e-05,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 1.1742115020751953e-05,
+      "l2_diff": 5.115018816618972e-05
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 1.1742115020751953e-05,
+      "l2_diff": 5.115018816618972e-05
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 0,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 0,
+    "vs_init_max_abs_diff": 0.0,
+    "vs_init_l2_diff": 0.0,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 0,
+      "max_abs_diff": 0.0,
+      "l2_diff": 0.0
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 1,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.01884406805038452,
+    "vs_init_l2_diff": 1.6570500872428018,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.01884406805038452,
+      "l2_diff": 1.6570500872428018
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.00433020293712616,
+      "l2_diff": 0.7243447580100913
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 1,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.02317427098751068,
+    "vs_init_l2_diff": 1.9787795549559828,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.02317427098751068,
+      "l2_diff": 1.9787795549559828
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 2,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.03911055624485016,
+    "vs_init_l2_diff": 2.4531877939397795,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.03911055624485016,
+      "l2_diff": 2.4531877939397795
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.005892843008041382,
+      "l2_diff": 0.7990141284839517
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 2,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.04500339925289154,
+    "vs_init_l2_diff": 2.7875244999081796,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.04500339925289154,
+      "l2_diff": 2.7875244999081796
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 3,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.05830533802509308,
+    "vs_init_l2_diff": 3.108868600667271,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.05830533802509308,
+      "l2_diff": 3.108868600667271
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.006462506949901581,
+      "l2_diff": 0.8504336992133616
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 3,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.0647396445274353,
+    "vs_init_l2_diff": 3.429226573881808,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.0647396445274353,
+      "l2_diff": 3.429226573881808
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 4,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.07399758696556091,
+    "vs_init_l2_diff": 3.6814339902382285,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.07399758696556091,
+      "l2_diff": 3.6814339902382285
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.006552934646606445,
+      "l2_diff": 0.8438054770406793
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 4,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.08052709698677063,
+    "vs_init_l2_diff": 4.005248244928963,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.08052709698677063,
+      "l2_diff": 4.005248244928963
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 5,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.0872969776391983,
+    "vs_init_l2_diff": 4.1338715387001885,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.0872969776391983,
+      "l2_diff": 4.1338715387001885
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.005876675248146057,
+      "l2_diff": 0.779710963150645
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 5,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.09317365288734436,
+    "vs_init_l2_diff": 4.395807084122947,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.09317365288734436,
+      "l2_diff": 4.395807084122947
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 6,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.096554234623909,
+    "vs_init_l2_diff": 4.446078235243862,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.096554234623909,
+      "l2_diff": 4.446078235243862
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.004329383373260498,
+      "l2_diff": 0.5914548439784768
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 6,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.10061520338058472,
+    "vs_init_l2_diff": 4.626523202276486,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.10061520338058472,
+      "l2_diff": 4.626523202276486
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  },
+  {
+    "group": "T",
+    "epoch": 7,
+    "kind": "ema",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.10200303792953491,
+    "vs_init_l2_diff": 4.6460615502359275,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.10200303792953491,
+      "l2_diff": 4.6460615502359275
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": {
+      "keys_match": true,
+      "n_tensors": 645,
+      "n_changed": 148,
+      "max_abs_diff": 0.0029463618993759155,
+      "l2_diff": 0.42414758505608613
+    }
+  },
+  {
+    "group": "T",
+    "epoch": 7,
+    "kind": "raw",
+    "vs_init_keys_match": true,
+    "vs_init_n_tensors": 645,
+    "vs_init_n_changed": 148,
+    "vs_init_max_abs_diff": 0.10433906316757202,
+    "vs_init_l2_diff": 4.751326356993848,
+    "vs_init_noise_pred": {
+      "keys_match": true,
+      "n_tensors": 148,
+      "n_changed": 148,
+      "max_abs_diff": 0.10433906316757202,
+      "l2_diff": 4.751326356993848
+    },
+    "nan_inf_keys": [],
+    "ema_vs_raw": null
+  }
+]

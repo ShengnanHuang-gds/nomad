@@ -1,0 +1,197 @@
+{
+  "diffusion_step_embed_dim": 256,
+  "encoding_size": 256,
+  "pos_dim": 18,
+  "cond_dim": 530,
+  "slices": {
+    "time": "[0:256)",
+    "vision": "[256:512)",
+    "mu": "[512:514)",
+    "path": "[514:530)"
+  },
+  "cond_encoder_layers": [
+    {
+      "name": "noise_pred_net.down_modules.0.0.cond_encoder.1.weight",
+      "shape": [
+        64,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.028138920664787292
+    },
+    {
+      "name": "noise_pred_net.down_modules.0.1.cond_encoder.1.weight",
+      "shape": [
+        64,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.033006805926561356
+    },
+    {
+      "name": "noise_pred_net.down_modules.1.0.cond_encoder.1.weight",
+      "shape": [
+        128,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.029655659571290016
+    },
+    {
+      "name": "noise_pred_net.down_modules.1.1.cond_encoder.1.weight",
+      "shape": [
+        128,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.025505410507321358
+    },
+    {
+      "name": "noise_pred_net.down_modules.2.0.cond_encoder.1.weight",
+      "shape": [
+        256,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.02841927483677864
+    },
+    {
+      "name": "noise_pred_net.down_modules.2.1.cond_encoder.1.weight",
+      "shape": [
+        256,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.03181016817688942
+    },
+    {
+      "name": "noise_pred_net.mid_modules.0.cond_encoder.1.weight",
+      "shape": [
+        256,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.03145957365632057
+    },
+    {
+      "name": "noise_pred_net.mid_modules.1.cond_encoder.1.weight",
+      "shape": [
+        256,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.034456729888916016
+    },
+    {
+      "name": "noise_pred_net.up_modules.0.0.cond_encoder.1.weight",
+      "shape": [
+        128,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.042939383536577225
+    },
+    {
+      "name": "noise_pred_net.up_modules.0.1.cond_encoder.1.weight",
+      "shape": [
+        128,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.03228843957185745
+    },
+    {
+      "name": "noise_pred_net.up_modules.1.0.cond_encoder.1.weight",
+      "shape": [
+        64,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.03324272111058235
+    },
+    {
+      "name": "noise_pred_net.up_modules.1.1.cond_encoder.1.weight",
+      "shape": [
+        64,
+        530
+      ],
+      "slices": {
+        "time": "[0:256)",
+        "vision": "[256:512)",
+        "mu": "[512:514)",
+        "path": "[514:530)"
+      },
+      "path_slice": "[514:530)",
+      "max_abs_delta_path_vs_oracle_expand": 0.027819355949759483
+    }
+  ],
+  "path_cols_max_abs_delta_vs_e_oracle_zero_init": 0.042939383536577225,
+  "e_oracle_checkpoint": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+  "e_oracle_sha256": "9d31ac8ac03eaa1539371797373a10c234b757dcc9fcc2e40268cd129168c4dc"
+}

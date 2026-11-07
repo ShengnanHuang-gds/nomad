@@ -1,0 +1,2 @@
+C:\Users\61078\anaconda3\python.exe eval_r2_r18_locked_nav.py
+PYTHONPATH=../diffusion_policy (cwd=train)

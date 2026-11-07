@@ -1,0 +1,31 @@
+{
+  "max_replay_same_model_twice": 0.0,
+  "max_diffusion_replay_diff": 0.0,
+  "mu_r2_r18_max_diff": 0.0,
+  "est_r2_shape": [
+    8,
+    2
+  ],
+  "est_r18_shape": [
+    8,
+    18
+  ],
+  "path_portion_max_abs_r18": 10.33217716217041,
+  "ctx_check": {
+    "context_frames": 2,
+    "batch_size_checked": 8,
+    "ctx_shape": [
+      8,
+      2,
+      49,
+      384
+    ]
+  },
+  "ok_replay_twice": true,
+  "ok_diffusion_replay": true,
+  "ok_mu_match": true,
+  "ok_shapes": true,
+  "ok_context_2": true,
+  "ok_path_nonzero": true,
+  "passed": true
+}

@@ -1,0 +1,40 @@
+{
+  "nav_ade_cm": {
+    "R2": 20.85423754565418,
+    "R18": 18.28511306606233
+  },
+  "delta_r2_minus_r18_cm_mean": 2.5691244795918466,
+  "bootstrap_delta_r2_minus_r18": {
+    "delta_r2_minus_r18_cm_mean": 2.5691244795918466,
+    "ci95_lo_cm": 1.981054551999511,
+    "ci95_hi_cm": 3.176689313426123,
+    "n_boot": 10000,
+    "boot_seed": 20261107,
+    "resample_unit": "trajectory (pool all frames from drawn trajs)",
+    "interpretation": "positive => R18 lower ADE than R2"
+  },
+  "main_table": [
+    {
+      "model": "R2",
+      "cond_dim": 2,
+      "nav_ade_cm": 20.85423754565418,
+      "ade_front4_cm": 8.699520225916057,
+      "ade_back4_cm": 33.00895474329591,
+      "nav_ade_turn_strict_cm": 24.659056636437295,
+      "checkpoint": "logs/nomad/nomad_e_r2_fair_20261107/ema_4.pth",
+      "checkpoint_sha256": "bcd2ef1e69eb8e4f649395a11873988b98992a8a4e5cf67b07771be507928b9b"
+    },
+    {
+      "model": "R18",
+      "cond_dim": 18,
+      "nav_ade_cm": 18.28511306606233,
+      "ade_front4_cm": 7.884241379378364,
+      "ade_back4_cm": 28.685984786599874,
+      "nav_ade_turn_strict_cm": 21.091372234209693,
+      "checkpoint": "logs/nomad/nomad_e_r18_fair_20261107/ema_1.pth",
+      "checkpoint_sha256": "53d5f5606f3aaccab5f5b208edf9e01ed6f680efdd1279fca1dfd7f7d99a072a"
+    }
+  ],
+  "strict_turn_n": 593,
+  "path_cond_audit_path_delta_max": 0.042939383536577225
+}

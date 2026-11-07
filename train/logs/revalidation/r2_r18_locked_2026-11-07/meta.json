@@ -1,0 +1,96 @@
+{
+  "timestamp_utc": "2026-11-07T10:12:50.487309+00:00",
+  "git_commit": "b9a11dcc6225acb0e4abf4da3c1d436e2f164f6f",
+  "frames_csv": "logs/revalidation/eval_audit_pathact8_far/paired_frames_far_20-40.csv",
+  "n_frames": 1000,
+  "seed": 0,
+  "num_samples": 8,
+  "batch_size": 8,
+  "horizon": 8,
+  "shared_noise_across_R2_R18": true,
+  "paired_step_noise_note": "Shared initial noise chunks; each model resets torch.Generator per chunk to seed+10007*chunk_index.",
+  "estimated_goal_pos": {
+    "R2": {
+      "goal_pos_mode": "goal",
+      "pos_dim": 2,
+      "true_pos_prob": 0
+    },
+    "R18": {
+      "goal_pos_mode": "goal_path",
+      "pos_dim": 18,
+      "wp_path_head": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "path_source": "wp_poly",
+      "path_units": "dataset",
+      "true_pos_prob": 0
+    }
+  },
+  "checkpoints": {
+    "R2": {
+      "path": "logs/nomad/nomad_e_r2_fair_20261107/ema_4.pth",
+      "sha256": "bcd2ef1e69eb8e4f649395a11873988b98992a8a4e5cf67b07771be507928b9b"
+    },
+    "R18": {
+      "path": "logs/nomad/nomad_e_r18_fair_20261107/ema_1.pth",
+      "sha256": "53d5f5606f3aaccab5f5b208edf9e01ed6f680efdd1279fca1dfd7f7d99a072a"
+    }
+  },
+  "dino_head": {
+    "path": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+    "sha256": "68a56ca0326e5069774efa404e4e0609973db4b83b27a4c2d928ca154c57d36c"
+  },
+  "pathact8_head": {
+    "path": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d"
+  },
+  "configs": {
+    "R2": "config/nomad_e_dino_r2_r18.yaml",
+    "R18": "config/nomad_e_dino_r18.yaml",
+    "nomad_b40": "config/nomad_b40.yaml"
+  },
+  "cache": {
+    "root": "logs/dino_cache/dinov2_vits14_reg",
+    "split": "test_paired"
+  },
+  "mu_match_max_abs": 0.0,
+  "smoke_check": null,
+  "summary": {
+    "nav_ade_cm": {
+      "R2": 20.85423754565418,
+      "R18": 18.28511306606233
+    },
+    "delta_r2_minus_r18_cm_mean": 2.5691244795918466,
+    "bootstrap_delta_r2_minus_r18": {
+      "delta_r2_minus_r18_cm_mean": 2.5691244795918466,
+      "ci95_lo_cm": 1.981054551999511,
+      "ci95_hi_cm": 3.176689313426123,
+      "n_boot": 10000,
+      "boot_seed": 20261107,
+      "resample_unit": "trajectory (pool all frames from drawn trajs)",
+      "interpretation": "positive => R18 lower ADE than R2"
+    },
+    "main_table": [
+      {
+        "model": "R2",
+        "cond_dim": 2,
+        "nav_ade_cm": 20.85423754565418,
+        "ade_front4_cm": 8.699520225916057,
+        "ade_back4_cm": 33.00895474329591,
+        "nav_ade_turn_strict_cm": 24.659056636437295,
+        "checkpoint": "logs/nomad/nomad_e_r2_fair_20261107/ema_4.pth",
+        "checkpoint_sha256": "bcd2ef1e69eb8e4f649395a11873988b98992a8a4e5cf67b07771be507928b9b"
+      },
+      {
+        "model": "R18",
+        "cond_dim": 18,
+        "nav_ade_cm": 18.28511306606233,
+        "ade_front4_cm": 7.884241379378364,
+        "ade_back4_cm": 28.685984786599874,
+        "nav_ade_turn_strict_cm": 21.091372234209693,
+        "checkpoint": "logs/nomad/nomad_e_r18_fair_20261107/ema_1.pth",
+        "checkpoint_sha256": "53d5f5606f3aaccab5f5b208edf9e01ed6f680efdd1279fca1dfd7f7d99a072a"
+      }
+    ],
+    "strict_turn_n": 593,
+    "path_cond_audit_path_delta_max": 0.042939383536577225
+  }
+}

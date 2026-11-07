@@ -71,6 +71,20 @@ def nav_ade_cm_per_frame(nav_samples, gt, meters):
         ade_m, _ = mean_ade_fde(nav_samples[i], gt[i], meters)
         out[i] = ade_m * 100.0
     return out
+
+
+def nav_ade_cm_decomposed_per_frame(nav_samples, gt, meters):
+    """Per frame: mean over num_samples then mean over timesteps (front4/back4 split)."""
+    n = len(gt)
+    full = np.zeros(n, dtype=np.float64)
+    front4 = np.zeros(n, dtype=np.float64)
+    back4 = np.zeros(n, dtype=np.float64)
+    for i in range(len(gt)):
+        dist = np.linalg.norm((nav_samples[i] - gt[i][None, :, :]) * meters, axis=-1)
+        full[i] = dist.mean() * 100.0
+        front4[i] = dist[:, :4].mean() * 100.0
+        back4[i] = dist[:, 4:].mean() * 100.0
+    return full, front4, back4
 def bootstrap_trajectory_pooled(delta_cm, traj_names, n_boot=10000, seed=20261104):
     delta_cm = np.asarray(delta_cm, dtype=np.float64)
     traj_names = np.asarray(traj_names)
@@ -165,8 +179,28 @@ class ValNavEvaluator:
             meters_per_unit=self.goal_pos_args.meters_per_unit,
             path_units=self.goal_pos_args.path_units,
         )
+    def _subset_means(self, ade_pf, front4, back4):
+        turn = np.asarray(
+            [float(m.get("turn_strict", 0) or 0) > 0.5 for m in self.manifest], dtype=bool
+        )
+        out = {
+            "nav_ade_cm": float(ade_pf.mean()),
+            "ade_front4_cm": float(front4.mean()),
+            "ade_back4_cm": float(back4.mean()),
+            "n_val": int(len(ade_pf)),
+        }
+        if turn.any():
+            out["nav_ade_turn_strict_cm"] = float(ade_pf[turn].mean())
+            out["ade_front4_turn_strict_cm"] = float(front4[turn].mean())
+            out["ade_back4_turn_strict_cm"] = float(back4[turn].mean())
+            out["turn_strict_n"] = int(turn.sum())
+        else:
+            out["nav_ade_turn_strict_cm"] = float("nan")
+            out["turn_strict_n"] = 0
+        return out
+
     @torch.no_grad()
-    def eval_ema_state_dict(self, state_dict, epoch: int = -1, out_dir: str = "") -> tuple[float, str]:
+    def eval_ema_state_dict(self, state_dict, epoch: int = -1, out_dir: str = "") -> tuple[dict, str]:
         self.model.load_state_dict(state_dict, strict=True)
         self.model.eval()
         n = len(self.frames)
@@ -191,8 +225,8 @@ class ValNavEvaluator:
                 self.model, self.scheduler, cond_goal, init_noise, self.num_samples, self.device, gen
             )
             preds[start : start + chunk_len] = pred[..., :2].detach().cpu().numpy()
-        ade_pf = nav_ade_cm_per_frame(preds, gt, self.meters)
-        mean_ade = float(ade_pf.mean())
+        ade_pf, front4, back4 = nav_ade_cm_decomposed_per_frame(preds, gt, self.meters)
+        metrics = self._subset_means(ade_pf, front4, back4)
         csv_path = ""
         if out_dir:
             os.makedirs(out_dir, exist_ok=True)
@@ -200,7 +234,17 @@ class ValNavEvaluator:
             with open(csv_path, "w", newline="", encoding="utf-8") as cf:
                 w = csv.DictWriter(
                     cf,
-                    fieldnames=["order", "traj_name", "curr_t", "goal_t", "goal_step", "nav_ade_cm"],
+                    fieldnames=[
+                        "order",
+                        "traj_name",
+                        "curr_t",
+                        "goal_t",
+                        "goal_step",
+                        "turn_strict",
+                        "nav_ade_cm",
+                        "ade_front4_cm",
+                        "ade_back4_cm",
+                    ],
                 )
                 w.writeheader()
                 for i, m in enumerate(self.manifest):
@@ -211,10 +255,14 @@ class ValNavEvaluator:
                             "curr_t": m["curr_t"],
                             "goal_t": m["goal_t"],
                             "goal_step": m.get("goal_step", ""),
+                            "turn_strict": m.get("turn_strict", ""),
                             "nav_ade_cm": float(ade_pf[i]),
+                            "ade_front4_cm": float(front4[i]),
+                            "ade_back4_cm": float(back4[i]),
                         }
                     )
-        return mean_ade, csv_path
+        metrics["per_frame_csv"] = csv_path
+        return metrics, csv_path
 def eval_checkpoint_file(
     ckpt_path: str,
     manifest_csv: str,
@@ -262,7 +310,7 @@ def eval_checkpoint_file(
     state = torch.load(ckpt_path, map_location="cpu", weights_only=False)
     if isinstance(state, dict) and "state_dict" in state:
         state = state["state_dict"]
-    return ev.eval_ema_state_dict(state, epoch=-1, out_dir="")[0]
+    return ev.eval_ema_state_dict(state, epoch=-1, out_dir="")[0]["nav_ade_cm"]
 
 def main_cli():
     import argparse
@@ -271,7 +319,7 @@ def main_cli():
     ap.add_argument("--checkpoint", required=True)
     ap.add_argument("--manifest-csv", required=True)
     ap.add_argument("--dino-head", required=True)
-    ap.add_argument("--wp-head", required=True)
+    ap.add_argument("--wp-head", default="")
     ap.add_argument("--wp-path-head", default="")
     ap.add_argument("--config-e-dino", default="config/nomad_e_dino_path.yaml")
     ap.add_argument("--config-b", default="config/nomad_b40.yaml")
@@ -293,10 +341,16 @@ def main_cli():
     _p, rows, _meta = load_cache(CACHE_DIR, "train")
     features = np.load(os.path.join(CACHE_DIR, "train", "features.npy"), mmap_mode="r")
     dino_head, _ = load_dino_head(args.dino_head, device)
-    wp_head, _ = load_dino_head(args.wp_head, device)
+    wp_head = None
+    if args.wp_head:
+        wp_head, _ = load_dino_head(args.wp_head, device)
     wp_path_head = None
     if args.wp_path_head:
         wp_path_head, _ = load_dino_head(args.wp_path_head, device)
+    if args.goal_pos_mode in ("blend", "blend_path") and wp_head is None:
+        raise ValueError(f"{args.goal_pos_mode} requires --wp-head")
+    if args.goal_pos_mode == "goal_path" and args.pos_dim > 2 and wp_path_head is None:
+        raise ValueError("goal_path pos_dim>2 requires --wp-path-head")
     gargs = apmod.Namespace(
         pos_dim=args.pos_dim,
         wp_scale=args.wp_scale,
@@ -321,10 +375,11 @@ def main_cli():
     state = torch.load(args.checkpoint, map_location="cpu", weights_only=False)
     if isinstance(state, dict) and "state_dict" in state:
         state = state["state_dict"]
-    ade, csv_path = ev.eval_ema_state_dict(state, epoch=args.epoch, out_dir=args.out_dir)
+    metrics, csv_path = ev.eval_ema_state_dict(state, epoch=args.epoch, out_dir=args.out_dir)
+    metrics["epoch"] = args.epoch
     with open(args.out_json, "w", encoding="utf-8") as f:
-        json.dump({"nav_ade_cm": ade, "per_frame_csv": csv_path}, f, indent=2)
-    print(json.dumps({"nav_ade_cm": ade, "per_frame_csv": csv_path}))
+        json.dump(metrics, f, indent=2)
+    print(json.dumps(metrics))
 
 
 if __name__ == "__main__":

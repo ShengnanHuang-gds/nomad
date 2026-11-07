@@ -1,0 +1,10 @@
+{
+  "n": 500,
+  "seed": 20261107,
+  "far_steps_ge": 20,
+  "goal_step_min": 20,
+  "goal_step_max": 39,
+  "turn_strict_n": 169,
+  "exclude_val_list": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\exclude_val_trajs.txt",
+  "note": "Val trajectories held out of training via DFT_VAL_LIST; label as finetune-val not strict OOD."
+}

@@ -430,9 +430,36 @@ def estimated_goal_pos(
             wp_head, features, curr_rows, goal_rows, past_rows, device, wp_odom=wp_odom
         )
         direction = blend_torch(direction, kappa, w_dir, w_k, wp_scale=wp_scale)
+    elif goal_pos_mode == "goal_path":
+        pass
     elif goal_pos_mode != "goal":
         raise ValueError(f"unknown goal_pos_mode: {goal_pos_mode}")
     mu = direction * steps.unsqueeze(-1)
+    if goal_pos_mode == "goal_path":
+        if pos_dim <= 2:
+            return mu
+        if wp_path_head is None:
+            raise ValueError("goal_path with pos_dim>2 requires wp_path_head (frozen pathact8)")
+        if path_source != "wp_poly":
+            raise ValueError(f"goal_path requires path_source=wp_poly, got {path_source}")
+        path_out, _w_dir, _w_k = forward_wp_head(
+            wp_path_head, features, curr_rows, goal_rows, past_rows, device, wp_odom=wp_odom
+        )
+        dummy_dir = torch.ones(mu.shape[0], 2, device=device, dtype=mu.dtype)
+        path_flat = build_blend_path(
+            dummy_dir,
+            pos_dim,
+            path_gate="none",
+            wp_out=path_out,
+            wp_head=wp_path_head,
+            path_source="wp_poly",
+            meters_per_unit=meters_per_unit,
+            path_units=path_units,
+        )
+        out = torch.cat([mu, path_flat], dim=-1)
+        if out.shape[-1] != pos_dim:
+            raise ValueError(f"goal_path width {out.shape[-1]} != pos_dim {pos_dim}")
+        return out
     if goal_pos_mode == "blend_path":
         # Stuff guessed near direction as an 8-step straight polyline in dataset units.
         # Step length 1 matches ViNT's normalized waypoint spacing.
@@ -487,6 +514,7 @@ def train_one_epoch(
     device,
     args,
     epoch,
+    lr_scheduler=None,
 ):
     model.vision_encoder.eval()
     model.dist_pred_net.eval()
@@ -499,6 +527,7 @@ def train_one_epoch(
     loss_sum, count = 0.0, 0
     goal_mask_prob = args.goal_mask_prob
     num_batches = len(loader) if args.max_batches <= 0 else min(len(loader), args.max_batches)
+    lr_start = float(optimizer.param_groups[0]["lr"])
     with tqdm(loader, total=num_batches, desc=f"E epoch {epoch}", leave=False) as bar:
         for i, batch in enumerate(bar):
             if i >= num_batches:
@@ -548,7 +577,7 @@ def train_one_epoch(
                     if use_true.any():
                         gp = goal_pos.to(device)
                         est_pos[use_true, :2] = gp[use_true]
-                        if args.goal_pos_mode == "blend_path" and args.pos_dim > 2:
+                        if args.goal_pos_mode in ("blend_path", "goal_path") and args.pos_dim > 2:
                             act = actions.to(device).float()[use_true, :, :2]
                             act = act.reshape(act.shape[0], -1)
                             n = min(act.shape[-1], args.pos_dim - 2)
@@ -571,6 +600,8 @@ def train_one_epoch(
             if getattr(args, "grad_clip", False):
                 torch.nn.utils.clip_grad_norm_(model.noise_pred_net.parameters(), float(args.max_grad_norm))
             optimizer.step()
+            if lr_scheduler is not None and getattr(args, "lr_schedule", "epoch") == "per_step":
+                lr_scheduler.step()
             ema.step(model)
 
             n = int(action_mask.sum().item())
@@ -579,7 +610,8 @@ def train_one_epoch(
             bar.set_postfix(loss=f"{loss.item():.4f}")
             if args.print_every > 0 and i % args.print_every == 0:
                 print(f"(epoch {epoch}) (batch {i}/{num_batches - 1}) action loss {loss.item():.4f}")
-    return loss_sum / max(count, 1)
+    lr_end = float(optimizer.param_groups[0]["lr"])
+    return loss_sum / max(count, 1), lr_start, lr_end
 
 
 def main():
@@ -614,9 +646,9 @@ def main():
     )
     parser.add_argument(
         "--goal-pos-mode",
-        choices=("goal", "blend", "blend_path"),
+        choices=("goal", "blend", "blend_path", "goal_path"),
         default="goal",
-        help="goal / blend / blend_path(=blend far xy + wp-dir polyline)",
+        help="goal / blend / blend_path / goal_path(=pure far mu + wp_poly path, no kappa)",
     )
     parser.add_argument(
         "--path-gate",
@@ -648,6 +680,17 @@ def main():
     parser.add_argument("--max-batches", type=int, default=0)
     parser.add_argument("--start-epoch", type=int, default=0, help="First epoch index when resuming")
     parser.add_argument("--run-name", default="")
+    parser.add_argument(
+        "--lr-schedule",
+        choices=("epoch", "per_step"),
+        default="epoch",
+        help="epoch: GradualWarmup+cosine per epoch; per_step: 1-epoch linear warmup by optimizer step then cosine",
+    )
+    parser.add_argument(
+        "--reset-train-rng-after-init",
+        action="store_true",
+        help="After loading weights, re-seed numpy/torch/cuda before training (paired R2/R18)",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -669,11 +712,15 @@ def main():
         raise ValueError("E-oracle base is pos_dim 2; need pos_dim >= 2")
     if args.goal_pos_mode == "blend_path" and args.pos_dim < 4:
         raise ValueError("blend_path needs pos_dim >= 4 (far xy + at least one path point)")
+    if args.goal_pos_mode == "goal_path" and args.pos_dim > 2 and not (args.wp_path_head or args.wp_head):
+        raise ValueError("goal_path pos_dim>2 requires --wp-path-head (frozen pathact8)")
 
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    blend_tag = {"blend": "_blend", "blend_path": "_blendpath"}.get(args.goal_pos_mode, "")
+    blend_tag = {"blend": "_blend", "blend_path": "_blendpath", "goal_path": "_goalpath"}.get(
+        args.goal_pos_mode, ""
+    )
     tag = f"d{args.pos_dim}_{args.init_from}_true{int(round(100 * args.true_pos_prob))}{blend_tag}"
     run_name = args.run_name or f"nomad_e_dino_{tag}_{time.strftime('%Y_%m_%d_%H_%M_%S')}"
     output_dir = os.path.join("logs", "nomad", run_name)
@@ -706,6 +753,18 @@ def main():
             if int(getattr(wp_path_head, "path_steps", 0) or 0) <= 0:
                 raise ValueError(f"--wp-path-head missing path_steps: {args.wp_path_head}")
             print(f"Decoupled cond: mu from {args.wp_head} | path from {args.wp_path_head}")
+    elif args.goal_pos_mode == "goal_path" and args.pos_dim > 2:
+        path_ckpt = args.wp_path_head or args.wp_head
+        wp_path_head, wp_path_meta = load_dino_head(path_ckpt, device)
+        for key in ("model", "width", "height", "pool"):
+            if wp_path_meta[key] != meta[key]:
+                raise RuntimeError(f"WP path cache {key}={meta[key]} vs head {wp_path_meta[key]}")
+        wp_ctx = int(wp_path_head.kind.shape[0] - 2)
+        if wp_ctx != 2:
+            raise ValueError(f"goal_path requires path head context=2, got {wp_ctx}")
+        if int(getattr(wp_path_head, "path_steps", 0) or 0) <= 0:
+            raise ValueError(f"pathact8 path head missing path_steps: {path_ckpt}")
+        print(f"goal_path: mu=pure DINO×B | path frozen from {path_ckpt} (ctx={wp_ctx})")
     for key in ("model", "width", "height", "pool"):
         if dino_meta[key] != meta[key]:
             raise RuntimeError(f"DINO cache {key}={meta[key]} vs head {dino_meta[key]}")
@@ -739,6 +798,8 @@ def main():
         dataset.index_to_data = [x for x in dataset.index_to_data if x[0] not in val_trajs]
         dataset.dataset_index = np.arange(len(dataset.index_to_data))
         print(f"exclude_val_list: dropped {before - len(dataset.index_to_data)} / {before} train index rows")
+    dl_gen = torch.Generator()
+    dl_gen.manual_seed(int(args.seed))
     loader = DataLoader(
         dataset,
         batch_size=config["batch_size"],
@@ -746,6 +807,7 @@ def main():
         num_workers=args.num_workers,
         persistent_workers=args.num_workers > 0,
         drop_last=True,
+        generator=dl_gen,
     )
     args.meters_per_unit = float(meters_per_unit(dataset))
     print(f"train samples: {len(dataset)}, meters/unit: {args.meters_per_unit:.3f}")
@@ -773,6 +835,12 @@ def main():
         else:
             load_expand_cond(model, args.checkpoint_e_oracle, 2, args.pos_dim, device, label='e_oracle')
         loc_model = load_frozen_nomad(load_config(args.config_b), args.checkpoint_b, device)
+    if args.reset_train_rng_after_init:
+        np.random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(args.seed)
+        print(f"Re-seeded train RNG after init (seed={args.seed})")
     model.vision_encoder.requires_grad_(False)
     model.dist_pred_net.requires_grad_(False)
     model.vision_encoder.eval()
@@ -787,14 +855,28 @@ def main():
 
     optimizer = torch.optim.AdamW([p for _, p in trainable], lr=float(config["lr"]), weight_decay=1e-4)
     total_epochs = int(config["epochs"])
-    cosine = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(total_epochs, 1))
+    steps_per_epoch = len(loader) if args.max_batches <= 0 else min(len(loader), args.max_batches)
+    total_steps = max(steps_per_epoch * total_epochs, 1)
     warmup_epochs = int(config.get("warmup_epochs", 4))
-    if warmup_epochs > 0:
-        lr_scheduler = GradualWarmupScheduler(
-            optimizer, multiplier=1, total_epoch=warmup_epochs, after_scheduler=cosine
+    if args.lr_schedule == "per_step":
+        from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
+
+        warmup_steps = max(steps_per_epoch * max(warmup_epochs, 1), 1)
+        sched_warm = LinearLR(optimizer, start_factor=1e-2, end_factor=1.0, total_iters=warmup_steps)
+        sched_cos = CosineAnnealingLR(optimizer, T_max=max(total_steps - warmup_steps, 1))
+        lr_scheduler = SequentialLR(optimizer, schedulers=[sched_warm, sched_cos], milestones=[warmup_steps])
+        print(
+            f"LR schedule per_step: warmup_steps={warmup_steps} total_steps={total_steps} "
+            f"(first step lr={sched_warm.get_last_lr()[0]:.2e})"
         )
     else:
-        lr_scheduler = cosine
+        cosine = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(total_epochs, 1))
+        if warmup_epochs > 0:
+            lr_scheduler = GradualWarmupScheduler(
+                optimizer, multiplier=1, total_epoch=warmup_epochs, after_scheduler=cosine
+            )
+        else:
+            lr_scheduler = cosine
     ema = EMAModel(model=model, power=0.75)
     if args.start_epoch > 0 and args.init_ckpt:
         ema_state = torch.load(args.init_ckpt, map_location="cpu", weights_only=False)
@@ -808,11 +890,12 @@ def main():
     if args.start_epoch > 0 and os.path.isfile(log_path):
         log_rows = list(csv.DictReader(open(log_path, encoding="utf-8")))
     train_root = os.path.dirname(os.path.abspath(__file__))
-    for _ in range(args.start_epoch):
-        lr_scheduler.step()
+    if args.lr_schedule == "epoch":
+        for _ in range(args.start_epoch):
+            lr_scheduler.step()
     for epoch in range(args.start_epoch, total_epochs):
         start = time.time()
-        train_loss = train_one_epoch(
+        train_loss, lr_epoch_start, lr_epoch_end = train_one_epoch(
             model,
             loc_model,
             ema,
@@ -826,8 +909,12 @@ def main():
             device,
             args,
             epoch,
+            lr_scheduler=lr_scheduler if args.lr_schedule == "per_step" else None,
         )
-        lr_scheduler.step()
+        if args.lr_schedule == "epoch":
+            lr_scheduler.step()
+            lr_epoch_start = float(optimizer.param_groups[0]["lr"])
+            lr_epoch_end = lr_epoch_start
 
         torch.save(ema.averaged_model.state_dict(), os.path.join(output_dir, f"ema_{epoch}.pth"))
         torch.save(ema.averaged_model.state_dict(), os.path.join(output_dir, "ema_latest.pth"))
@@ -837,6 +924,8 @@ def main():
             "epoch": epoch,
             "train_action_loss": train_loss,
             "lr": optimizer.param_groups[0]["lr"],
+            "lr_epoch_start": lr_epoch_start,
+            "lr_epoch_end": lr_epoch_end,
             "minutes": (time.time() - start) / 60,
             "train_batches": len(loader) if args.max_batches <= 0 else min(len(loader), args.max_batches),
             "train_samples_index": len(dataset),
@@ -853,8 +942,6 @@ def main():
                 args.val_manifest_csv,
                 "--dino-head",
                 args.dino_head,
-                "--wp-head",
-                args.wp_head,
                 "--config-e-dino",
                 args.config,
                 "--config-b",
@@ -878,8 +965,14 @@ def main():
                 "--out-json",
                 val_json,
             ]
+            if args.wp_head:
+                val_cmd.extend(["--wp-head", args.wp_head])
             if args.wp_path_head:
                 val_cmd.extend(["--wp-path-head", args.wp_path_head])
+            elif args.goal_pos_mode == "goal_path" and args.pos_dim > 2:
+                path_h = args.wp_path_head or args.wp_head
+                if path_h:
+                    val_cmd.extend(["--wp-path-head", path_h])
             env = os.environ.copy()
             dp = os.path.join(os.path.dirname(train_root), "diffusion_policy")
             env["PYTHONPATH"] = dp if not env.get("PYTHONPATH") else dp + os.pathsep + env["PYTHONPATH"]
@@ -904,6 +997,7 @@ def main():
         f.write(f"cache={args.cache_dir}\ngoal_mask_prob={args.goal_mask_prob}\n")
         f.write(f"init_from={args.init_from}\ncheckpoint_e_oracle={args.checkpoint_e_oracle}\n")
         f.write(f"true_pos_prob={args.true_pos_prob}\nlr={config['lr']}\nepochs={config['epochs']}\n")
+        f.write(f"lr_schedule={args.lr_schedule}\nreset_train_rng_after_init={args.reset_train_rng_after_init}\n")
     print(f"Done. Checkpoints in {os.path.abspath(output_dir)}")
 
 

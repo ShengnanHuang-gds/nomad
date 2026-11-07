@@ -1,0 +1,29 @@
+{
+  "mu_r2_r18_max_diff": 0.0,
+  "r18_path_max_abs": 10.156911849975586,
+  "wp_context_frames": 2,
+  "init_noise_pred_max_diff": 0.00018543004989624023,
+  "frozen_heads_with_grad": 0,
+  "r18_path_input_grad_max": 0.030992677435278893,
+  "noise_pred_grad_max": 0.030992677435278893,
+  "r2_cond_shape": [
+    16,
+    2
+  ],
+  "r18_cond_shape": [
+    16,
+    18
+  ],
+  "e_oracle_sha256": "9d31ac8ac03eaa1539371797373a10c234b757dcc9fcc2e40268cd129168c4dc",
+  "pathact8_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+  "dino_sha256": "68a56ca0326e5069774efa404e4e0609973db4b83b27a4c2d928ca154c57d36c",
+  "lr_schedule_cpu": {
+    "lr_step0": 3.0000000000000004e-07,
+    "lr_step1": 5.970000000000001e-07,
+    "lr_end_warmup": 2.9702999999999986e-05,
+    "lr_after_warmup": 3e-05,
+    "lr_final": 1.5106511992157865e-10,
+    "epoch0_has_positive_lr": true
+  },
+  "passed": true
+}

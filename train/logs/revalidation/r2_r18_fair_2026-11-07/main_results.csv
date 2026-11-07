@@ -1,0 +1,3 @@
+﻿method,cond_dim,val_nav_ade_cm,turn_strict_ade_cm,front4_cm,back4_cm,best_epoch,checkpoint
+R2,2,12.828997647762298,17.9359201275738,5.190944445133209,20.467050878703596,4,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs/nomad\nomad_e_r2_fair_20261107\ema_4.pth
+R18,18,11.651542914845049,15.878810269548696,4.935802666749805,18.367283165082334,1,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs/nomad\nomad_e_r18_fair_20261107\ema_1.pth

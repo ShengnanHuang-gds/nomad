@@ -269,13 +269,46 @@ def run_preflight(manifest_csv: str) -> dict:
     pred = model_r18("noise_pred_net", sample=noisy, timestep=ts, global_cond=cond)
     loss = F.mse_loss(pred, noise)
     loss.backward()
-    path_col_grad = 0.0
+
+    from r2_r18_common import path_cond_grad_and_delta
+
+
+
+    path_grad_info = path_cond_grad_and_delta(model_r18, model_r2)
+
+    path_col_grad = float(path_grad_info["path_input_grad_max"])
+
+    opt = torch.optim.AdamW(train_r18, lr=3e-5)
+
+    w_path_before = {
+
+        name: p[:, 258:274].detach().clone()
+
+        for name, p in model_r18.noise_pred_net.named_parameters()
+
+        if name.endswith("cond_encoder.1.weight") and p.shape[1] >= 274
+
+    }
+
+    opt.step()
+
+    path_delta_max = 0.0
+
     for name, p in model_r18.noise_pred_net.named_parameters():
-        if p.grad is None or "weight" not in name or p.grad.ndim != 2:
-            continue
-        if p.grad.shape[1] > 2:
-            path_col_grad = max(path_col_grad, float(p.grad[:, 2:].abs().max().item()))
+
+        if name in w_path_before:
+
+            path_delta_max = max(
+
+                path_delta_max, float((p[:, 258:274] - w_path_before[name]).abs().max().item())
+
+            )
+
+    path_grad_info["path_weight_delta_max_after_one_step"] = path_delta_max
+
     nav_grad = float(max(p.grad.abs().max().item() for p in train_r18 if p.grad is not None))
+
+
 
     lr_cpu = verify_lr_schedule_cpu()
     checks = {
@@ -285,6 +318,7 @@ def run_preflight(manifest_csv: str) -> dict:
         "init_noise_pred_max_diff": init_pred_diff,
         "frozen_heads_with_grad": frozen_grad,
         "r18_path_input_grad_max": path_col_grad,
+        "r18_path_cond_columns": path_grad_info,
         "noise_pred_grad_max": nav_grad,
         "r2_cond_shape": list(est2.shape),
         "r18_cond_shape": list(est18.shape),
@@ -373,8 +407,19 @@ def train_arm(label: str, goal_mode: str, pos_dim: int, config: str, run_name: s
             ]
         )
     if start_epoch > 0:
-        cmd.extend(["--start-epoch", str(start_epoch), "--init-ckpt", os.path.join(run_dir, "ema_latest.pth")])
-        print(f"{label}: resume from epoch {start_epoch} (optimizer state NOT restored   prefer fresh run)")
+
+        raise SystemExit(
+
+            f"{label}: train_log has {start_epoch} completed epoch(s) under {run_dir}. "
+
+            "Refusing ema_latest-only resume (need model+optimizer+scheduler+EMA step count+RNG). "
+
+            "If training is still running in another process, do not start a second job. "
+
+            "If the run stopped mid-way, keep artifacts and restore manually; this launcher will not auto-retrain."
+
+        )
+
     run_cmd(cmd)
     return run_dir
 
@@ -396,56 +441,121 @@ def pick_best_epoch(run_dir: str) -> dict:
 
 
 def write_report(r2_dir: str, r18_dir: str, manifest_csv: str):
-    from eval_e_path_adapt_val import bootstrap_trajectory_pooled
+
+    from r2_r18_common import align_paired_ade, bootstrap_traj_pooled_pairs, manifest_units_note
+
+
 
     b2 = pick_best_epoch(r2_dir)
+
     b18 = pick_best_epoch(r18_dir)
+
     r2_ep = b2.get("per_frame_csv", "")
+
     r18_ep = b18.get("per_frame_csv", "")
+
     paired = {"delta_r2_minus_r18_cm": float("nan"), "ci95_lo": float("nan"), "ci95_hi": float("nan")}
-    if r2_ep and r18_ep and os.path.isfile(r2_ep) and os.path.isfile(r2_ep):
-        a2 = {r["traj_name"] + f"@{r['curr_t']}": float(r["nav_ade_cm"]) for r in csv.DictReader(open(r2_ep))}
-        a18 = {r["traj_name"] + f"@{r['curr_t']}": float(r["nav_ade_cm"]) for r in csv.DictReader(open(r18_ep))}
-        keys = sorted(set(a2) & set(a18))
-        d = np.array([a2[k] - a18[k] for k in keys])
-        trajs = [k.split("@")[0] for k in keys]
-        m, lo, hi = bootstrap_trajectory_pooled(d, np.array(trajs))
-        paired = {"delta_r2_minus_r18_cm": m, "ci95_lo": lo, "ci95_hi": hi, "n_frames": len(keys)}
+
+    if r2_ep and r18_ep and os.path.isfile(r2_ep) and os.path.isfile(r18_ep):
+
+        r2_ep = r2_ep if os.path.isabs(r2_ep) else os.path.join(CWD, r2_ep)
+
+        r18_ep = r18_ep if os.path.isabs(r18_ep) else os.path.join(CWD, r18_ep)
+
+        ade2, ade18, trajs = align_paired_ade(r2_ep, r18_ep)
+
+        d = ade2 - ade18
+
+        m, lo, hi = bootstrap_traj_pooled_pairs(d, np.array(trajs))
+
+        paired = {
+
+            "delta_r2_minus_r18_cm_mean": m,
+
+            "ci95_lo": lo,
+
+            "ci95_hi": hi,
+
+            "n_pairs": len(d),
+
+            "align_key": "(traj_name,curr_t,goal_t) via manifest order",
+
+        }
+
     summary = {
+
         "R2": {"run_dir": r2_dir, "best": b2, "condition": "2D mu only"},
+
         "R18": {"run_dir": r18_dir, "best": b18, "condition": "2D mu + pathact8 16D"},
+
         "paired_all": paired,
+
         "manifest_csv": manifest_csv,
+
+        "manifest_units": manifest_units_note(manifest_csv),
+
         "val_noise_seed": VAL_EVAL_SEED,
+
     }
+
     with open(os.path.join(OUT, "summary.json"), "w", encoding="utf-8") as f:
+
         json.dump(summary, f, indent=2)
+
     rows = [
+
         ["method", "cond_dim", "val_nav_ade_cm", "turn_strict_ade_cm", "front4_cm", "back4_cm", "best_epoch", "checkpoint"],
+
         [
+
             "R2",
+
             2,
+
             b2.get("nav_ade_cm"),
+
             b2.get("nav_ade_turn_strict_cm"),
+
             b2.get("ade_front4_cm"),
+
             b2.get("ade_back4_cm"),
+
             b2.get("epoch"),
+
             b2.get("checkpoint"),
+
         ],
+
         [
+
             "R18",
+
             18,
+
             b18.get("nav_ade_cm"),
+
             b18.get("nav_ade_turn_strict_cm"),
+
             b18.get("ade_front4_cm"),
+
             b18.get("ade_back4_cm"),
+
             b18.get("epoch"),
+
             b18.get("checkpoint"),
+
         ],
+
     ]
+
     with open(os.path.join(OUT, "main_results.csv"), "w", newline="", encoding="utf-8-sig") as f:
+
         csv.writer(f).writerows(rows)
+
     print(json.dumps(summary, indent=2))
+
+
+
 
 
 def main():

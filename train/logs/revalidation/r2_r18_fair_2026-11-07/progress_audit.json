@@ -1,0 +1,207 @@
+{
+  "audited_at_utc": "2026-11-07T06:07:57.327088+00:00",
+  "manifest": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+  "manifest_units": {
+    "n_pairs": 500,
+    "unique_curr_traj_t": 482,
+    "unique_triple": 500,
+    "unit": "one row = one (traj_name, curr_t, goal_t) far-goal pair; metrics averaged over 500 pairs"
+  },
+  "r2_launch_cmd_note": "train_e_dino.py config/nomad_e_dino_r2_r18.yaml goal pos_dim=2 true_pos_prob=0 8ep bs32 lr3e-5 per_step warmup",
+  "r18_launch_cmd_note": "train_e_dino.py config/nomad_e_dino_r18.yaml goal_path pos_dim=18 pathact8 wp_poly dataset ctx=2 (starts after R2 in same launcher)",
+  "R2": {
+    "label": "R2",
+    "run_dir": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r2_fair_20261107",
+    "exists": true,
+    "completed_epochs": [
+      {
+        "epoch": 0,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "3.0000000000000004e-07",
+        "lr_epoch_end": "3e-05",
+        "train_action_loss": "0.016855438638730937",
+        "val_nav_ade_cm": "13.163301917910577"
+      },
+      {
+        "epoch": 1,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "3e-05",
+        "lr_epoch_end": "2.8514533018536113e-05",
+        "train_action_loss": "0.01680141442972671",
+        "val_nav_ade_cm": "12.943958669900894"
+      },
+      {
+        "epoch": 2,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "2.8514533018536113e-05",
+        "lr_epoch_end": "2.43523470278809e-05",
+        "train_action_loss": "0.01679459755209486",
+        "val_nav_ade_cm": "12.84223999939859"
+      },
+      {
+        "epoch": 3,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "2.43523470278809e-05",
+        "lr_epoch_end": "1.833781400934456e-05",
+        "train_action_loss": "0.016583912554963488",
+        "val_nav_ade_cm": "12.892100521549583"
+      },
+      {
+        "epoch": 4,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.833781400934456e-05",
+        "lr_epoch_end": "1.1662185990655143e-05",
+        "train_action_loss": "0.0161868020096912",
+        "val_nav_ade_cm": "12.828997647762298"
+      },
+      {
+        "epoch": 5,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.1662185990655143e-05",
+        "lr_epoch_end": "5.64765297211889e-06",
+        "train_action_loss": "0.016187623203937154",
+        "val_nav_ade_cm": "12.88403131403029"
+      },
+      {
+        "epoch": 6,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "5.64765297211889e-06",
+        "lr_epoch_end": "1.485466981463692e-06",
+        "train_action_loss": "0.01615852279271965",
+        "val_nav_ade_cm": "12.885399909690022"
+      },
+      {
+        "epoch": 7,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.485466981463692e-06",
+        "lr_epoch_end": "0.0",
+        "train_action_loss": "0.01593665310511781",
+        "val_nav_ade_cm": "12.882883420586586"
+      }
+    ],
+    "in_progress_epoch": null,
+    "init_e_oracle_sha256": "9d31ac8ac03eaa1539371797373a10c234b757dcc9fcc2e40268cd129168c4dc",
+    "resume": "fresh from e_oracle (no optimizer restore in this job)",
+    "best_by_val_nav_ade": {
+      "epoch": 4,
+      "nav_ade_cm": 12.828997647762298,
+      "ade_front4_cm": 5.190944445133209,
+      "ade_back4_cm": 20.467050878703596,
+      "n_val": 500,
+      "nav_ade_turn_strict_cm": 17.9359201275738,
+      "ade_front4_turn_strict_cm": 6.809541377508958,
+      "ade_back4_turn_strict_cm": 29.062299077680127,
+      "turn_strict_n": 169,
+      "per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107\\val_nav_ade_epoch4.csv",
+      "checkpoint_sha256": "bcd2ef1e69eb8e4f649395a11873988b98992a8a4e5cf67b07771be507928b9b"
+    }
+  },
+  "R18": {
+    "label": "R18",
+    "run_dir": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r18_fair_20261107",
+    "exists": true,
+    "completed_epochs": [
+      {
+        "epoch": 0,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "3.0000000000000004e-07",
+        "lr_epoch_end": "3e-05",
+        "train_action_loss": "0.01637197092120953",
+        "val_nav_ade_cm": "11.929611000791192"
+      },
+      {
+        "epoch": 1,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "3e-05",
+        "lr_epoch_end": "2.8514533018536113e-05",
+        "train_action_loss": "0.015554621622932316",
+        "val_nav_ade_cm": "11.651542914845049"
+      },
+      {
+        "epoch": 2,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "2.8514533018536113e-05",
+        "lr_epoch_end": "2.43523470278809e-05",
+        "train_action_loss": "0.015316888191177913",
+        "val_nav_ade_cm": "11.6842863291502"
+      },
+      {
+        "epoch": 3,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "2.43523470278809e-05",
+        "lr_epoch_end": "1.833781400934456e-05",
+        "train_action_loss": "0.01499134717926252",
+        "val_nav_ade_cm": "11.69028099179268"
+      },
+      {
+        "epoch": 4,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.833781400934456e-05",
+        "lr_epoch_end": "1.1662185990655143e-05",
+        "train_action_loss": "0.014617235335667736",
+        "val_nav_ade_cm": "11.709188667684794"
+      },
+      {
+        "epoch": 5,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.1662185990655143e-05",
+        "lr_epoch_end": "5.64765297211889e-06",
+        "train_action_loss": "0.014478511401856511",
+        "val_nav_ade_cm": "11.775053199194371"
+      },
+      {
+        "epoch": 6,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "5.64765297211889e-06",
+        "lr_epoch_end": "1.485466981463692e-06",
+        "train_action_loss": "0.014480355107332539",
+        "val_nav_ade_cm": "11.767160556651652"
+      },
+      {
+        "epoch": 7,
+        "train_batches": "3847",
+        "train_samples_index": "123125",
+        "lr_epoch_start": "1.485466981463692e-06",
+        "lr_epoch_end": "0.0",
+        "train_action_loss": "0.014225293964075115",
+        "val_nav_ade_cm": "11.789817337878048"
+      }
+    ],
+    "in_progress_epoch": null,
+    "init_e_oracle_sha256": "9d31ac8ac03eaa1539371797373a10c234b757dcc9fcc2e40268cd129168c4dc",
+    "resume": "fresh from e_oracle (no optimizer restore in this job)",
+    "best_by_val_nav_ade": {
+      "epoch": 1,
+      "nav_ade_cm": 11.651542914845049,
+      "ade_front4_cm": 4.935802666749805,
+      "ade_back4_cm": 18.367283165082334,
+      "n_val": 500,
+      "nav_ade_turn_strict_cm": 15.878810269548696,
+      "ade_front4_turn_strict_cm": 6.22617452510098,
+      "ade_back4_turn_strict_cm": 25.531446093902787,
+      "turn_strict_n": 169,
+      "per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107\\val_nav_ade_epoch1.csv",
+      "checkpoint_sha256": "53d5f5606f3aaccab5f5b208edf9e01ed6f680efdd1279fca1dfd7f7d99a072a"
+    }
+  },
+  "implementation_fixes": {
+    "path_grad_cols": "[258:274) on noise_pred_net.*.cond_encoder.1.weight",
+    "pairing": "500 pairs by order + (traj_name,curr_t,goal_t)",
+    "resume_policy": "launcher refuses partial ema_latest resume"
+  }
+}

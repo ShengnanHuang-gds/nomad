@@ -1,0 +1,53 @@
+{
+  "R2": {
+    "run_dir": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r2_fair_20261107_seed1",
+    "best": {
+      "epoch": 5,
+      "nav_ade_cm": 12.897174018248915,
+      "ade_front4_cm": 5.203900967724621,
+      "ade_back4_cm": 20.590446919202805,
+      "n_val": 500,
+      "nav_ade_turn_strict_cm": 18.14999706910912,
+      "ade_front4_turn_strict_cm": 6.870684846023307,
+      "ade_back4_turn_strict_cm": 29.42930896430326,
+      "turn_strict_n": 169,
+      "per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch5.csv",
+      "checkpoint": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\ema_5.pth",
+      "sha256": "a5e289de5cd4d6d01a9b48219cf07ee46073c0a9ae8261589f65ceafc2815735"
+    },
+    "condition": "2D mu only"
+  },
+  "R18": {
+    "run_dir": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r18_fair_20261107_seed1",
+    "best": {
+      "epoch": 2,
+      "nav_ade_cm": 11.75614252500236,
+      "ade_front4_cm": 4.928883811924607,
+      "ade_back4_cm": 18.58340112939477,
+      "n_val": 500,
+      "nav_ade_turn_strict_cm": 16.0059561302676,
+      "ade_front4_turn_strict_cm": 6.184929283060265,
+      "ade_back4_turn_strict_cm": 25.82698284742042,
+      "turn_strict_n": 169,
+      "per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch2.csv",
+      "checkpoint": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\ema_2.pth",
+      "sha256": "088384d1e659bf8bfcbc3b31f792a06af2018453b9d5fde37620c8626dddf17a"
+    },
+    "condition": "2D mu + pathact8 16D"
+  },
+  "paired_all": {
+    "delta_r2_minus_r18_cm_mean": 1.1410314932465553,
+    "ci95_lo": 0.3663326095327029,
+    "ci95_hi": 1.9961748207606824,
+    "n_pairs": 500,
+    "align_key": "(traj_name,curr_t,goal_t) via manifest order"
+  },
+  "manifest_csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+  "manifest_units": {
+    "n_pairs": 500,
+    "unique_curr_traj_t": 482,
+    "unique_triple": 500,
+    "unit": "one row = one (traj_name, curr_t, goal_t) far-goal pair; metrics averaged over 500 pairs"
+  },
+  "val_noise_seed": 0
+}

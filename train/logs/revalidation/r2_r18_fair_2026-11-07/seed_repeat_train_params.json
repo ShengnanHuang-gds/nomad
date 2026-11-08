@@ -1,0 +1,810 @@
+{
+  "experiment": "R2_R18_fair_ablation_train_seed_repeat",
+  "recorded_at_utc": "2026-11-08T04:42:07.423517+00:00",
+  "checkpoint_scope_cn": "每 epoch 保存 EMA 权重 ema_k.pth；无 optimizer/scheduler/EMA step/RNG 全状态。选模用各 run 自己的 val_nav_epoch*.json。",
+  "frozen_seed0_runs": [
+    "nomad_e_r2_fair_20261107",
+    "nomad_e_r18_fair_20261107"
+  ],
+  "shared_protocol": {
+    "val_manifest_csv": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+    "val_manifest_sha256": "991e87b8a62c64f353e4ecd7e5e774ce063bf85984c3b5d7b5945c29d98b80c8",
+    "val_pairs": 500,
+    "unique_curr_frames_note": 482,
+    "val_diffusion_noise_seed": 0
+  },
+  "train_hyperparams_fixed": {
+    "epochs": 8,
+    "batch_size": 32,
+    "optimizer": "AdamW",
+    "lr": 3e-05,
+    "weight_decay": 0.0001,
+    "grad_clip_max_norm": 1.0,
+    "warmup_epochs": 1,
+    "lr_schedule": "per_step",
+    "warmup_steps_per_epoch_then_cosine": true,
+    "total_optimizer_steps_per_run": 30776,
+    "warmup_optimizer_steps": 3847,
+    "true_pos_prob": 0.0,
+    "reset_train_rng_after_init": true,
+    "num_workers": 2,
+    "trainable_params": "noise_pred_net only (~3.85M)"
+  },
+  "initialization_shared": {
+    "init_from": "e_oracle",
+    "checkpoint_e_oracle": "logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+    "checkpoint_b_frozen": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+    "dino_dir_head": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+    "pathact8_frozen_R18": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+    "exclude_val_list": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\exclude_val_trajs.txt"
+  },
+  "arm_definitions": {
+    "R2": {
+      "goal_pos_mode": "goal",
+      "pos_dim": 2,
+      "config_yaml": "config/nomad_e_dino_r2_r18.yaml",
+      "path_gate": "none",
+      "wp_path_head": "none"
+    },
+    "R18": {
+      "goal_pos_mode": "goal_path",
+      "pos_dim": 18,
+      "config_yaml": "config/nomad_e_dino_r18.yaml",
+      "path_source": "wp_poly",
+      "path_units": "dataset",
+      "wp_path_head_ckpt": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+      "path_cond_zero_init_extra_cols": true,
+      "path_ctx_frames": 2
+    }
+  },
+  "run_name_pattern": "nomad_e_{r2|r18}_fair_20261107_seed{train_seed}",
+  "launcher": {
+    "script": "train/run_r2_r18_seed_repeat.py",
+    "command": "python run_r2_r18_seed_repeat.py --seeds 1 2",
+    "python_env": "C:\\Users\\61078\\anaconda3\\envs\\nomad_train\\python.exe",
+    "train_script": "train_e_dino.py"
+  },
+  "pairing_rule": "Same train_seed for R2+R18 pair: shared data order, augment, train noise, diffusion timesteps after reset_train_rng_after_init",
+  "runs": [
+    {
+      "run_name": "nomad_e_r2_fair_20261107_seed1",
+      "train_seed": 1,
+      "output_dir": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r2_fair_20261107_seed1",
+      "args_txt": {
+        "checkpoint_b": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+        "dino_head": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+        "pos_dim": "2",
+        "goal_pos_mode": "goal",
+        "path_gate": "none",
+        "path_source": "ray",
+        "init_ckpt": "",
+        "wp_head": "logs/nomad_d/nomad_dino_wp_e60_2026_10_20_20_29_32/dino_dir_best.pth",
+        "wp_path_head": "",
+        "wp_scale": "1.0",
+        "exclude_val_list": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\exclude_val_trajs.txt",
+        "val_manifest_csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+        "cache": "logs/dino_cache/dinov2_vits14_reg",
+        "goal_mask_prob": "0.5",
+        "init_from": "e_oracle",
+        "checkpoint_e_oracle": "logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+        "true_pos_prob": "0.0",
+        "lr": "3e-05",
+        "epochs": "8",
+        "lr_schedule": "per_step",
+        "reset_train_rng_after_init": "True"
+      },
+      "epochs_logged": 8,
+      "train_budget": {
+        "train_samples_index": "123125",
+        "train_batches_per_epoch": "3847",
+        "lr_epoch_start_ep0": "3.0000000000000004e-07",
+        "lr_epoch_end_ep0": "3e-05",
+        "minutes_per_epoch_sample": [
+          "12.33278792699178",
+          "10.819112475713094",
+          "10.60557131767273",
+          "10.62242994705836",
+          "10.57054025332133",
+          "10.585270301500957",
+          "10.586076088746388",
+          "10.711742579936981"
+        ]
+      },
+      "per_epoch_log": [
+        {
+          "epoch": "0",
+          "train_action_loss": "0.01677223895291579",
+          "lr": "3e-05",
+          "lr_epoch_start": "3.0000000000000004e-07",
+          "lr_epoch_end": "3e-05",
+          "minutes": "12.33278792699178",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "13.173764548823238",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch0.csv"
+        },
+        {
+          "epoch": "1",
+          "train_action_loss": "0.016935395440726107",
+          "lr": "2.8514533018536113e-05",
+          "lr_epoch_start": "3e-05",
+          "lr_epoch_end": "2.8514533018536113e-05",
+          "minutes": "10.819112475713094",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "13.066264946386218",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch1.csv"
+        },
+        {
+          "epoch": "2",
+          "train_action_loss": "0.016672042044035162",
+          "lr": "2.43523470278809e-05",
+          "lr_epoch_start": "2.8514533018536113e-05",
+          "lr_epoch_end": "2.43523470278809e-05",
+          "minutes": "10.60557131767273",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.985792876407505",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch2.csv"
+        },
+        {
+          "epoch": "3",
+          "train_action_loss": "0.0164694730627664",
+          "lr": "1.833781400934456e-05",
+          "lr_epoch_start": "2.43523470278809e-05",
+          "lr_epoch_end": "1.833781400934456e-05",
+          "minutes": "10.62242994705836",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "13.009002363681793",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch3.csv"
+        },
+        {
+          "epoch": "4",
+          "train_action_loss": "0.01646852462938467",
+          "lr": "1.1662185990655143e-05",
+          "lr_epoch_start": "1.833781400934456e-05",
+          "lr_epoch_end": "1.1662185990655143e-05",
+          "minutes": "10.57054025332133",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.986700313538313",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch4.csv"
+        },
+        {
+          "epoch": "5",
+          "train_action_loss": "0.01625714783812718",
+          "lr": "5.64765297211889e-06",
+          "lr_epoch_start": "1.1662185990655143e-05",
+          "lr_epoch_end": "5.64765297211889e-06",
+          "minutes": "10.585270301500957",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.897174018248915",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch5.csv"
+        },
+        {
+          "epoch": "6",
+          "train_action_loss": "0.015969441393159457",
+          "lr": "1.485466981463692e-06",
+          "lr_epoch_start": "5.64765297211889e-06",
+          "lr_epoch_end": "1.485466981463692e-06",
+          "minutes": "10.586076088746388",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.905685636028647",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch6.csv"
+        },
+        {
+          "epoch": "7",
+          "train_action_loss": "0.016068708595339216",
+          "lr": "0.0",
+          "lr_epoch_start": "1.485466981463692e-06",
+          "lr_epoch_end": "0.0",
+          "minutes": "10.711742579936981",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.919403022155166",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed1\\val_nav_ade_epoch7.csv"
+        }
+      ],
+      "checkpoints_ema": [
+        {
+          "file": "ema_0.pth",
+          "sha256": "50ba39b423289a49be13c9bf023ef87caf7b09d386ae39536a87dfc7cf548e57"
+        },
+        {
+          "file": "ema_1.pth",
+          "sha256": "a2e44673a13526399438a82794a37a6a3ddc3d58932091f36909af605a3f28fa"
+        },
+        {
+          "file": "ema_2.pth",
+          "sha256": "40dc4264d329740453a9e75dbdaf6ad09abb0767e64dc5ed1d24aa66d1c57793"
+        },
+        {
+          "file": "ema_3.pth",
+          "sha256": "de2861a7dc6ecb1a55b97cef27d85167562810d41af0bf382a1e928dea2bf546"
+        },
+        {
+          "file": "ema_4.pth",
+          "sha256": "fffebc945cf0eb5c08ace1139afae42d8e381ea1ce4ec71a2b4d3d32d3d0a081"
+        },
+        {
+          "file": "ema_5.pth",
+          "sha256": "a5e289de5cd4d6d01a9b48219cf07ee46073c0a9ae8261589f65ceafc2815735"
+        },
+        {
+          "file": "ema_6.pth",
+          "sha256": "f9d926599bdec04d19b591d01f2cfe792513a1fbedae513c363b427fad206e12"
+        },
+        {
+          "file": "ema_7.pth",
+          "sha256": "df1d7b99e1c635d6b79c67f7d0fe5018101f7d668a76030ec14309afc573a18f"
+        }
+      ],
+      "ema_latest_sha256": "2e03045146339963b016d6c389866c7003b5a8189c52ec2ff82748fc6eb9f33f",
+      "val_epochs_done": 8,
+      "best_val_nav_by_ade": {
+        "epoch": 5,
+        "nav_ade_cm": 12.897174018248915,
+        "checkpoint_rel": "logs/nomad/nomad_e_r2_fair_20261107_seed1/ema_5.pth"
+      },
+      "status": "complete"
+    },
+    {
+      "run_name": "nomad_e_r18_fair_20261107_seed1",
+      "train_seed": 1,
+      "output_dir": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r18_fair_20261107_seed1",
+      "args_txt": {
+        "checkpoint_b": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+        "dino_head": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+        "pos_dim": "18",
+        "goal_pos_mode": "goal_path",
+        "path_gate": "none",
+        "path_source": "wp_poly",
+        "init_ckpt": "logs/nomad/nomad_e_r18_fair_20261107_seed1/ema_latest.pth",
+        "wp_head": "logs/nomad_d/nomad_dino_wp_e60_2026_10_20_20_29_32/dino_dir_best.pth",
+        "wp_path_head": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+        "wp_scale": "1.0",
+        "exclude_val_list": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\exclude_val_trajs.txt",
+        "val_manifest_csv": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+        "cache": "logs/dino_cache/dinov2_vits14_reg",
+        "goal_mask_prob": "0.5",
+        "init_from": "e_oracle",
+        "checkpoint_e_oracle": "logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+        "true_pos_prob": "0.0",
+        "lr": "3e-05",
+        "epochs": "8",
+        "lr_schedule": "per_step",
+        "reset_train_rng_after_init": "True"
+      },
+      "epochs_logged": 8,
+      "train_budget": {
+        "train_samples_index": "123125",
+        "train_batches_per_epoch": "3847",
+        "lr_epoch_start_ep0": "3.0000000000000004e-07",
+        "lr_epoch_end_ep0": "3e-05",
+        "minutes_per_epoch_sample": [
+          "12.20205352306366",
+          "11.682592952251435",
+          "11.761039380232493",
+          "11.568688376744587",
+          "11.885539356867472",
+          "11.802282341321309",
+          "11.649270196755728",
+          "11.899876356124878"
+        ]
+      },
+      "per_epoch_log": [
+        {
+          "epoch": "0",
+          "train_action_loss": "0.016281675971845842",
+          "lr": "3e-05",
+          "lr_epoch_start": "3.0000000000000004e-07",
+          "lr_epoch_end": "3e-05",
+          "minutes": "12.20205352306366",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.97940821312368",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch0.csv"
+        },
+        {
+          "epoch": "1",
+          "train_action_loss": "0.0157123717865715",
+          "lr": "2.8514533018536113e-05",
+          "lr_epoch_start": "3e-05",
+          "lr_epoch_end": "2.8514533018536113e-05",
+          "minutes": "11.682592952251435",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.81966630294919",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch1.csv"
+        },
+        {
+          "epoch": "2",
+          "train_action_loss": "0.015263515605402525",
+          "lr": "2.43523470278809e-05",
+          "lr_epoch_start": "2.8514533018536113e-05",
+          "lr_epoch_end": "2.43523470278809e-05",
+          "minutes": "11.761039380232493",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.75614252500236",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch2.csv"
+        },
+        {
+          "epoch": "3",
+          "train_action_loss": "0.014942315907069053",
+          "lr": "1.833781400934456e-05",
+          "lr_epoch_start": "2.43523470278809e-05",
+          "lr_epoch_end": "1.833781400934456e-05",
+          "minutes": "11.568688376744587",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.764725456014276",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch3.csv"
+        },
+        {
+          "epoch": "4",
+          "train_action_loss": "0.014807217868658493",
+          "lr": "1.1662185990655143e-05",
+          "lr_epoch_start": "1.833781400934456e-05",
+          "lr_epoch_end": "1.1662185990655143e-05",
+          "minutes": "11.885539356867472",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.76433112807572",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch4.csv"
+        },
+        {
+          "epoch": "5",
+          "train_action_loss": "0.014637535430374155",
+          "lr": "5.64765297211889e-06",
+          "lr_epoch_start": "1.1662185990655143e-05",
+          "lr_epoch_end": "5.64765297211889e-06",
+          "minutes": "11.802282341321309",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.793207717686892",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch5.csv"
+        },
+        {
+          "epoch": "6",
+          "train_action_loss": "0.014268441893066527",
+          "lr": "1.485466981463692e-06",
+          "lr_epoch_start": "5.64765297211889e-06",
+          "lr_epoch_end": "1.485466981463692e-06",
+          "minutes": "11.649270196755728",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.829581595212222",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch6.csv"
+        },
+        {
+          "epoch": "7",
+          "train_action_loss": "0.014535413087842938",
+          "lr": "3e-05",
+          "lr_epoch_start": "3.0000000000000004e-07",
+          "lr_epoch_end": "3e-05",
+          "minutes": "11.899876356124878",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.824789835512638",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed1\\val_nav_ade_epoch7.csv"
+        }
+      ],
+      "checkpoints_ema": [
+        {
+          "file": "ema_0.pth",
+          "sha256": "0cd39277c4a591ae093c2499074ce01bfc27ccbcd15d59b444da76899a6b5ba7"
+        },
+        {
+          "file": "ema_1.pth",
+          "sha256": "e8c92bbea2ceb878c3500a849941d9e01eea96c41cccce4fed753961eb2bbda3"
+        },
+        {
+          "file": "ema_2.pth",
+          "sha256": "088384d1e659bf8bfcbc3b31f792a06af2018453b9d5fde37620c8626dddf17a"
+        },
+        {
+          "file": "ema_3.pth",
+          "sha256": "e6c8892e1a767049c3edac83b6d5a5709e8a33a9d0f801accc9a63297940b4b9"
+        },
+        {
+          "file": "ema_4.pth",
+          "sha256": "385f5442ced4c02af79b9d3d28c0fda97fb2cfdb5b3090783dd9de1e8f013a56"
+        },
+        {
+          "file": "ema_5.pth",
+          "sha256": "ffc6947a9544bec0aef8684fd63c4908fc69ca6d68bee08d216b2f38ff3cf09d"
+        },
+        {
+          "file": "ema_6.pth",
+          "sha256": "eb176b7c66a0c3ef45a16f11d6e95c679821ee3f698687385eccf4b8631c141c"
+        },
+        {
+          "file": "ema_7.pth",
+          "sha256": "b669bdc9c0baf574868676192d0bc8041d0e751d444ed505d1bd9c9811f947d0"
+        }
+      ],
+      "ema_latest_sha256": "f30876ccd3dbbc7c2aebdb9e6e771d2d1a746356f426b68fed74eb233a1d9006",
+      "val_epochs_done": 8,
+      "best_val_nav_by_ade": {
+        "epoch": 2,
+        "nav_ade_cm": 11.75614252500236,
+        "checkpoint_rel": "logs/nomad/nomad_e_r18_fair_20261107_seed1/ema_2.pth"
+      },
+      "status": "complete"
+    },
+    {
+      "run_name": "nomad_e_r2_fair_20261107_seed2",
+      "train_seed": 2,
+      "output_dir": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r2_fair_20261107_seed2",
+      "args_txt": {
+        "checkpoint_b": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+        "dino_head": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+        "pos_dim": "2",
+        "goal_pos_mode": "goal",
+        "path_gate": "none",
+        "path_source": "ray",
+        "init_ckpt": "",
+        "wp_head": "logs/nomad_d/nomad_dino_wp_e60_2026_10_20_20_29_32/dino_dir_best.pth",
+        "wp_path_head": "",
+        "wp_scale": "1.0",
+        "exclude_val_list": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\exclude_val_trajs.txt",
+        "val_manifest_csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+        "cache": "logs/dino_cache/dinov2_vits14_reg",
+        "goal_mask_prob": "0.5",
+        "init_from": "e_oracle",
+        "checkpoint_e_oracle": "logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+        "true_pos_prob": "0.0",
+        "lr": "3e-05",
+        "epochs": "8",
+        "lr_schedule": "per_step",
+        "reset_train_rng_after_init": "True"
+      },
+      "epochs_logged": 8,
+      "train_budget": {
+        "train_samples_index": "123125",
+        "train_batches_per_epoch": "3847",
+        "lr_epoch_start_ep0": "3.0000000000000004e-07",
+        "lr_epoch_end_ep0": "3e-05",
+        "minutes_per_epoch_sample": [
+          "10.529982554912568",
+          "10.063178137938182",
+          "10.057393892606099",
+          "10.169645770390828",
+          "10.200155719121296",
+          "10.37533017396927",
+          "10.786926817893981",
+          "10.835043974717458"
+        ]
+      },
+      "per_epoch_log": [
+        {
+          "epoch": "0",
+          "train_action_loss": "0.016917465519465352",
+          "lr": "3e-05",
+          "lr_epoch_start": "3.0000000000000004e-07",
+          "lr_epoch_end": "3e-05",
+          "minutes": "10.529982554912568",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "13.27903006374836",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch0.csv"
+        },
+        {
+          "epoch": "1",
+          "train_action_loss": "0.01689719873425651",
+          "lr": "2.8514533018536113e-05",
+          "lr_epoch_start": "3e-05",
+          "lr_epoch_end": "2.8514533018536113e-05",
+          "minutes": "10.063178137938182",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.982908383011818",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch1.csv"
+        },
+        {
+          "epoch": "2",
+          "train_action_loss": "0.016904496961998635",
+          "lr": "2.43523470278809e-05",
+          "lr_epoch_start": "2.8514533018536113e-05",
+          "lr_epoch_end": "2.43523470278809e-05",
+          "minutes": "10.057393892606099",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.928366148471833",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch2.csv"
+        },
+        {
+          "epoch": "3",
+          "train_action_loss": "0.0167625682605973",
+          "lr": "1.833781400934456e-05",
+          "lr_epoch_start": "2.43523470278809e-05",
+          "lr_epoch_end": "1.833781400934456e-05",
+          "minutes": "10.169645770390828",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.900466692820192",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch3.csv"
+        },
+        {
+          "epoch": "4",
+          "train_action_loss": "0.016255981332766477",
+          "lr": "1.1662185990655143e-05",
+          "lr_epoch_start": "1.833781400934456e-05",
+          "lr_epoch_end": "1.1662185990655143e-05",
+          "minutes": "10.200155719121296",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.904016600176693",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch4.csv"
+        },
+        {
+          "epoch": "5",
+          "train_action_loss": "0.01635206475525997",
+          "lr": "5.64765297211889e-06",
+          "lr_epoch_start": "1.1662185990655143e-05",
+          "lr_epoch_end": "5.64765297211889e-06",
+          "minutes": "10.37533017396927",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.82520508505404",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch5.csv"
+        },
+        {
+          "epoch": "6",
+          "train_action_loss": "0.016162582917760872",
+          "lr": "1.485466981463692e-06",
+          "lr_epoch_start": "5.64765297211889e-06",
+          "lr_epoch_end": "1.485466981463692e-06",
+          "minutes": "10.786926817893981",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.824990313127637",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch6.csv"
+        },
+        {
+          "epoch": "7",
+          "train_action_loss": "0.016368664688836878",
+          "lr": "0.0",
+          "lr_epoch_start": "1.485466981463692e-06",
+          "lr_epoch_end": "0.0",
+          "minutes": "10.835043974717458",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.799586356431245",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r2_fair_20261107_seed2\\val_nav_ade_epoch7.csv"
+        }
+      ],
+      "checkpoints_ema": [
+        {
+          "file": "ema_0.pth",
+          "sha256": "be4723a8b5eaec3de5a22a58a2a74698ae05d67d7ab3828ae69ff0cb06bc796f"
+        },
+        {
+          "file": "ema_1.pth",
+          "sha256": "5a9945d1fd873b0011a40d2381b23dfc03336d9352182e3c35121c42a7248c3c"
+        },
+        {
+          "file": "ema_2.pth",
+          "sha256": "11ffb7e68bab656d10558e4829979f02686b5888c88dc0061f0247d7e2ca6620"
+        },
+        {
+          "file": "ema_3.pth",
+          "sha256": "421d452fcfd8090bd03b082424005d46940b5b4477ea7aafee0cdacf02177ddd"
+        },
+        {
+          "file": "ema_4.pth",
+          "sha256": "3283f2a1639d74f181771b2d8371ee067f192247c50227e36a3a374b54fab647"
+        },
+        {
+          "file": "ema_5.pth",
+          "sha256": "437cda7d8a9b7034c4130a22e8630cd67a46104553ee9577e9781588b1d2e69f"
+        },
+        {
+          "file": "ema_6.pth",
+          "sha256": "18bad683f51c190e9572672aaf5e5c1ab8e779e25f09ce9e1a6f372b84c2eacb"
+        },
+        {
+          "file": "ema_7.pth",
+          "sha256": "596b406d3a41b9bc641ec4e5ac37c1fabd02be2f05c291f7bf4c60bc5c71d805"
+        }
+      ],
+      "ema_latest_sha256": "20d6d8e185b9b8d469d42c207db5cbeaa7f343efa23dd1dd03e9f5cfe52d4b0b",
+      "val_epochs_done": 8,
+      "best_val_nav_by_ade": {
+        "epoch": 7,
+        "nav_ade_cm": 12.799586356431245,
+        "checkpoint_rel": "logs/nomad/nomad_e_r2_fair_20261107_seed2/ema_7.pth"
+      },
+      "status": "complete"
+    },
+    {
+      "run_name": "nomad_e_r18_fair_20261107_seed2",
+      "train_seed": 2,
+      "output_dir": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_r18_fair_20261107_seed2",
+      "args_txt": {
+        "checkpoint_b": "logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+        "dino_head": "logs/nomad_d/nomad_dino_dir_e60_2026_10_13_19_29_06/dino_dir_best.pth",
+        "pos_dim": "18",
+        "goal_pos_mode": "goal_path",
+        "path_gate": "none",
+        "path_source": "wp_poly",
+        "init_ckpt": "",
+        "wp_head": "logs/nomad_d/nomad_dino_wp_e60_2026_10_20_20_29_32/dino_dir_best.pth",
+        "wp_path_head": "logs/nomad_d/nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32/dino_dir_best.pth",
+        "wp_scale": "1.0",
+        "exclude_val_list": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\exclude_val_trajs.txt",
+        "val_manifest_csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+        "cache": "logs/dino_cache/dinov2_vits14_reg",
+        "goal_mask_prob": "0.5",
+        "init_from": "e_oracle",
+        "checkpoint_e_oracle": "logs/nomad/nomad_e_oracle_2026_10_09_09_20_40/ema_29.pth",
+        "true_pos_prob": "0.0",
+        "lr": "3e-05",
+        "epochs": "8",
+        "lr_schedule": "per_step",
+        "reset_train_rng_after_init": "True"
+      },
+      "epochs_logged": 8,
+      "train_budget": {
+        "train_samples_index": "123125",
+        "train_batches_per_epoch": "3847",
+        "lr_epoch_start_ep0": "3.0000000000000004e-07",
+        "lr_epoch_end_ep0": "3e-05",
+        "minutes_per_epoch_sample": [
+          "12.07138787508011",
+          "11.625236058235169",
+          "11.669355575243632",
+          "11.54130953947703",
+          "11.519416125615438",
+          "11.459079003334045",
+          "11.475331330299378",
+          "11.583736109733582"
+        ]
+      },
+      "per_epoch_log": [
+        {
+          "epoch": "0",
+          "train_action_loss": "0.016445237360350216",
+          "lr": "3e-05",
+          "lr_epoch_start": "3.0000000000000004e-07",
+          "lr_epoch_end": "3e-05",
+          "minutes": "12.07138787508011",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "12.087178675457835",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch0.csv"
+        },
+        {
+          "epoch": "1",
+          "train_action_loss": "0.015593409260196067",
+          "lr": "2.8514533018536113e-05",
+          "lr_epoch_start": "3e-05",
+          "lr_epoch_end": "2.8514533018536113e-05",
+          "minutes": "11.625236058235169",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.765307065099478",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch1.csv"
+        },
+        {
+          "epoch": "2",
+          "train_action_loss": "0.015395679844851178",
+          "lr": "2.43523470278809e-05",
+          "lr_epoch_start": "2.8514533018536113e-05",
+          "lr_epoch_end": "2.43523470278809e-05",
+          "minutes": "11.669355575243632",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.698679548315704",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch2.csv"
+        },
+        {
+          "epoch": "3",
+          "train_action_loss": "0.015080722095726065",
+          "lr": "1.833781400934456e-05",
+          "lr_epoch_start": "2.43523470278809e-05",
+          "lr_epoch_end": "1.833781400934456e-05",
+          "minutes": "11.54130953947703",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.70776304230094",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch3.csv"
+        },
+        {
+          "epoch": "4",
+          "train_action_loss": "0.01467722083728903",
+          "lr": "1.1662185990655143e-05",
+          "lr_epoch_start": "1.833781400934456e-05",
+          "lr_epoch_end": "1.1662185990655143e-05",
+          "minutes": "11.519416125615438",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.753105979785323",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch4.csv"
+        },
+        {
+          "epoch": "5",
+          "train_action_loss": "0.014650863060119661",
+          "lr": "5.64765297211889e-06",
+          "lr_epoch_start": "1.1662185990655143e-05",
+          "lr_epoch_end": "5.64765297211889e-06",
+          "minutes": "11.459079003334045",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.77123118378222",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch5.csv"
+        },
+        {
+          "epoch": "6",
+          "train_action_loss": "0.01446505013127064",
+          "lr": "1.485466981463692e-06",
+          "lr_epoch_start": "5.64765297211889e-06",
+          "lr_epoch_end": "1.485466981463692e-06",
+          "minutes": "11.475331330299378",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.806433054246009",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch6.csv"
+        },
+        {
+          "epoch": "7",
+          "train_action_loss": "0.01466654220571724",
+          "lr": "0.0",
+          "lr_epoch_start": "1.485466981463692e-06",
+          "lr_epoch_end": "0.0",
+          "minutes": "11.583736109733582",
+          "train_batches": "3847",
+          "train_samples_index": "123125",
+          "val_nav_ade_cm": "11.798821328021585",
+          "val_nav_per_frame_csv": "logs\\nomad\\nomad_e_r18_fair_20261107_seed2\\val_nav_ade_epoch7.csv"
+        }
+      ],
+      "checkpoints_ema": [
+        {
+          "file": "ema_0.pth",
+          "sha256": "48bfe006f6af9601a3be561841a7e644134d78bfa9772d476a009a145b323bb6"
+        },
+        {
+          "file": "ema_1.pth",
+          "sha256": "7dfa531789648daecbdebb566e21ef2c4f740dc09bf2ef4b3db8f548a7f4f6b6"
+        },
+        {
+          "file": "ema_2.pth",
+          "sha256": "a80086548c0b7334b7ec2e7addc246faf036f3779c9af2c00e7ad66d71f68782"
+        },
+        {
+          "file": "ema_3.pth",
+          "sha256": "65355c3d14878f527763f53caa56b95425f4ae72c0347fe7efc24beb326e453b"
+        },
+        {
+          "file": "ema_4.pth",
+          "sha256": "c0790cb71c948c80c2805e41f9a4b1032137a3b27944277649a63f31eef1c310"
+        },
+        {
+          "file": "ema_5.pth",
+          "sha256": "541c4bb8b6fa7721ea16ab702c2f53509cb67a8497fe96eb74fd53e9d912afde"
+        },
+        {
+          "file": "ema_6.pth",
+          "sha256": "82f884dd192e3acacf9eceb40a05a2e5f6870e57559a981de814fa4a5b5102b1"
+        },
+        {
+          "file": "ema_7.pth",
+          "sha256": "d8fea89255a08f567e4b6967e1727d1c9dfd6790358994293738ca23c7923c36"
+        }
+      ],
+      "ema_latest_sha256": "a567746fef058dc4df974535fd0ce5560c25a9f55b38ed013e1b1d59bfad04c3",
+      "val_epochs_done": 8,
+      "best_val_nav_by_ade": {
+        "epoch": 2,
+        "nav_ade_cm": 11.698679548315704,
+        "checkpoint_rel": "logs/nomad/nomad_e_r18_fair_20261107_seed2/ema_2.pth"
+      },
+      "status": "complete"
+    }
+  ]
+}

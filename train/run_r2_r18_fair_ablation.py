@@ -344,7 +344,7 @@ def run_preflight(manifest_csv: str) -> dict:
     return checks
 
 
-def train_arm(label: str, goal_mode: str, pos_dim: int, config: str, run_name: str, manifest_csv: str, exclude_txt: str):
+def train_arm(label: str, goal_mode: str, pos_dim: int, config: str, run_name: str, manifest_csv: str, exclude_txt: str, train_seed: int = 0):
     run_dir = os.path.join(CWD, "logs", "nomad", run_name)
     log_path = os.path.join(run_dir, "train_log.csv")
     start_epoch = 0
@@ -383,7 +383,7 @@ def train_arm(label: str, goal_mode: str, pos_dim: int, config: str, run_name: s
         "per_step",
         "--reset-train-rng-after-init",
         "--seed",
-        "0",
+        str(train_seed),
         "--num-workers",
         "2",
         "--run-name",

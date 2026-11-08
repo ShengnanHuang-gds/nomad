@@ -1,0 +1,36 @@
+{
+  "audited_at_utc": "2026-11-08T04:42:05.394212+00:00",
+  "seeds_requested": [
+    1,
+    2
+  ],
+  "status": {
+    "seed0_note": "nomad_e_r2_fair_20261107 / nomad_e_r18_fair_20261107 (unchanged)",
+    "seed1": {
+      "R2": {
+        "run_name": "nomad_e_r2_fair_20261107_seed1",
+        "epochs_in_log": 8,
+        "complete": true
+      },
+      "R18": {
+        "run_name": "nomad_e_r18_fair_20261107_seed1",
+        "epochs_in_log": 8,
+        "complete": true
+      }
+    },
+    "seed2": {
+      "R2": {
+        "run_name": "nomad_e_r2_fair_20261107_seed2",
+        "epochs_in_log": 8,
+        "complete": true
+      },
+      "R18": {
+        "run_name": "nomad_e_r18_fair_20261107_seed2",
+        "epochs_in_log": 8,
+        "complete": true
+      }
+    }
+  },
+  "val_manifest": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs/revalidation/r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+  "val_eval_seed": 0
+}

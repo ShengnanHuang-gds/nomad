@@ -1,0 +1,8 @@
+{
+  "E_init": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_ft_pathact8\\ema_latest.pth",
+  "E_sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6",
+  "WP": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad_d\\nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32\\dino_dir_best.pth",
+  "WP_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+  "val_manifest": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\r2_r18_fair_2026-11-07\\val_far_manifest_seed20261107.csv",
+  "note_locked_17.75cm": "historical Locked 1000 reference, not this 500-pair val protocol"
+}

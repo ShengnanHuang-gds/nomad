@@ -1,0 +1,9 @@
+epoch,is_best_nav_ade,lr_end,lr_start,minutes,train_loss,val_nav_ade_cm,val_nav_per_frame_csv
+0,True,3e-06,3.0000000000000004e-08,77.34402361313502,0.012450908192787566,11.70731694996357,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\revalidation\e_path_joint_ab_2026-11-08\arm_a\val_nav_ade_epoch0.csv
+1,,2.851453301853642e-06,3e-06,77.5495357076327,0.012522596871503757,11.73038573898375,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\revalidation\e_path_joint_ab_2026-11-08\arm_a\val_nav_ade_epoch1.csv
+2,True,2.435234702788104e-06,2.851453301853642e-06,76.49693585236868,0.012242617385055738,11.69404097162187,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\revalidation\e_path_joint_ab_2026-11-08\arm_a\val_nav_ade_epoch2.csv
+3,True,1.8337814009344673e-06,2.435234702788104e-06,76.46614434321721,0.012222235735348455,11.665945400670171,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\revalidation\e_path_joint_ab_2026-11-08\arm_a\val_nav_ade_epoch3.csv
+4,,1.1662185990655233e-06,1.8337814009344673e-06,76.54110819896063,0.012313082123326087,11.678865488059818,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs\revalidation\e_path_joint_ab_2026-11-08\arm_a\val_nav_ade_epoch4.csv
+5,,5.647652972119036e-07,1.1662185990655233e-06,78.09352047046026,0.012343710175954616,11.671167169511317,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs/revalidation/e_path_joint_ab_2026-11-08/arm_a\val_nav_ade_epoch5.csv
+6,,1.485466981463719e-07,5.647652972119036e-07,75.17370278437933,0.012120469634167099,11.685540656931698,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs/revalidation/e_path_joint_ab_2026-11-08/arm_a\val_nav_ade_epoch6.csv
+7,,0.0,1.485466981463719e-07,74.92929827769598,0.0121459993278405,11.677382918819784,C:\Users\61078\Desktop\nomad\visualnav-transformer\train\logs/revalidation/e_path_joint_ab_2026-11-08/arm_a\val_nav_ade_epoch7.csv

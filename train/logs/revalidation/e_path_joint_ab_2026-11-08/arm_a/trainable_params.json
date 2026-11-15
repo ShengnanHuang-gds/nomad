@@ -1,0 +1,1122 @@
+[
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.0.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.0.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.0.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.0.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.1.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.1.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.1.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.blocks.1.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.cond_encoder.1.weight",
+    "shape": [
+      256,
+      530
+    ],
+    "n": 135680
+  },
+  {
+    "name": "noise_pred_net.mid_modules.0.cond_encoder.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.0.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.0.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.0.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.0.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.1.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.1.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.1.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.blocks.1.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.cond_encoder.1.weight",
+    "shape": [
+      256,
+      530
+    ],
+    "n": 135680
+  },
+  {
+    "name": "noise_pred_net.mid_modules.1.cond_encoder.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.diffusion_step_encoder.1.weight",
+    "shape": [
+      1024,
+      256
+    ],
+    "n": 262144
+  },
+  {
+    "name": "noise_pred_net.diffusion_step_encoder.1.bias",
+    "shape": [
+      1024
+    ],
+    "n": 1024
+  },
+  {
+    "name": "noise_pred_net.diffusion_step_encoder.3.weight",
+    "shape": [
+      256,
+      1024
+    ],
+    "n": 262144
+  },
+  {
+    "name": "noise_pred_net.diffusion_step_encoder.3.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.0.block.0.weight",
+    "shape": [
+      128,
+      512,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.0.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.0.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.0.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.1.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.1.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.1.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.blocks.1.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.cond_encoder.1.weight",
+    "shape": [
+      128,
+      530
+    ],
+    "n": 67840
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.cond_encoder.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.residual_conv.weight",
+    "shape": [
+      128,
+      512,
+      1
+    ],
+    "n": 65536
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.0.residual_conv.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.0.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.0.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.0.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.0.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.1.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.1.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.1.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.blocks.1.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.cond_encoder.1.weight",
+    "shape": [
+      128,
+      530
+    ],
+    "n": 67840
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.1.cond_encoder.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.2.conv.weight",
+    "shape": [
+      128,
+      128,
+      4
+    ],
+    "n": 65536
+  },
+  {
+    "name": "noise_pred_net.up_modules.0.2.conv.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.0.block.0.weight",
+    "shape": [
+      64,
+      256,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.0.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.0.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.0.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.1.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.1.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.1.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.blocks.1.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.cond_encoder.1.weight",
+    "shape": [
+      64,
+      530
+    ],
+    "n": 33920
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.cond_encoder.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.residual_conv.weight",
+    "shape": [
+      64,
+      256,
+      1
+    ],
+    "n": 16384
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.0.residual_conv.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.0.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.0.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.0.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.0.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.1.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.1.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.1.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.blocks.1.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.cond_encoder.1.weight",
+    "shape": [
+      64,
+      530
+    ],
+    "n": 33920
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.1.cond_encoder.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.2.conv.weight",
+    "shape": [
+      64,
+      64,
+      4
+    ],
+    "n": 16384
+  },
+  {
+    "name": "noise_pred_net.up_modules.1.2.conv.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.0.block.0.weight",
+    "shape": [
+      64,
+      2,
+      3
+    ],
+    "n": 384
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.0.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.0.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.0.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.1.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.1.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.1.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.blocks.1.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.cond_encoder.1.weight",
+    "shape": [
+      64,
+      530
+    ],
+    "n": 33920
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.cond_encoder.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.residual_conv.weight",
+    "shape": [
+      64,
+      2,
+      1
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.0.residual_conv.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.0.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.0.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.0.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.0.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.1.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.1.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.1.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.blocks.1.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.cond_encoder.1.weight",
+    "shape": [
+      64,
+      530
+    ],
+    "n": 33920
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.1.cond_encoder.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.2.conv.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.down_modules.0.2.conv.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.0.block.0.weight",
+    "shape": [
+      128,
+      64,
+      3
+    ],
+    "n": 24576
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.0.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.0.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.0.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.1.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.1.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.1.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.blocks.1.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.cond_encoder.1.weight",
+    "shape": [
+      128,
+      530
+    ],
+    "n": 67840
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.cond_encoder.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.residual_conv.weight",
+    "shape": [
+      128,
+      64,
+      1
+    ],
+    "n": 8192
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.0.residual_conv.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.0.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.0.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.0.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.0.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.1.block.0.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.1.block.0.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.1.block.1.weight",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.blocks.1.block.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.cond_encoder.1.weight",
+    "shape": [
+      128,
+      530
+    ],
+    "n": 67840
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.1.cond_encoder.1.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.2.conv.weight",
+    "shape": [
+      128,
+      128,
+      3
+    ],
+    "n": 49152
+  },
+  {
+    "name": "noise_pred_net.down_modules.1.2.conv.bias",
+    "shape": [
+      128
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.0.block.0.weight",
+    "shape": [
+      256,
+      128,
+      3
+    ],
+    "n": 98304
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.0.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.0.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.0.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.1.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.1.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.1.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.blocks.1.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.cond_encoder.1.weight",
+    "shape": [
+      256,
+      530
+    ],
+    "n": 135680
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.cond_encoder.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.residual_conv.weight",
+    "shape": [
+      256,
+      128,
+      1
+    ],
+    "n": 32768
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.0.residual_conv.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.0.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.0.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.0.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.0.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.1.block.0.weight",
+    "shape": [
+      256,
+      256,
+      3
+    ],
+    "n": 196608
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.1.block.0.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.1.block.1.weight",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.blocks.1.block.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.cond_encoder.1.weight",
+    "shape": [
+      256,
+      530
+    ],
+    "n": 135680
+  },
+  {
+    "name": "noise_pred_net.down_modules.2.1.cond_encoder.1.bias",
+    "shape": [
+      256
+    ],
+    "n": 256
+  },
+  {
+    "name": "noise_pred_net.final_conv.0.block.0.weight",
+    "shape": [
+      64,
+      64,
+      3
+    ],
+    "n": 12288
+  },
+  {
+    "name": "noise_pred_net.final_conv.0.block.0.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.final_conv.0.block.1.weight",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.final_conv.0.block.1.bias",
+    "shape": [
+      64
+    ],
+    "n": 64
+  },
+  {
+    "name": "noise_pred_net.final_conv.1.weight",
+    "shape": [
+      2,
+      64,
+      1
+    ],
+    "n": 128
+  },
+  {
+    "name": "noise_pred_net.final_conv.1.bias",
+    "shape": [
+      2
+    ],
+    "n": 2
+  }
+]

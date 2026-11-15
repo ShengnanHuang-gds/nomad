@@ -1,0 +1,30 @@
+{
+  "O_nav_ade_cm": 11.768606268242001,
+  "A_nav_ade_cm": 11.665945400670171,
+  "B_nav_ade_cm": 11.622764428146183,
+  "A_best_epoch": 3,
+  "B_best_epoch": 7,
+  "delta_A_minus_O": -0.10266086757182968,
+  "delta_B_minus_O": -0.1458418400958177,
+  "delta_B_minus_A": -0.043180972523988004,
+  "bootstrap_A_minus_O": {
+    "mean": -0.10266086757183075,
+    "ci95_low": -0.14959484785795213,
+    "ci95_high": -0.05494258664548397
+  },
+  "bootstrap_B_minus_A": {
+    "mean": -0.043180972523987296,
+    "ci95_low": -0.07458526324480771,
+    "ci95_high": -0.012265338748693465
+  },
+  "bootstrap_B_minus_O": {
+    "mean": -0.14584184009581805,
+    "ci95_low": -0.19693648908287287,
+    "ci95_high": -0.0875698134303093
+  },
+  "success_B_better_than_O_and_A": true,
+  "init_hashes": {
+    "E_init_sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6",
+    "WP_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d"
+  }
+}

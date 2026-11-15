@@ -1,0 +1,230 @@
+{
+  "config_evidence": {
+    "dataset_name": "go_stanford",
+    "data_folder": "C:/Users/61078/Desktop/nomad/go_stanford",
+    "train_split_file": "c:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\vint_train\\data\\data_splits\\go_stanford\\train\\traj_names.txt",
+    "n_train_trajs_in_split": 2956,
+    "from_nomad_e_dino_path_yaml": {
+      "context_size": 3,
+      "context_type": "temporal",
+      "len_traj_pred": 8,
+      "learn_angle": false,
+      "image_size": [
+        96,
+        96
+      ],
+      "goals_per_obs": 2,
+      "waypoint_spacing_in_yaml": "<absent \u2192 code default 1>"
+    },
+    "vint_dataset_defaults_note": "train_e_joint_path_ab / train_e_dino use ViNTWithDinoRows with waypoint_spacing=data_config.get('waypoint_spacing', 1) \u2192 1 for go_stanford",
+    "metric_waypoint_spacing_m": 0.12,
+    "nominal_meters_per_index_step": 0.12,
+    "e_path_joint_ab_actual": {
+      "batch_size": 32,
+      "epochs": 8,
+      "source": "logs/revalidation/e_path_joint_ab_2026-11-08/ init_meta + train_log"
+    },
+    "wp_head_pathact8_context": 2,
+    "wp_head_note": "PairTokenHead uses 2 past cache frames; ViNT temporal context uses 4 images (context_size=3)"
+  },
+  "image_pose_consistency": {
+    "trajs_scanned": 2956,
+    "mismatches": [],
+    "mismatch_count": 0
+  },
+  "adjacent_frame_statistics": {
+    "all_edges": {
+      "n": 156245,
+      "median": 5.183333333333334,
+      "p90": 21.006666666666668,
+      "p95": 25.140000000000004,
+      "max": 36.10999999999994,
+      "mean_disp_m": null,
+      "pct_ge_5deg": 50.717782969055015,
+      "pct_ge_10deg": 33.38090818906205,
+      "pct_ge_20deg": 11.400044801433646,
+      "label": "all_adjacent_frames"
+    },
+    "straight_edges_abs_dyaw_lt_5deg": {
+      "n": 77001,
+      "median": 0.236666666666635,
+      "p90": 3.636666666666678,
+      "p95": 4.343333333333335,
+      "max": 4.999999999999995,
+      "mean_disp_m": null,
+      "pct_ge_5deg": 0.0,
+      "pct_ge_10deg": 0.0,
+      "pct_ge_20deg": 0.0,
+      "label": "straight_subset"
+    },
+    "turn_edges_abs_dyaw_ge_5deg": {
+      "n": 79244,
+      "median": 12.861666666666638,
+      "p90": 25.05000000000002,
+      "p95": 27.05333333333332,
+      "max": 36.10999999999994,
+      "mean_disp_m": null,
+      "pct_ge_5deg": 100.0,
+      "pct_ge_10deg": 65.81697036999647,
+      "pct_ge_20deg": 22.477411539043963,
+      "label": "turn_edge_subset"
+    },
+    "displacement_between_frames_m": {
+      "n": 156245,
+      "median": 0.1457009195581478,
+      "p90": 0.16666666666666655,
+      "p95": 0.16703033880512094,
+      "max": 0.18835313690879715
+    }
+  },
+  "top_turn_windows_8edges": [
+    {
+      "traj": "no1vc_18_0",
+      "n_frames": 55,
+      "match": true,
+      "window4_start": 39,
+      "window4_sum_abs_deg": 124.94333333333338,
+      "window8_start": 39,
+      "window8_sum_abs_deg": 233.68333333333337
+    },
+    {
+      "traj": "no1vcF_18_0",
+      "n_frames": 55,
+      "match": true,
+      "window4_start": 39,
+      "window4_sum_abs_deg": 124.94333333333338,
+      "window8_start": 39,
+      "window8_sum_abs_deg": 233.68333333333337
+    },
+    {
+      "traj": "sim2hF_0_34",
+      "n_frames": 46,
+      "match": true,
+      "window4_start": 10,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 10,
+      "window8_sum_abs_deg": 229.1831180523293
+    },
+    {
+      "traj": "sim3hF_1_2",
+      "n_frames": 113,
+      "match": true,
+      "window4_start": 27,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 81,
+      "window8_sum_abs_deg": 229.1831180523293
+    },
+    {
+      "traj": "sim4hF_0_9",
+      "n_frames": 46,
+      "match": true,
+      "window4_start": 13,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 13,
+      "window8_sum_abs_deg": 229.1831180523293
+    },
+    {
+      "traj": "sim26h_4_6",
+      "n_frames": 93,
+      "match": true,
+      "window4_start": 21,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 21,
+      "window8_sum_abs_deg": 229.1831180523293
+    },
+    {
+      "traj": "sim12h_1_6",
+      "n_frames": 65,
+      "match": true,
+      "window4_start": 21,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 21,
+      "window8_sum_abs_deg": 229.1831180523293
+    },
+    {
+      "traj": "sim24hF_2_10",
+      "n_frames": 140,
+      "match": true,
+      "window4_start": 0,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 0,
+      "window8_sum_abs_deg": 229.1831180523293
+    }
+  ],
+  "example_exports": [
+    {
+      "rank": 1,
+      "traj": "no1vc_18_0",
+      "n_frames": 55,
+      "match": true,
+      "window4_start": 39,
+      "window4_sum_abs_deg": 124.94333333333338,
+      "window8_start": 39,
+      "window8_sum_abs_deg": 233.68333333333337,
+      "exported_frames": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ]
+    },
+    {
+      "rank": 2,
+      "traj": "no1vcF_18_0",
+      "n_frames": 55,
+      "match": true,
+      "window4_start": 39,
+      "window4_sum_abs_deg": 124.94333333333338,
+      "window8_start": 39,
+      "window8_sum_abs_deg": 233.68333333333337,
+      "exported_frames": [
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ]
+    },
+    {
+      "rank": 3,
+      "traj": "sim2hF_0_34",
+      "n_frames": 46,
+      "match": true,
+      "window4_start": 10,
+      "window4_sum_abs_deg": 114.59155902616465,
+      "window8_start": 10,
+      "window8_sum_abs_deg": 229.1831180523293,
+      "exported_frames": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ]
+    }
+  ],
+  "eval_nav_turn_gap_reference_O_baseline": {
+    "nav_ade_cm": 11.768606268242001,
+    "ade_back4_cm": 18.58807586543262,
+    "nav_ade_turn_strict_cm": 15.815947114451397,
+    "ade_back4_turn_strict_cm": 25.492343480682234,
+    "turn_strict_n": 169
+  },
+  "missing_for_prepost_processing_compare": {
+    "go_stanford_raw_ros_bags": "not found under go_stanford/ (*.bag count 0)",
+    "go_stanford_hdf5_source": "not in repo; process_recon.py applies to 'recon' HDF5, not go_stanford",
+    "traj_data_timestamp_fields": "traj_data.pkl only has position, yaw (no t/sec) \u2014 cannot compute Hz",
+    "preprocessing_log_for_go_stanford": "no recorded export command in repo for this machine's go_stanford tree"
+  },
+  "hard_oversample_experiments": {
+    "mechanism": "train_goal_dino.draw(): weighted resample of existing (traj,curr) pair indices",
+    "hard_frame_boost_example": "run_ab_mainline_hardwp.py: --hard-frame-boost 5.0 with hard_pairs_train.csv",
+    "new_intermediate_views": false,
+    "evidence": "Pairs built from DINO cache rows / ViNT index; draw() uses rng.choice on same index array with replacement",
+    "nomad_e_train_uses_hard_oversample": "No (train_e_dino / ViNT loader have no hard-pairs hook)"
+  }
+}

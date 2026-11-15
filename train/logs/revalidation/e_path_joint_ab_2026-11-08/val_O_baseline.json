@@ -1,0 +1,12 @@
+{
+  "nav_ade_cm": 11.768606268242001,
+  "ade_front4_cm": 4.949136648140848,
+  "ade_back4_cm": 18.58807586543262,
+  "n_val": 500,
+  "nav_ade_turn_strict_cm": 15.815947114451397,
+  "ade_front4_turn_strict_cm": 6.139550580692714,
+  "ade_back4_turn_strict_cm": 25.492343480682234,
+  "turn_strict_n": 169,
+  "per_frame_csv": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\revalidation\\e_path_joint_ab_2026-11-08\\val_nav_ade_epoch-1.csv",
+  "epoch": -1
+}

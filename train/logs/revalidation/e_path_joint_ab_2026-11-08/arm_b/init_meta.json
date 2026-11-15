@@ -1,0 +1,8 @@
+{
+  "init_ckpt": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad\\nomad_e_ft_pathact8\\ema_latest.pth",
+  "init_sha256": "d3b6053c1efb6aac5a59be8ca6e27aecc0a4ec13ecc9dbe7cfe74da9e9b00bf6",
+  "wp_head": "C:\\Users\\61078\\Desktop\\nomad\\visualnav-transformer\\train\\logs\\nomad_d\\nomad_dino_wp_ctx2_pathact8_2026_11_02_10_56_32\\dino_dir_best.pth",
+  "wp_sha256": "c2197c133d08cd9b84329d73385b183974d9c42a8c3b9fc0b2f4615156b97d4d",
+  "arm": "b",
+  "seed": 0
+}

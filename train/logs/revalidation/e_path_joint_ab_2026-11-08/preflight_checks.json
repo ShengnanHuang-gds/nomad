@@ -1,0 +1,11 @@
+{
+  "mu_consistency": {
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0,
+    "pass": true
+  },
+  "cond_init_match_frozen_vs_train_layer": true,
+  "grad_path_only_norm": 1.764451265335083,
+  "grad_diff_only_norm": 0.016816871240735054,
+  "frozen_wp_grad_tensors": 0
+}

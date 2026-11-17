@@ -1,0 +1,14 @@
+{
+  "epoch": -1,
+  "updates": 0,
+  "checkpoint_sha256": "95c8c97bfeabcf369a64efa6dcddd91e27022da6c71e69535348636e4a645a32",
+  "checkpoint_bytes": 22675733,
+  "selected_on": "house_run_05",
+  "mae_deg": 46.23603821152505,
+  "p90_deg": 92.0803585863479,
+  "large_turn_sign_accuracy": 0.49221183800623053,
+  "pair_count": 1138,
+  "large_turn_pair_count": 642,
+  "selection_score": 69.25612785811202,
+  "validation_gate_passed": false
+}

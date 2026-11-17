@@ -1,0 +1,35 @@
+{
+  "out": "gazebo_sim/visual_yaw_stage",
+  "epochs": 30,
+  "steps_per_epoch": 32,
+  "batch_size": 16,
+  "lr": 5e-05,
+  "kind": "image_pair_yaw_v1",
+  "base_config": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/model.yaml",
+  "base_checkpoint": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/best.pth",
+  "base_checkpoint_sha256": "48a963373cfb1f49c22bd7129e36122d945b67603949008ef15d0a9d20937d56",
+  "train_routes": [
+    "house_run_00",
+    "house_run_01",
+    "house_run_02",
+    "house_run_03",
+    "house_run_04"
+  ],
+  "validation_routes": [
+    "house_run_05"
+  ],
+  "train_pairs": 6756,
+  "validation_pairs": 1138,
+  "max_pair_frame_gap": 20,
+  "seed": 42,
+  "input": "current RGB and goal RGB only",
+  "output": "cos/sin of relative heading",
+  "angle_supervision": "wrapped goal yaw minus current yaw",
+  "loss": "MSE(raw_vector, target_cos_sin) + 0.25 * circular_cosine_loss",
+  "xy_checkpoint_modified": false,
+  "scheduler_steps_per_epoch": 1,
+  "validation_gate": "MAE<=10deg; p90<=20deg; large-turn sign accuracy>=0.95",
+  "gate_note": "engineering screening on route05, not a closed-loop safety or success guarantee",
+  "handoff_sha256": "c66009115b4c7119f185305adb7b0675349a4d38985c9250d43e67b0b6a81eb4",
+  "torch": "2.6.0+cu124"
+}

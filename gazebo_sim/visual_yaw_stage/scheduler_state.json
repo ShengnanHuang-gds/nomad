@@ -1,0 +1,14 @@
+{
+  "T_max": 30,
+  "eta_min": 0.0,
+  "base_lrs": [
+    5e-05
+  ],
+  "last_epoch": 30,
+  "verbose": false,
+  "_step_count": 31,
+  "_get_lr_called_within_step": false,
+  "_last_lr": [
+    0.0
+  ]
+}

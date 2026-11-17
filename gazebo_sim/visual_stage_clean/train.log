@@ -1,0 +1,52 @@
+---
+pid: 39580
+cwd: |
+  C:\Users\61078\Desktop\nomad
+---
+  --out gazebo_sim/visual_stage_preflight --prepare-only
+Verified archive: c66009115b4c7119f185305adb7b0675349a4d38985c9250d43e67b0b6a81eb4
+Train: 161 observations (00-04); validation: 27 (05); no old caches used.
+hsnnb@localhost:/mnt/c/Users/61078/Desktop/nomad$ "$NOMAD_PY"gazebo_sim/train_visual_stage.py \
+  --out gazebo_sim/visual_stage_smoke --epochs 1 --steps-per-epoch 2
+/home/hsnnb/nomad_ros_venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+epoch=-1 updates=0 validation={'validation_ade_m': 0.33258839620760194, 'validation_turn_ade_m': 0.4867793060839176, 'validation_turn_sign_accuracy': 0.6458333333333334, 'validation_distance_rmse': 10.58474435096733, 'selection_score': 0.9252151458011929} elapsed=2.1s
+epoch=0 updates=2 validation={'validation_ade_m': 0.33264849779920447, 'validation_turn_ade_m': 0.48632626856366795, 'validation_turn_sign_accuracy': 0.625, 'validation_distance_rmse': 10.55021310013439, 'selection_score': 0.9244768973642162} elapsed=3.7s
+Finished. Best EMA weights: /mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_smoke/best.pth; check best.json (epoch=-1 means baseline won).
+hsnnb@localhost:/mnt/c/Users/61078/Desktop/nomad$ "$NOMAD_PY"gazebo_sim/train_visual_stage.py \
+  --out gazebo_sim/visual_stage_clean --epochs 30 --steps-per-epoch 32
+/home/hsnnb/nomad_ros_venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+epoch=-1 updates=0 validation={'validation_ade_m': 0.33258839620760194, 'validation_turn_ade_m': 0.4867793060839176, 'validation_turn_sign_accuracy': 0.6458333333333334, 'validation_distance_rmse': 10.58474435096733, 'selection_score': 0.9252151458011929} elapsed=1.8s
+epoch=0 updates=32 validation={'validation_ade_m': 0.3347826741152891, 'validation_turn_ade_m': 0.46079043205827475, 'validation_turn_sign_accuracy': 0.625, 'validation_distance_rmse': 8.909961886378184, 'selection_score': 0.8846727250373456} elapsed=6.8s
+epoch=1 updates=64 validation={'validation_ade_m': 0.32715153587223206, 'validation_turn_ade_m': 0.4226799133854608, 'validation_turn_sign_accuracy': 0.6041666666666666, 'validation_distance_rmse': 7.5309148493575835, 'selection_score': 0.8251405977512687} elapsed=11.3s
+epoch=2 updates=96 validation={'validation_ade_m': 0.31973587719861557, 'validation_turn_ade_m': 0.39888405419575673, 'validation_turn_sign_accuracy': 0.625, 'validation_distance_rmse':6.864801272679627, 'selection_score': 0.7872679441211685} elapsed=15.9s
+epoch=3 updates=128 validation={'validation_ade_m': 0.3117397043991972, 'validation_turn_ade_m': 0.38254745630547404, 'validation_turn_sign_accuracy': 0.6666666666666666, 'validation_distance_rmse': 6.537531731447573, 'selection_score': 0.759662478019147} elapsed=21.2s
+epoch=4 updates=160 validation={'validation_ade_m': 0.30818913106082213, 'validation_turn_ade_m': 0.3653020221584787, 'validation_turn_sign_accuracy': 0.7083333333333334, 'validation_distance_rmse': 6.39036039655092, 'selection_score': 0.7373947571848101} elapsed=26.4s
+epoch=5 updates=192 validation={'validation_ade_m': 0.3091935249286945, 'validation_turn_ade_m': 0.3545505946191649, 'validation_turn_sign_accuracy': 0.7083333333333334, 'validation_distance_rmse': 6.220071194326819, 'selection_score': 0.7259448314911275} elapsed=31.8s
+epoch=6 updates=224 validation={'validation_ade_m': 0.31165650114417076, 'validation_turn_ade_m': 0.3486469498214622, 'validation_turn_sign_accuracy': 0.75, 'validation_distance_rmse': 6.237484527120287, 'selection_score': 0.7226782962368358} elapsed=37.3s
+epoch=7 updates=256 validation={'validation_ade_m': 0.3094019312584014, 'validation_turn_ade_m': 0.3524040507618338, 'validation_turn_sign_accuracy': 0.75, 'validation_distance_rmse': 6.303046611420902, 'selection_score': 0.7248364481344441} elapsed=42.4s
+epoch=8 updates=288 validation={'validation_ade_m': 0.30814866066254953, 'validation_turn_ade_m': 0.3596066140259306, 'validation_turn_sign_accuracy': 0.7291666666666666, 'validation_distance_rmse': 6.302371898996797, 'selection_score': 0.730778993678448} elapsed=47.3s
+epoch=9 updates=320 validation={'validation_ade_m': 0.3057349408045411, 'validation_turn_ade_m': 0.3615090603319307, 'validation_turn_sign_accuracy': 0.7083333333333334, 'validation_distance_rmse': 6.274596739010289, 'selection_score': 0.7299899685265746} elapsed=52.3s
+epoch=10 updates=352 validation={'validation_ade_m': 0.3053227725473267, 'validation_turn_ade_m': 0.3623600360006094, 'validation_turn_sign_accuracy': 0.7083333333333334, 'validation_distance_rmse': 6.315279492235107, 'selection_score': 0.7308356034702871} elapsed=57.4s
+epoch=11 updates=384 validation={'validation_ade_m': 0.30112362487448585, 'validation_turn_ade_m': 0.36877855580920976, 'validation_turn_sign_accuracy': 0.7083333333333334, 'validation_distance_rmse': 6.4395201122203325, 'selection_score': 0.7342973818058989} elapsed=62.7s
+epoch=12 updates=416 validation={'validation_ade_m': 0.30156466244133534, 'validation_turn_ade_m': 0.3795575325687726, 'validation_turn_sign_accuracy': 0.6875, 'validation_distance_rmse': 6.591552685422166, 'selection_score': 0.7470377218643296} elapsed=67.8s
+epoch=13 updates=448 validation={'validation_ade_m': 0.3024074358658658, 'validation_turn_ade_m': 0.3889280930161476, 'validation_turn_sign_accuracy': 0.6875, 'validation_distance_rmse': 6.636241884621624, 'selection_score': 0.7576979477282297} elapsed=72.7s
+epoch=14 updates=480 validation={'validation_ade_m': 0.3042632024390278, 'validation_turn_ade_m': 0.3994369038070242, 'validation_turn_sign_accuracy': 0.6875, 'validation_distance_rmse': 6.792387074746582, 'selection_score': 0.7716239769935178} elapsed=77.6s
+epoch=15 updates=512 validation={'validation_ade_m': 0.30257821590122247, 'validation_turn_ade_m': 0.4118816905344526, 'validation_turn_sign_accuracy': 0.6875, 'validation_distance_rmse': 6.950085984837451, 'selection_score': 0.7839607662840496} elapsed=82.4s
+epoch=16 updates=544 validation={'validation_ade_m': 0.302443308359081, 'validation_turn_ade_m': 0.4214564252955218, 'validation_turn_sign_accuracy': 0.5833333333333334, 'validation_distance_rmse': 6.94158887960373, 'selection_score': 0.7933156224506401} elapsed=87.3s
+epoch=17 updates=576 validation={'validation_ade_m': 0.30455214535403585, 'validation_turn_ade_m': 0.42589766656359035, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.006840414117544, 'selection_score': 0.8005182160588016} elapsed=92.1s
+epoch=18 updates=608 validation={'validation_ade_m': 0.3037983324482209, 'validation_turn_ade_m': 0.42655924645562965, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.059106802673042, 'selection_score': 0.800948646930581} elapsed=97.1s
+epoch=19 updates=640 validation={'validation_ade_m': 0.302561237907934, 'validation_turn_ade_m': 0.4224662453246613, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse':7.095637983198527, 'selection_score': 0.7959838630645806} elapsed=102.1s
+epoch=20 updates=672 validation={'validation_ade_m': 0.3010738006344548, 'validation_turn_ade_m': 0.42403072336067754, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.098087396254715, 'selection_score': 0.7960853979576795} elapsed=107.0s
+epoch=21 updates=704 validation={'validation_ade_m': 0.3019754554455479, 'validation_turn_ade_m': 0.42600714322179556, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.161218612015201, 'selection_score': 0.7995947847874953} elapsed=112.0s
+epoch=22 updates=736 validation={'validation_ade_m': 0.30326267557770564, 'validation_turn_ade_m': 0.4296179853069286, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.159271199788494, 'selection_score': 0.8044733728825192} elapsed=117.1s
+epoch=23 updates=768 validation={'validation_ade_m': 0.30190186352572507, 'validation_turn_ade_m': 0.43325935940568644, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.169740230474249, 'selection_score': 0.806858625236154} elapsed=122.0s
+epoch=24 updates=800 validation={'validation_ade_m': 0.30111838728879337, 'validation_turn_ade_m': 0.4365148466701309, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.163354062210913, 'selection_score': 0.8092667745810334} elapsed=127.0s
+epoch=25 updates=832 validation={'validation_ade_m': 0.3008756994407762, 'validation_turn_ade_m': 0.4391644050677617, 'validation_turn_sign_accuracy': 0.5625, 'validation_distance_rmse': 7.147027898357103, 'selection_score': 0.8115103834921089} elapsed=132.1s
+epoch=26 updates=864 validation={'validation_ade_m': 0.30006570432818047, 'validation_turn_ade_m': 0.4409595138082902, 'validation_turn_sign_accuracy': 0.5416666666666666, 'validation_distance_rmse': 7.155176026145123, 'selection_score': 0.812576978397922} elapsed=137.4s
+epoch=27 updates=896 validation={'validation_ade_m': 0.2998032425012853, 'validation_turn_ade_m': 0.4426164757460356, 'validation_turn_sign_accuracy': 0.5208333333333334, 'validation_distance_rmse': 7.20447099816659, 'selection_score': 0.8144644282289868} elapsed=142.7s
+epoch=28 updates=928 validation={'validation_ade_m': 0.29917770344763994, 'validation_turn_ade_m': 0.4440183875461419, 'validation_turn_sign_accuracy': 0.5208333333333334, 'validation_distance_rmse': 7.229141138868135, 'selection_score': 0.8154875023824631} elapsed=147.5s
+epoch=29 updates=960 validation={'validation_ade_m': 0.29860918373904294, 'validation_turn_ade_m': 0.4450829550623894, 'validation_turn_sign_accuracy': 0.5208333333333334, 'validation_distance_rmse': 7.2500814532336255, 'selection_score': 0.8161929533337686} elapsed=152.5s
+Finished. Best EMA weights: /mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/best.pth; check best.json (epoch=-1 means baseline won).
+hsnnb@localhost:/mnt/c/Users/61078/Desktop/nomad$ 

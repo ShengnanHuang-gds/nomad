@@ -38,6 +38,7 @@ from teach_turn import TeachTurnAssist
 from csv_log import CsvLog
 from teach_route import TeachRouteAssist
 from episode_budget import timeout_reason
+from scan_diagnostics import summarize_scan
 
 REPO = Path(__file__).resolve().parents[1]
 VT = REPO / "visualnav-transformer"
@@ -155,6 +156,8 @@ class NoMaDNavigate(Node):
 
         self.context_queue: list[PILImage.Image] = []
         self._scan_min: float | None = None
+        self._scan_details = {}
+        self._scan_stamp = self._scan_received_mono = None
         self._odom_xy: tuple[float, float] | None = None
         self._path_m = 0.0
         self._last_xy: tuple[float, float] | None = None
@@ -163,6 +166,7 @@ class NoMaDNavigate(Node):
         self._collision = False
         self._tick_log = CsvLog(args.log_csv)
         self._odom_v = self._odom_w = None
+        self._odom_roll = self._odom_pitch = self._odom_z = None
         self._odom_stamp = self._odom_received_t = self._odom_received_mono = None
         self._cmd_v = self._cmd_w = None
         self._cmd_stamp = self._cmd_received_t = self._cmd_received_mono = None
@@ -275,6 +279,9 @@ class NoMaDNavigate(Node):
         siny = 2.0 * (q.w * q.z + q.x * q.y)
         cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
         self._odom_yaw = math.atan2(siny, cosy)
+        self._odom_roll = math.atan2(2 * (q.w*q.x + q.y*q.z), 1 - 2*(q.x*q.x + q.y*q.y))
+        self._odom_pitch = math.asin(max(-1.0, min(1.0, 2 * (q.w*q.y - q.z*q.x))))
+        self._odom_z = float(p.z)
         xy = (float(p.x), float(p.y))
         self._odom_xy = xy
         if self._last_xy is not None:
@@ -291,12 +298,10 @@ class NoMaDNavigate(Node):
         self._cmd_w = float(msg.twist.angular.z)
 
     def _on_scan(self, msg: LaserScan):
-        valid = [
-            r
-            for r in msg.ranges
-            if msg.range_min < r < msg.range_max and not math.isinf(r) and not math.isnan(r)
-        ]
-        self._scan_min = min(valid) if valid else None
+        self._scan_details = summarize_scan(msg)
+        self._scan_min = self._scan_details["scan_min"]
+        self._scan_stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        self._scan_received_mono = time.monotonic()
 
     def _teach_spin_waypoint(self, node: int):
         if self._turn_assist is None and self._route_assist is None:
@@ -358,6 +363,12 @@ class NoMaDNavigate(Node):
             "success": bool(reached),
             "path_odom_m": float(self._path_m),
             "collision_count": int(self._collision_events),
+            "collision_metric": "laser_min_range_proxy_not_contact",
+            "collision_threshold_m": self.args.collision_m,
+            "scan_last": self._scan_details,
+            "stop_odom": {"xy": self._odom_xy, "yaw": self._odom_yaw,
+                          "roll": self._odom_roll, "pitch": self._odom_pitch,
+                          "z": self._odom_z, "v": self._odom_v, "w": self._odom_w},
             "ticks": int(self._tick_count),
             "nav_ticks": int(self._nav_active_ticks),
             "closest_node": int(self.closest_node),
@@ -556,6 +567,9 @@ class NoMaDNavigate(Node):
                     "window_start": window_start,
                     "sg_node": sg_node,
                     "odom_yaw": self._odom_yaw,
+                    "odom_roll": self._odom_roll,
+                    "odom_pitch": self._odom_pitch,
+                    "odom_z": self._odom_z,
                     "odom_v": self._odom_v,
                     "odom_w": self._odom_w,
                     "odom_stamp_ros_s": self._odom_stamp,
@@ -582,6 +596,16 @@ class NoMaDNavigate(Node):
                     "odom_x": self._odom_xy[0] if self._odom_xy else "",
                     "odom_y": self._odom_xy[1] if self._odom_xy else "",
                     "scan_min": self._scan_min if self._scan_min is not None else "",
+                    "scan_min_angle_deg": self._scan_details.get("scan_min_angle_deg"),
+                    "scan_front_min": self._scan_details.get("scan_front_min"),
+                    "scan_left_min": self._scan_details.get("scan_left_min"),
+                    "scan_right_min": self._scan_details.get("scan_right_min"),
+                    "scan_rear_min": self._scan_details.get("scan_rear_min"),
+                    "scan_valid_rays": self._scan_details.get("scan_valid_rays"),
+                    "scan_frame_id": self._scan_details.get("scan_frame_id"),
+                    "scan_stamp_ros_s": self._scan_stamp,
+                    "scan_age_s": now_mono - self._scan_received_mono
+                    if self._scan_received_mono is not None else "",
                     "collision_events": self._collision_events,
                 }
             )
@@ -593,6 +617,7 @@ class NoMaDNavigate(Node):
             if args.episode_out:
                 self._finish_episode(True)
         elif self._collision and args.stop_on_collision:
+            self._finish_reason = "scan_proximity_stop"
             self.get_logger().warn(
                 f"collision proxy stop scan_min={self._scan_min} path_m={self._path_m:.2f}"
             )

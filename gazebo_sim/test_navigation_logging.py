@@ -106,7 +106,7 @@ class LoggingTest(unittest.TestCase):
                      flags=__future__.annotations.compiler_flag), ns)
         node = NS(_last_xy=None, _path_m=0.0, _path_xy=[], _odom_start_stamp=None)
         odom = NS(header=twist().header,
-                  pose=NS(pose=NS(position=NS(x=0.8, y=-0.4),
+                  pose=NS(pose=NS(position=NS(x=0.8, y=-0.4, z=0.01),
                                   orientation=NS(w=math.cos(0.1), z=math.sin(0.1), x=0, y=0))),
                   twist=NS(twist=NS(linear=NS(x=0.12), angular=NS(z=-0.25))))
         cmd = twist()
@@ -114,6 +114,7 @@ class LoggingTest(unittest.TestCase):
         ns["_on_odom"](node, odom)
         ns["_on_cmd_vel"](node, cmd)
         self.assertAlmostEqual(node._odom_yaw, 0.2)
+        self.assertEqual((node._odom_roll, node._odom_pitch, node._odom_z), (0.0, 0.0, 0.01))
         self.assertEqual((node._odom_v, node._odom_w), (0.12, -0.25))
         self.assertEqual((node._cmd_v, node._cmd_w), (0.2, -0.3))
         self.assertEqual(node._odom_stamp, 12.5)

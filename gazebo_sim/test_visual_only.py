@@ -13,6 +13,7 @@ from unittest.mock import patch
 from PIL import Image
 
 from vision_debug import VisionDebug
+from audit_visual_model import context_indices, summarize_waypoints
 
 ROOT = Path(__file__).parent
 
@@ -27,6 +28,17 @@ def method(name):
 
 
 class VisualOnlyTest(unittest.TestCase):
+    def test_audit_context_uses_only_current_and_previous_images(self):
+        self.assertEqual(context_indices(8, 3, "temporal"), [5, 6, 7, 8])
+        self.assertEqual(context_indices(0, 3, "temporal"), [0, 0, 0, 0])
+        self.assertEqual(context_indices(8, 3, "repeat"), [8, 8, 8, 8])
+
+    def test_audit_summarizes_actual_sample_bearings(self):
+        summary = summarize_waypoints([[1, 1], [2, 2], [1, -1]])
+        self.assertEqual(summary["bearing_deg_median"], 45.0)
+        self.assertAlmostEqual(summary["left_fraction"], 2/3)
+        self.assertEqual(summary["forward_fraction"], 1.0)
+
     def test_visual_mode_cannot_be_combined_with_either_teacher_mode(self):
         for flag in ("--teach-route", "--teach-yaw-spin"):
             with patch.object(sys, "argv", ["navigate", "--visual-only", flag]):

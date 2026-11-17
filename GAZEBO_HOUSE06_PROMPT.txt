@@ -1,0 +1,17 @@
+你在做 Gazebo turtlebot3_house 上的 NoMaD 闭环导航。仓库在 /mnt/c/Users/61078/Desktop/nomad。WSL 用户 hsnnb。先 source gazebo_sim/nomad_wsl_env.sh，再用 $NOMAD_PY。不要用 Windows 的 python。T1 是 bash gazebo_sim/launch_tb3_house_at_run.sh house_run_06，T2 再跑脚本。gz set_pose 经常连不上，朝向用 /cmd_vel 原地转。新脚本如果用 Windows 写入会变成 UTF-16，改已有 UTF-8 文件，或用 PowerShell UTF8Encoding false。
+
+当前路线是留出的 house_run_06，拓扑图 house_06。示教路程 4.56 m。存图规则：平移 0.12 m 存一张，另外原地转弯大约每 12° 存一张。现在 63 张。旧的 46 张备份在 gazebo_sim/house_run_06_bak_20261117_152725。朝向：第 0–8 张约 -31.6°，第 9–12 张原地转到约 +12°（第 11 张砖墙转到镜头前），第 13 张起再直行，第 23–30 张是下一次大约 90° 的原地转。
+
+导航在 gazebo_sim/nomad_navigate_ros2.py。默认半径 4、close_threshold 5、对上才 subgoal+1、执行预测轨迹第 2 个点。距离小于 5 才把子目标往前换。
+
+已经证实的事实，不要再重复这些实验：
+- nomad_b40 在直道上 dist 约 1.1，认得走廊。对着第 12 张转弯图，路点仍然只有大约 10°（dx 约 0.48，dy 约 0.03–0.09）。模型不给这个弯。
+- 搜索半径改成 20、子目标 +12、路点改成第 6 个，结果一样，大约 2.9 m、15/62，在 2.1 m 处 dist 超过 5。
+- 底盘 MAX_V=0.2。gazebo_sim/pd_controller_ros2.py 里 MAX_W 已从 0.4 改成 1.5。放开角速度没有让 b40 转过弯。
+- 只转到下一张（12°）时画面还是直道，车开过弯口，路程 2.33 m。
+- 按示教朝向把一整段原地转角一次转完（_teach_spin_waypoint）：在 0.89 m 处原地转到第 11 张，dist 降到 1.19，第一个弯的图对上了。之后往前开偏出走廊，碰撞 28 次，停在 2.22 m，节点回到 10，dist 6.7。结果 gazebo_sim/episodes_eval_gpu/house_06_nomad_b40_burst.json。走廊偏差中位数 0.05 m。
+- nomad_gazebo 曾报 62/62，但路程只有 2.73 m，碰撞 109，节点是跳过去的，当时 dist 还有 7。节点到终点不算成功。成功要看路程接近 4.56 m、dist 低、碰撞少。
+
+启动脚本 gazebo_sim/run_holdout_06_b40.sh 支持环境变量 MODEL、EPISODE_OUT、SUBGOAL_LEAD、WAYPOINT、RADIUS、TEACH_YAW_SPIN。
+
+还没解决的问题：第一个弯可以靠示教朝向原地转完并对上图。转完之后的前进路点会把车带离走廊。先查 burst 这次从第 11 张对上之后，路点的 dx、dy 和实际 xy 为什么偏，再改转完之后怎么走。不要再重录，不要再只改半径或阈值。

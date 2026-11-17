@@ -1,0 +1,10 @@
+{
+  "success_bonus": 1.0,
+  "fail_penalty": -1.0,
+  "collision_penalty": 0.35,
+  "path_penalty_per_m": 0.08,
+  "path_only_if_success": true,
+  "temperature": 1.0,
+  "weight_floor": 0.05,
+  "weight_ceil": 3.0
+}

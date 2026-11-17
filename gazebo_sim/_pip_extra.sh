@@ -1,0 +1,1 @@
+/home/hsnnb/nomad_ros_venv/bin/pip install prettytable timm wandb lmdb -q

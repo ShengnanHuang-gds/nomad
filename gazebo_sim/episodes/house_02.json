@@ -1,0 +1,10 @@
+{
+  "traj": "house_run_02",
+  "topomap": "house_02",
+  "success": false,
+  "path_odom_m": 0.6639445559540417,
+  "collision_count": 718,
+  "ticks": 800,
+  "closest_node": 4,
+  "goal_node": 45
+}

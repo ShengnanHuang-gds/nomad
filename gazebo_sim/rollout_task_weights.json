@@ -1,0 +1,62 @@
+{
+  "reward_config": {
+    "success_bonus": 1.0,
+    "fail_penalty": -1.0,
+    "collision_penalty": 0.35,
+    "path_penalty_per_m": 0.08,
+    "path_only_if_success": true,
+    "temperature": 1.0,
+    "weight_floor": 0.05,
+    "weight_ceil": 3.0
+  },
+  "trajectories": {
+    "house_run_00": {
+      "traj": "house_run_00",
+      "success": false,
+      "path_odom_m": 1.849330576934941,
+      "collision_count": 195,
+      "reward": -69.25,
+      "weight": 0.05
+    },
+    "house_run_01": {
+      "traj": "house_run_01",
+      "success": false,
+      "path_odom_m": 3.2278446561596303,
+      "collision_count": 504,
+      "reward": -177.39999999999998,
+      "weight": 0.05
+    },
+    "house_run_02": {
+      "traj": "house_run_02",
+      "success": false,
+      "path_odom_m": 0.6639445559540417,
+      "collision_count": 718,
+      "reward": -252.29999999999998,
+      "weight": 0.05
+    },
+    "house_run_03": {
+      "traj": "house_run_03",
+      "success": false,
+      "path_odom_m": 3.4195892971624935,
+      "collision_count": 0,
+      "reward": -1.0,
+      "weight": 0.36787944117144233
+    },
+    "house_run_04": {
+      "traj": "house_run_04",
+      "success": false,
+      "path_odom_m": 2.8351482294793144,
+      "collision_count": 0,
+      "reward": -1.0,
+      "weight": 0.36787944117144233
+    },
+    "house_run_05": {
+      "traj": "house_run_05",
+      "success": false,
+      "path_odom_m": 3.560782119731513,
+      "collision_count": 0,
+      "reward": -1.0,
+      "weight": 0.36787944117144233
+    }
+  }
+}

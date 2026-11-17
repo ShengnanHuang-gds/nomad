@@ -1,0 +1,100 @@
+{
+  "checkpoint": "/mnt/d/nomad_data/visualnav-transformer/train/logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+  "checkpoint_sha256": "6858c2f68118d1f00a6d1927f07022476a4916f4167d99da71ab6cb96507f0a1",
+  "config": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/config/nomad_b40.yaml",
+  "model_params": {
+    "project_name": "nomad",
+    "run_name": "nomad_b40",
+    "use_wandb": false,
+    "train": true,
+    "batch_size": 64,
+    "eval_batch_size": 400,
+    "epochs": 30,
+    "gpu_ids": [
+      0
+    ],
+    "num_workers": 4,
+    "lr": "1e-4",
+    "optimizer": "adamw",
+    "seed": 0,
+    "clipping": false,
+    "train_subset": 1.0,
+    "model_type": "nomad",
+    "obs_encoding_size": 1024,
+    "goal_encoding_size": 1024,
+    "normalize": true,
+    "context_type": "temporal",
+    "context_size": 3,
+    "alpha": "1e-4",
+    "beta": 0.1,
+    "obs_type": "image",
+    "goal_type": "image",
+    "scheduler": "cosine",
+    "distance": {
+      "min_dist_cat": 0,
+      "max_dist_cat": 40
+    },
+    "action": {
+      "min_dist_cat": 3,
+      "max_dist_cat": 40
+    },
+    "close_far_threshold": 10,
+    "len_traj_pred": 8,
+    "learn_angle": false,
+    "image_size": [
+      96,
+      96
+    ],
+    "print_log_freq": 100,
+    "image_log_freq": 1000,
+    "num_images_log": 8,
+    "pairwise_test_freq": 0,
+    "eval_fraction": 0.25,
+    "wandb_log_freq": 10,
+    "eval_freq": 1,
+    "load_run": "nomad/nomad_b40_2026_09_29_21_03_40",
+    "stop_epoch": 30,
+    "max_norm": 1.0,
+    "warmup": true,
+    "warmup_epochs": 4,
+    "cyclic_period": 10,
+    "plateau_patience": 3,
+    "plateau_factor": 0.5,
+    "vision_encoder": "nomad_vint",
+    "encoding_size": 256,
+    "obs_encoder": "efficientnet-b0",
+    "attn_unet": false,
+    "cond_predict_scale": false,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4,
+    "mha_ff_dim_factor": 4,
+    "down_dims": [
+      64,
+      128,
+      256
+    ],
+    "num_diffusion_iters": 10,
+    "goal_mask_prob": 0.5,
+    "datasets": {
+      "go_stanford": {
+        "data_folder": "C:/Users/61078/Desktop/nomad/go_stanford",
+        "train": "vint_train/data/data_splits/go_stanford/train/",
+        "test": "vint_train/data/data_splits/go_stanford/test/",
+        "end_slack": 0,
+        "goals_per_obs": 2,
+        "negative_mining": true
+      }
+    }
+  },
+  "strict_checkpoint_load": true,
+  "device": "cuda",
+  "torch": "2.6.0+cu124",
+  "seed": 0,
+  "samples": 32,
+  "topomap": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/deployment/topomaps/images/house_06",
+  "context_modes": {
+    "temporal": "previous teaching images",
+    "repeat": "same image repeated"
+  },
+  "caveat": "teacher-image offline audit, not live-camera or closed-loop performance"
+}

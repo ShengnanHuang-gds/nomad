@@ -1,0 +1,9 @@
+{
+  "epoch": 6,
+  "updates": 224,
+  "validation_ade_m": 0.31165650114417076,
+  "validation_turn_ade_m": 0.3486469498214622,
+  "validation_turn_sign_accuracy": 0.75,
+  "validation_distance_rmse": 6.237484527120287,
+  "selection_score": 0.7226782962368358
+}

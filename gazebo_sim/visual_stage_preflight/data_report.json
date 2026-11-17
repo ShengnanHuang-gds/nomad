@@ -1,0 +1,95 @@
+{
+  "train_routes": [
+    "house_run_00",
+    "house_run_01",
+    "house_run_02",
+    "house_run_03",
+    "house_run_04"
+  ],
+  "validation_routes": [
+    "house_run_05"
+  ],
+  "heldout_routes_read": [],
+  "train_observations": 161,
+  "validation_observations": 27,
+  "cache_used": false,
+  "metric_waypoint_spacing_m": 0.12,
+  "routes": {
+    "house_run_00": {
+      "images": 48,
+      "observations": 37,
+      "turn_classes": {
+        "left": 5,
+        "right": 2,
+        "straight": 30
+      }
+    },
+    "house_run_01": {
+      "images": 37,
+      "observations": 26,
+      "turn_classes": {
+        "left": 4,
+        "right": 2,
+        "straight": 20
+      }
+    },
+    "house_run_02": {
+      "images": 46,
+      "observations": 35,
+      "turn_classes": {
+        "left": 4,
+        "right": 3,
+        "straight": 28
+      }
+    },
+    "house_run_03": {
+      "images": 41,
+      "observations": 30,
+      "turn_classes": {
+        "left": 2,
+        "right": 4,
+        "straight": 24
+      }
+    },
+    "house_run_04": {
+      "images": 44,
+      "observations": 33,
+      "turn_classes": {
+        "left": 4,
+        "right": 3,
+        "straight": 26
+      }
+    },
+    "house_run_05": {
+      "images": 38,
+      "observations": 27,
+      "turn_classes": {
+        "left": 4,
+        "right": 2,
+        "straight": 21
+      }
+    }
+  },
+  "legacy_train_index_audit": [
+    {
+      "path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_preflight/handoff/splits/train/dataset_dist_0_to_20_context_temporal_n3_slack_0_pred_8.pkl",
+      "observations": 264,
+      "goals": 352,
+      "cached_routes": [
+        "house_run_00",
+        "house_run_01",
+        "house_run_02",
+        "house_run_03",
+        "house_run_04",
+        "house_run_05",
+        "house_run_06",
+        "house_run_07"
+      ],
+      "unexpected_routes": [
+        "house_run_06",
+        "house_run_07"
+      ],
+      "unexpected_observations": 76
+    }
+  ]
+}

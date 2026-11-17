@@ -1,0 +1,44 @@
+action:
+  max_dist_cat: 20
+  min_dist_cat: 3
+attn_unet: false
+cond_predict_scale: false
+context_size: 3
+datasets:
+  go_stanford:
+    data_folder: /mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/handoff/dataset
+    note: cache-free train_visual_stage.py; dataset name retains the 0.12m action-unit
+      convention
+    train_routes:
+    - house_run_00
+    - house_run_01
+    - house_run_02
+    - house_run_03
+    - house_run_04
+    validation_routes:
+    - house_run_05
+distance:
+  max_dist_cat: 20
+  min_dist_cat: 0
+down_dims:
+- 64
+- 128
+- 256
+encoding_size: 256
+goal_mask_prob: 0.0
+image_size:
+- 96
+- 96
+inference_only_config: true
+learn_angle: false
+len_traj_pred: 8
+mha_ff_dim_factor: 4
+mha_num_attention_heads: 4
+mha_num_attention_layers: 4
+model_type: nomad
+normalize: true
+num_diffusion_iters: 10
+obs_encoder: efficientnet-b0
+run_name: nomad_visual_clean_stage
+training_recipe: /mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/stage_config.json
+vision_encoder: nomad_vint

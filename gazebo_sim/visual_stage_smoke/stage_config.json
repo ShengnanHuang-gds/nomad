@@ -1,0 +1,33 @@
+{
+  "out": "gazebo_sim/visual_stage_smoke",
+  "handoff": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/training_handoff",
+  "prepare_only": false,
+  "epochs": 1,
+  "steps_per_epoch": 2,
+  "batch_size": 16,
+  "lr": 5e-05,
+  "seed": 42,
+  "initial_checkpoint": "/mnt/d/nomad_data/visualnav-transformer/train/logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth",
+  "initial_checkpoint_sha256": "6858c2f68118d1f00a6d1927f07022476a4916f4167d99da71ab6cb96507f0a1",
+  "optimizer_reset": true,
+  "scheduler_reset": true,
+  "scheduler_steps_per_epoch": 1,
+  "goal_mask_probability": 0.0,
+  "negative_probability": 0.1,
+  "ema_decay": 0.99,
+  "action_stats": {
+    "min": [
+      -2.5,
+      -4.0
+    ],
+    "max": [
+      5,
+      4
+    ]
+  },
+  "turn_balanced_observation_sampling": true,
+  "distance_loss": "MSE(predicted_distance/20, label/20)",
+  "selection": "min ADE + turn ADE + 0.01*distance RMSE; turn ADE/direction/distance cannot regress from baseline",
+  "torch": "2.6.0+cu124",
+  "handoff_sha256": "c66009115b4c7119f185305adb7b0675349a4d38985c9250d43e67b0b6a81eb4"
+}

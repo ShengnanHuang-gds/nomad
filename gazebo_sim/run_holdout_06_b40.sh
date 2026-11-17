@@ -10,6 +10,12 @@ LEAD="${SUBGOAL_LEAD:-1}"
 WP="${WAYPOINT:-2}"
 RAD="${RADIUS:-4}"
 MAX_TICKS="${MAX_TICKS:-600}"
+TEACH_YAW_DEG="${TEACH_YAW_DEG:-3}"
+TEACH_EXIT_M="${TEACH_EXIT_M:-0.35}"
+TEACH_ARGS=()
+if [[ "${TEACH_YAW_SPIN:-0}" == 1 ]]; then
+  TEACH_ARGS=(--teach-yaw-spin --teach-yaw-deg "$TEACH_YAW_DEG" --teach-exit-m "$TEACH_EXIT_M")
+fi
 export GZ_ROBOT_ENTITY="${GZ_ROBOT_ENTITY:-burger_cam}"
 
 "$PY" "$ROOT/gazebo_sim/check_sim_prereq.py" --need-gpu
@@ -21,7 +27,7 @@ else
   "$PY" "$ROOT/gazebo_sim/reset_run_pose.py" --run house_run_06 --skip-teleport --verify --max-err-m 0.8 --settle-s 5
 fi
 
-"$PY" "$ROOT/gazebo_sim/pd_controller_ros2.py" &
+"$PY" "$ROOT/gazebo_sim/pd_controller_ros2.py" --log-csv "${OUT%.*}.control.csv" &
 PD=$!
 sleep 1
 trap "kill $PD 2>/dev/null || true" EXIT
@@ -36,7 +42,7 @@ trap "kill $PD 2>/dev/null || true" EXIT
   --subgoal-lead "$LEAD" \
   --waypoint "$WP" \
   --radius "$RAD" \
-  ${TEACH_YAW_SPIN:+--teach-yaw-spin} \
+  "${TEACH_ARGS[@]}" \
   --auto-log-csv
 
 kill -TERM "$PD" 2>/dev/null || true

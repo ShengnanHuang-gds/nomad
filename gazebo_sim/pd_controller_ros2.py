@@ -36,6 +36,8 @@ def pd_controller(waypoint: np.ndarray) -> tuple[float, float]:
         if abs(dx) < EPS and abs(dy) < EPS:
             w = clip_angle(math.atan2(hy, hx)) / DT
             return 0.0, float(np.clip(w, -MAX_W, MAX_W))
+    if abs(dx) < EPS and abs(dy) < EPS:
+        return 0.0, 0.0
     if abs(dx) < EPS:
         w = np.sign(dy) * math.pi / (2 * DT)
         return 0.0, float(np.clip(w, -MAX_W, MAX_W))

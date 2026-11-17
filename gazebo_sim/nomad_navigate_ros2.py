@@ -15,6 +15,7 @@ Optional metrics: --log-csv rollout.csv (odom path length, scan-based collision 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -133,6 +134,25 @@ class NoMaDNavigate(Node):
         self.context_size = int(model_params["context_size"])
         self.model = load_model(str(ckpt), model_params, self.device)
         self.model.eval()
+        self._visual_yaw = None
+        self._visual_yaw_meta = None
+        if args.visual_yaw_dir:
+            from visual_yaw import VisualYaw
+            folder = Path(args.visual_yaw_dir)
+            meta = json.loads((folder / "head_config.json").read_text(encoding="utf-8"))
+            best = json.loads((folder / "best.json").read_text(encoding="utf-8"))
+            if meta.get("kind") != "image_pair_yaw_v1" or not best.get("validation_gate_passed") or best["epoch"] < 0:
+                raise ValueError("Visual yaw module must pass the predeclared route05 validation checks")
+            if hashlib.sha256(ckpt.read_bytes()).hexdigest() != meta["base_checkpoint_sha256"]:
+                raise ValueError("Visual yaw module belongs to a different XY checkpoint")
+            head_path = folder / "best_yaw.pth"
+            if hashlib.sha256(head_path.read_bytes()).hexdigest() != best["checkpoint_sha256"]:
+                raise ValueError("Visual yaw checkpoint does not match its validation record")
+            self._visual_yaw = VisualYaw.from_nomad(self.model).to(self.device)
+            self._visual_yaw.load_state_dict(torch.load(head_path, map_location="cpu", weights_only=True), strict=True)
+            self._visual_yaw.eval()
+            self._visual_yaw_meta = {"head_dir": str(folder.resolve()), "validation": best,
+                                     "head_sha256": hashlib.sha256(head_path.read_bytes()).hexdigest()}
 
         self.noise_scheduler = DDPMScheduler(
             num_train_timesteps=model_params["num_diffusion_iters"],
@@ -159,6 +179,9 @@ class NoMaDNavigate(Node):
             "topomap_files": [p.name for p in names],
             "image_topic": args.image_topic,
             "visual_only": args.visual_only,
+            "visual_yaw": self._visual_yaw_meta,
+            "policy_variant": "teacher_pose_diagnostic" if args.teach_route or args.teach_yaw_spin
+            else "nomad_xy_visual_yaw" if self._visual_yaw is not None else "nomad_xy",
             "teacher_used_for_control": bool(args.teach_route or args.teach_yaw_spin),
             "image_transform": "RGB; resize image_size; ImageNet normalization; center_crop=False",
         }
@@ -410,6 +433,8 @@ class NoMaDNavigate(Node):
             "subgoal_lead": int(self.args.subgoal_lead),
             "teacher_pose_assisted": bool(self.args.teach_yaw_spin or self.args.teach_route),
             "visual_only": self.args.visual_only,
+            "visual_yaw": self._visual_yaw_meta,
+            "policy_variant": self._runtime["policy_variant"],
             "teach_route": self.args.teach_route,
             "success_criterion": "ordered_teacher_legs_and_endpoint_0.04m"
             if self._route_assist else "visual_goal_node_only",
@@ -487,6 +512,7 @@ class NoMaDNavigate(Node):
         control_source = "stop"
         sg_node = -1
         window_start = -1
+        visual_yaw_deg = None
         reached = self._reached_goal()
 
         if not reached and not self._collision:
@@ -586,6 +612,14 @@ class NoMaDNavigate(Node):
                 chosen_waypoint = np.asarray(override, dtype=np.float64)
                 control_source = ("teach_route_" + self._route_assist.phase if self._route_assist
                                   else "teach_" + self._turn_assist.phase)
+            if self._visual_yaw is not None:
+                from visual_yaw import heading_override
+                vector = to_numpy(self._visual_yaw(obs_images[:, -3:], goal_batch[sg_idx:sg_idx+1]))[0]
+                visual_yaw_deg = math.degrees(math.atan2(float(vector[1]), float(vector[0])))
+                yaw_waypoint, source = heading_override(vector, args.visual_yaw_align_deg)
+                if yaw_waypoint is not None:
+                    chosen_waypoint = np.asarray(yaw_waypoint, dtype=np.float64)
+                    control_source = "visual_yaw_" + source
 
         wp = Float32MultiArray()
         wp.data = chosen_waypoint.tolist()
@@ -638,6 +672,7 @@ class NoMaDNavigate(Node):
                     "wp_hx": float(chosen_waypoint[2]) if len(chosen_waypoint) == 4 else "",
                     "wp_hy": float(chosen_waypoint[3]) if len(chosen_waypoint) == 4 else "",
                     "control_source": control_source,
+                    "visual_yaw_deg": visual_yaw_deg,
                     "teach_turn_end": self._turn_assist.active[1]
                     if self._turn_assist and self._turn_assist.active else "",
                     "reached": int(reached),
@@ -691,6 +726,9 @@ def parse_args():
     p.add_argument("--teach-yaw-spin", action="store_true")
     p.add_argument("--visual-only", action="store_true",
                    help="forbid teacher-pose/yaw control; use visual localization and model waypoints")
+    p.add_argument("--visual-yaw-dir", default="",
+                   help="optional validated image-only heading module directory")
+    p.add_argument("--visual-yaw-align-deg", type=float, default=8.0)
     p.add_argument("--vision-debug-dir", default="",
                    help="save RGB context and model outputs at localization changes and every 20 ticks")
     p.add_argument("--teach-route", action="store_true",
@@ -739,6 +777,10 @@ def parse_args():
     args = p.parse_args()
     if args.visual_only and (args.teach_route or args.teach_yaw_spin):
         p.error("--visual-only forbids --teach-route and --teach-yaw-spin")
+    if args.visual_yaw_dir and (args.teach_route or args.teach_yaw_spin):
+        p.error("visual heading cannot be combined with teacher-pose control")
+    if not math.isfinite(args.visual_yaw_align_deg) or args.visual_yaw_align_deg <= 0:
+        p.error("--visual-yaw-align-deg must be finite and positive")
     if args.teach_route and args.teach_yaw_spin:
         p.error("choose --teach-route or --teach-yaw-spin")
     if args.teach_route and args.goal_node != -1:

@@ -22,7 +22,8 @@ def method(name):
     tree = ast.parse((ROOT / "nomad_navigate_ros2.py").read_text(encoding="utf-8"))
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and node.name == name:
-            ns = {"argparse": argparse, "DEFAULT_RATE": 4, "IMAGE_TOPIC": "/camera/image_raw"}
+            import math
+            ns = {"argparse": argparse, "math": math, "DEFAULT_RATE": 4, "IMAGE_TOPIC": "/camera/image_raw"}
             exec(compile(ast.Module(body=[node], type_ignores=[]), "visual_only", "exec"), ns)
             return ns[name]
 
@@ -48,6 +49,12 @@ class VisualOnlyTest(unittest.TestCase):
     def test_visual_mode_never_reads_teacher_pose_or_odometry_for_override(self):
         node = SimpleNamespace(args=SimpleNamespace(visual_only=True))
         self.assertEqual(method("_teach_spin_waypoint")(node, 11), (None, None))
+
+    def test_visual_heading_cannot_be_mixed_with_teacher_control(self):
+        for flag in ("--teach-route", "--teach-yaw-spin"):
+            with patch.object(sys, "argv", ["navigate", "--visual-yaw-dir", "head", flag]):
+                with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                    method("parse_args")()
 
     def test_saved_context_matches_model_input_pixels_and_sampling_metadata(self):
         with tempfile.TemporaryDirectory() as temp:

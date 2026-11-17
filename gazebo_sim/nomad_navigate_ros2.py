@@ -15,6 +15,7 @@ Optional metrics: --log-csv rollout.csv (odom path length, scan-based collision 
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import os
 import sys
@@ -39,6 +40,7 @@ from csv_log import CsvLog
 from teach_route import TeachRouteAssist
 from episode_budget import timeout_reason
 from scan_diagnostics import summarize_scan
+from vision_debug import VisionDebug
 
 REPO = Path(__file__).resolve().parents[1]
 VT = REPO / "visualnav-transformer"
@@ -105,6 +107,7 @@ class NoMaDNavigate(Node):
     def __init__(self, args: argparse.Namespace):
         super().__init__("nomad_navigate")
         self.args = args
+        self._vision_debug = VisionDebug(args.vision_debug_dir)
         self.device = torch.device(
             "cuda" if torch.cuda.is_available() and not args.cpu else "cpu"
         )
@@ -147,6 +150,22 @@ class NoMaDNavigate(Node):
         )
         self.topomap = [PILImage.open(p).convert("RGB") for p in names]
         self.get_logger().info(f"topomap {args.topomap}: {len(self.topomap)} nodes")
+        self._runtime = {
+            "model": args.model,
+            "checkpoint_path": str(ckpt.resolve()),
+            "checkpoint_bytes": ckpt.stat().st_size,
+            "model_params": model_params,
+            "topomap_dir": str(topomap_dir),
+            "topomap_files": [p.name for p in names],
+            "image_topic": args.image_topic,
+            "visual_only": args.visual_only,
+            "teacher_used_for_control": bool(args.teach_route or args.teach_yaw_spin),
+            "image_transform": "RGB; resize image_size; ImageNet normalization; center_crop=False",
+        }
+        if args.log_csv:
+            runtime_path = Path(args.log_csv).with_suffix(".runtime.json")
+            runtime_path.parent.mkdir(parents=True, exist_ok=True)
+            runtime_path.write_text(json.dumps(self._runtime, indent=2), encoding="utf-8")
 
         assert -1 <= args.goal_node < len(self.topomap)
         self.goal_node = (
@@ -155,6 +174,7 @@ class NoMaDNavigate(Node):
         self.closest_node = 0
 
         self.context_queue: list[PILImage.Image] = []
+        self._context_stamps = []
         self._scan_min: float | None = None
         self._scan_details = {}
         self._scan_stamp = self._scan_received_mono = None
@@ -264,6 +284,8 @@ class NoMaDNavigate(Node):
         else:
             self.context_queue.pop(0)
             self.context_queue.append(pil)
+        self._context_stamps.append(msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9)
+        self._context_stamps = self._context_stamps[-(self.context_size + 1):]
 
     def _on_odom(self, msg: Odometry):
         self._odom_received_t = time.time()
@@ -304,6 +326,8 @@ class NoMaDNavigate(Node):
         self._scan_received_mono = time.monotonic()
 
     def _teach_spin_waypoint(self, node: int):
+        if self.args.visual_only:
+            return None, None
         if self._turn_assist is None and self._route_assist is None:
             return None, None
         xy = self._odom_xy
@@ -385,6 +409,7 @@ class NoMaDNavigate(Node):
             "subgoal_idx_last": int(self._last_sg_idx),
             "subgoal_lead": int(self.args.subgoal_lead),
             "teacher_pose_assisted": bool(self.args.teach_yaw_spin or self.args.teach_route),
+            "visual_only": self.args.visual_only,
             "teach_route": self.args.teach_route,
             "success_criterion": "ordered_teacher_legs_and_endpoint_0.04m"
             if self._route_assist else "visual_goal_node_only",
@@ -396,6 +421,7 @@ class NoMaDNavigate(Node):
             "sim_elapsed_s": self._sim_elapsed_s,
             "wall_elapsed_s": time.monotonic() - self._wall_start,
             "finish_reason": self._finish_reason,
+            "vision_debug_dir": self.args.vision_debug_dir,
             "teach_yaw_deg": self.args.teach_yaw_deg,
             "teach_exit_m": self.args.teach_exit_m,
             "primary_failure": failure,
@@ -541,6 +567,20 @@ class NoMaDNavigate(Node):
             if mp.get("normalize", True):
                 chosen_waypoint = chosen_waypoint * (MAX_V / args.rate)
             model_waypoint = chosen_waypoint.copy()
+            self._vision_debug.record(self._tick_count, self.context_queue, {
+                "closest_node": self.closest_node,
+                "context_stamp_ros_s": list(self._context_stamps),
+                "input_goal_mask": 0,
+                "window_start": start,
+                "sg_node": sg_node,
+                "dist_is_close": bool(self._last_dist_min < args.close_threshold),
+                "distance_predictions": self._last_dist_window,
+                "sampled_actions": naction.tolist(),
+                "action_scale": MAX_V / args.rate if mp.get("normalize", True) else 1.0,
+                "selected_sample": 0,
+                "selected_waypoint_index": args.waypoint,
+                "model_waypoint": model_waypoint.tolist(),
+            }, goal_image=self.topomap[sg_node])
             control_source = "model"
             if override is not None:
                 chosen_waypoint = np.asarray(override, dtype=np.float64)
@@ -649,6 +689,10 @@ def parse_args():
     p.add_argument("--goal-node", "-g", type=int, default=-1)
     p.add_argument("--waypoint", "-w", type=int, default=2)
     p.add_argument("--teach-yaw-spin", action="store_true")
+    p.add_argument("--visual-only", action="store_true",
+                   help="forbid teacher-pose/yaw control; use visual localization and model waypoints")
+    p.add_argument("--vision-debug-dir", default="",
+                   help="save RGB context and model outputs at localization changes and every 20 ticks")
     p.add_argument("--teach-route", action="store_true",
                    help="diagnostic: follow all teacher-pose legs; not pure visual NoMaD")
     p.add_argument("--teach-yaw-deg", type=float, default=3.0)
@@ -693,6 +737,8 @@ def parse_args():
     )
     p.add_argument("--cpu", action="store_true")
     args = p.parse_args()
+    if args.visual_only and (args.teach_route or args.teach_yaw_spin):
+        p.error("--visual-only forbids --teach-route and --teach-yaw-spin")
     if args.teach_route and args.teach_yaw_spin:
         p.error("choose --teach-route or --teach-yaw-spin")
     if args.teach_route and args.goal_node != -1:

@@ -101,7 +101,7 @@ class TeachRouteTest(unittest.TestCase):
         node = SimpleNamespace(_turn_assist=None, _route_assist=route, _spawn_at_launch=False,
                                _odom_xy=(2.08, -0.967), _odom_yaw=float(self.yaw[38]),
                                _odom_stamp=21.2, _scan_stamp=20.8, _scan_min=0.198,
-                               args=SimpleNamespace(rate=4))
+                               args=SimpleNamespace(rate=4, visual_only=False))
         wp, _ = ns["_teach_spin_waypoint"](node, 38)
         self.assertEqual(route.phase, "wait_scan")
         self.assertEqual(self.pd(np.asarray(wp)), (0.0, 0.0))

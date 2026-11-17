@@ -1,0 +1,22 @@
+route,current,goal,odom_delta_yaw_deg,odom_step_m,sift_current,sift_goal,mutual_matches,similarity_inliers,image_rotation_deg,image_scale,inlier_area_fraction,note
+house_run_00,11,12,88.63653809088568,9.685022441255981e-06,24,26,1,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_00,22,23,-88.53950043266073,0.004633101425600719,77,32,0,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_00,31,32,43.65668905257581,0.0002503429143152344,30,17,0,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_00,40,41,43.31560931214062,6.280369834735101e-16,22,3,1,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_01,9,10,88.55046404773472,7.125462825149683e-06,56,29,1,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_01,18,19,-58.476072570839506,1.0300572399251707e-14,18,23,5,3,-0.06549962199349671,1.001372414389047,0.011272622132657754,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_01,28,29,88.69673147505783,5.895451523625878e-14,43,51,6,3,-10.06220517153721,1.0618167131184348,0.0033818545987624776,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_02,8,9,-88.60423690895483,5.47229976460508e-05,75,35,3,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_02,19,20,43.60206260128836,0.002115730332944642,55,53,0,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_02,29,30,43.63690774392273,0.0010085732235496911,38,70,1,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_02,38,39,-88.49619624429012,1.6917059540611801e-13,65,83,4,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_03,10,11,-88.31881636899885,0.004537231593142223,59,91,1,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_03,20,21,58.55628666056807,2.2765799233284228e-14,119,122,39,31,3.896321152238684,0.9748035610414,0.11038147414382214,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_03,29,30,-43.355716356140356,2.8044506102004164e-14,100,83,33,25,1.0281710463403573,1.0494863667483982,0.30985887159136105,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_04,8,9,88.49619639911448,9.66360506125895e-06,16,26,3,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_04,18,19,88.65657139247341,9.688146316995852e-06,23,28,0,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_04,26,27,-58.50910055517526,6.7958059438161e-06,22,17,3,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_04,36,37,-43.649484085535526,6.802815923190978e-06,14,23,2,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_05,9,10,-88.602714465333,1.5252006074646917e-05,21,23,4,0,,,,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_05,18,19,88.53630329001092,8.173172055824794e-14,65,35,5,2,34.068034266322776,0.6682177348556705,0,image rotation is not base yaw; uncalibrated diagnostic only
+house_run_05,29,30,43.47603749328731,4.855826650227131e-14,8,18,4,0,,,,image rotation is not base yaw; uncalibrated diagnostic only

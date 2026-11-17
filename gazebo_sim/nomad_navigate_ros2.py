@@ -36,6 +36,8 @@ from sensor_msgs.msg import Image, LaserScan
 from std_msgs.msg import Bool, Float32MultiArray
 from teach_turn import TeachTurnAssist
 from csv_log import CsvLog
+from teach_route import TeachRouteAssist
+from episode_budget import timeout_reason
 
 REPO = Path(__file__).resolve().parents[1]
 VT = REPO / "visualnav-transformer"
@@ -178,6 +180,11 @@ class NoMaDNavigate(Node):
         self._teach_pos = None
         self._teach_anchor = None
         self._turn_assist = None
+        self._route_assist = None
+        self._odom_start_stamp = None
+        self._sim_elapsed_s = 0.0
+        self._wall_start = time.monotonic()
+        self._finish_reason = ""
         self._spawn_at_launch = spawn_at_launch_enabled(args.spawn_at_launch)
         if args.traj_name:
             pkl = Path(__file__).resolve().parent / args.traj_name / "traj_data.pkl"
@@ -204,15 +211,19 @@ class NoMaDNavigate(Node):
                         f"expect reset odom near ({self._expected_start[0]:.3f}, {self._expected_start[1]:.3f})"
                     )
 
-        if args.teach_yaw_spin:
+        if args.teach_yaw_spin or args.teach_route:
             if self._teach_pos is None or len(self._teach_pos) != len(self.topomap):
-                raise ValueError("--teach-yaw-spin requires matching teacher poses and topomap")
-            self._turn_assist = TeachTurnAssist(
-                self._teach_pos, self._teach_yaw, args.teach_yaw_deg, args.teach_exit_m
-            )
+                raise ValueError("teacher assistance requires matching teacher poses and topomap")
+            if args.teach_route:
+                self._route_assist = TeachRouteAssist(self._teach_pos, self._teach_yaw, args.teach_yaw_deg)
+            else:
+                self._turn_assist = TeachTurnAssist(
+                    self._teach_pos, self._teach_yaw, args.teach_yaw_deg, args.teach_exit_m
+                )
             self.get_logger().info(
-                "teacher-pose assisted diagnostic: latched turns and "
-                f"{args.teach_exit_m:.2f}m exit guidance (not pure visual NoMaD)"
+                "teacher-pose assisted diagnostic: " +
+                ("full ordered route" if args.teach_route else f"latched turns and {args.teach_exit_m:.2f}m exit guidance") +
+                " (not pure visual NoMaD)"
             )
 
         qos = QoSProfile(
@@ -254,6 +265,9 @@ class NoMaDNavigate(Node):
         self._odom_received_t = time.time()
         self._odom_received_mono = time.monotonic()
         self._odom_stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+        if self._odom_start_stamp is None:
+            self._odom_start_stamp = self._odom_stamp
+        self._sim_elapsed_s = max(0.0, self._odom_stamp - self._odom_start_stamp)
         self._odom_v = float(msg.twist.twist.linear.x)
         self._odom_w = float(msg.twist.twist.angular.z)
         p = msg.pose.pose.position
@@ -285,14 +299,21 @@ class NoMaDNavigate(Node):
         self._scan_min = min(valid) if valid else None
 
     def _teach_spin_waypoint(self, node: int):
-        if self._turn_assist is None:
+        if self._turn_assist is None and self._route_assist is None:
             return None, None
         xy = self._odom_xy
         # Legacy non-spawn episodes use teacher absolute odom. Spawn episodes
         # use origin odom; teacher recordings may use either convention.
         if xy is not None and self._spawn_at_launch:
             xy = (xy[0] + self._teach_anchor[0], xy[1] + self._teach_anchor[1])
+        if self._route_assist:
+            return self._route_assist.update(xy, self._odom_yaw, MAX_V / self.args.rate)
         return self._turn_assist.update(node, xy, self._odom_yaw, MAX_V / self.args.rate)
+
+    def _reached_goal(self):
+        if self._route_assist:
+            return self._route_assist.reached
+        return self.closest_node == self.goal_node
 
     def _collision_proxy(self) -> bool:
         if self._scan_min is None:
@@ -304,8 +325,10 @@ class NoMaDNavigate(Node):
             return "reset_pose_mismatch"
         if self._collision and self.args.stop_on_collision:
             return "collision"
-        if self.closest_node >= self.goal_node:
+        if self._reached_goal():
             return "none"
+        if self._finish_reason:
+            return self._finish_reason
         if (
             not self._spawn_at_launch
             and self._closest_node_max < 3
@@ -345,7 +368,16 @@ class NoMaDNavigate(Node):
             "dist_pred_window_last": self._last_dist_window,
             "subgoal_idx_last": int(self._last_sg_idx),
             "subgoal_lead": int(self.args.subgoal_lead),
-            "teacher_pose_assisted": bool(self.args.teach_yaw_spin),
+            "teacher_pose_assisted": bool(self.args.teach_yaw_spin or self.args.teach_route),
+            "teach_route": self.args.teach_route,
+            "success_criterion": "ordered_teacher_legs_and_endpoint_0.04m"
+            if self._route_assist else "visual_goal_node_only",
+            "endpoint_error_m": self._route_assist.endpoint_error_m if self._route_assist else None,
+            "route_leg": self._route_assist.leg if self._route_assist else None,
+            "route_legs_total": len(self._route_assist.legs) if self._route_assist else None,
+            "sim_elapsed_s": self._sim_elapsed_s,
+            "wall_elapsed_s": time.monotonic() - self._wall_start,
+            "finish_reason": self._finish_reason,
             "teach_yaw_deg": self.args.teach_yaw_deg,
             "teach_exit_m": self.args.teach_exit_m,
             "primary_failure": failure,
@@ -370,6 +402,17 @@ class NoMaDNavigate(Node):
             return
         step_started = time.monotonic()
         self._tick_count += 1
+        reason = timeout_reason(self._tick_count, self._sim_elapsed_s,
+                                time.monotonic() - self._wall_start,
+                                self.args.max_ticks, self.args.max_sim_seconds,
+                                self.args.max_wall_seconds)
+        if reason:
+            self._finish_reason = reason
+            self._wp_pub.publish(Float32MultiArray(data=[0.0, 0.0, 1.0, 0.0]))
+            self._goal_pub.publish(Bool(data=False))
+            self.get_logger().warn(f"{reason}: sim={self._sim_elapsed_s:.2f}s path={self._path_m:.2f}m")
+            self._finish_episode(False)
+            return
         if len(self.context_queue) <= self.context_size:
             return
         if self._reset_align_m is None and self._expected_start and self._odom_xy:
@@ -400,7 +443,7 @@ class NoMaDNavigate(Node):
         control_source = "stop"
         sg_node = -1
         window_start = -1
-        reached = self.closest_node == self.goal_node
+        reached = self._reached_goal()
 
         if not reached and not self._collision:
             mp = self.model_params
@@ -412,15 +455,14 @@ class NoMaDNavigate(Node):
             )
             mask = torch.zeros(1, dtype=torch.long, device=self.device)
 
-            start = max(self.closest_node - args.radius, 0)
+            center = self._route_assist.goal if self._route_assist else self.closest_node
+            start = max(center - args.radius, 0)
             window_start = start
-            end = min(self.closest_node + args.radius + 1, self.goal_node)
+            end = min(center + args.radius + 1, self.goal_node)
             if self._turn_assist and self._turn_assist.active:
                 # A visual retreat during a latched turn must not remove the
                 # first translating exit goal from the inference batch.
                 end = min(max(end, self._turn_assist.active[1] + 1), self.goal_node)
-            if self._turn_assist and self._turn_assist.forward_goal is not None:
-                end = min(max(end, self._turn_assist.forward_goal), self.goal_node)
             goal_batch = torch.concat(
                 [
                     transform_images(g, mp["image_size"], center_crop=False).to(
@@ -484,13 +526,14 @@ class NoMaDNavigate(Node):
             control_source = "model"
             if override is not None:
                 chosen_waypoint = np.asarray(override, dtype=np.float64)
-                control_source = "teach_" + self._turn_assist.phase
+                control_source = ("teach_route_" + self._route_assist.phase if self._route_assist
+                                  else "teach_" + self._turn_assist.phase)
 
         wp = Float32MultiArray()
         wp.data = chosen_waypoint.tolist()
         self._wp_pub.publish(wp)
         wp_publish_t = time.time()
-        reached = self.closest_node == self.goal_node
+        reached = self._reached_goal()
         self._goal_pub.publish(Bool(data=reached))
 
         if args.log_csv:
@@ -499,6 +542,11 @@ class NoMaDNavigate(Node):
                 {
                     "t": time.time(),
                     "tick": self._tick_count,
+                    "sim_elapsed_s": self._sim_elapsed_s,
+                    "route_leg": self._route_assist.leg if self._route_assist else "",
+                    "route_goal": self._route_assist.goal if self._route_assist else "",
+                    "endpoint_error_m": self._route_assist.endpoint_error_m if self._route_assist else "",
+                    "localization_window_source": "teacher_pose" if self._route_assist else "visual",
                     "ros_time_s": self.get_clock().now().nanoseconds * 1e-9,
                     "step_elapsed_s": now_mono - step_started,
                     "wp_publish_t": wp_publish_t,
@@ -550,10 +598,6 @@ class NoMaDNavigate(Node):
             )
             if args.episode_out:
                 self._finish_episode(False)
-        elif args.max_ticks and self._tick_count >= args.max_ticks:
-            self.get_logger().warn(f"max_ticks={args.max_ticks} path_m={self._path_m:.2f}")
-            if args.episode_out:
-                self._finish_episode(reached)
 
     def write_log(self, path: str):
         # Rows have already been flushed during the run, including on timeout.
@@ -569,6 +613,8 @@ def parse_args():
     p.add_argument("--goal-node", "-g", type=int, default=-1)
     p.add_argument("--waypoint", "-w", type=int, default=2)
     p.add_argument("--teach-yaw-spin", action="store_true")
+    p.add_argument("--teach-route", action="store_true",
+                   help="diagnostic: follow all teacher-pose legs; not pure visual NoMaD")
     p.add_argument("--teach-yaw-deg", type=float, default=3.0)
     p.add_argument("--teach-exit-m", type=float, default=0.35,
                    help="teacher-pose guidance after a latched turn; 0 disables exit guidance")
@@ -590,6 +636,9 @@ def parse_args():
     p.add_argument("--episode-out", default="", help="write success/path/collision JSON and exit")
     p.add_argument("--traj-name", default="", help="label in episode JSON")
     p.add_argument("--max-ticks", type=int, default=0, help="episode timeout in navigate ticks")
+    p.add_argument("--max-sim-seconds", type=float, default=0,
+                   help="timeout by /odom message time, independent of simulation speed")
+    p.add_argument("--max-wall-seconds", type=float, default=0, help="wall-clock watchdog")
     p.add_argument(
         "--max-reset-err-m",
         type=float,
@@ -607,7 +656,12 @@ def parse_args():
         help="with --episode-out, also write <episode>.ticks.csv",
     )
     p.add_argument("--cpu", action="store_true")
-    return p.parse_args()
+    args = p.parse_args()
+    if args.teach_route and args.teach_yaw_spin:
+        p.error("choose --teach-route or --teach-yaw-spin")
+    if args.teach_route and args.goal_node != -1:
+        p.error("--teach-route follows the whole teacher route; leave --goal-node at -1")
+    return args
 
 
 def main():
@@ -626,7 +680,7 @@ def main():
     except KeyboardInterrupt:
         pass
     if args.episode_out and not node._finished:
-        node._finish_episode(node.closest_node == node.goal_node)
+        node._finish_episode(node._reached_goal())
     if args.log_csv:
         node.write_log(args.log_csv)
         node.get_logger().info(f"wrote {args.log_csv}")

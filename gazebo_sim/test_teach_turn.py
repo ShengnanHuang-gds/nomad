@@ -50,7 +50,7 @@ class TeachTurnTest(unittest.TestCase):
         # A stale visual match cannot replay the already completed turn.
         wp, goal = self.assist.update(9, self.xy[8], self.yaw[12], 0.05)
         self.assertIsNone(wp)
-        self.assertEqual(goal, 13)  # do not recondition on an old spin image
+        self.assertIsNone(goal)  # do not force a passed exit image forever
         wp, goal = self.assist.update(22, self.xy[22], self.yaw[22], 0.05)
         self.assertEqual(goal, 31)
         self.assertLess(wp[3], 0)  # next turn is right

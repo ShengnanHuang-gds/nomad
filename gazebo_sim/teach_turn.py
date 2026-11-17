@@ -36,7 +36,6 @@ class TeachTurnAssist:
         self.completed = set()
         self.active = None
         self.phase = "model"
-        self.forward_goal = None
 
     def update(self, node, xy, yaw, step_m):
         """Return an override waypoint and optional first translating goal index."""
@@ -52,10 +51,7 @@ class TeachTurnAssist:
                     self.phase = "spin"
                     break
         if self.active is None:
-            # Keep conditioning on translation if localization falls back to
-            # images from an already completed in-place turn.
-            goal = self.forward_goal if self.forward_goal is not None and node < self.forward_goal else None
-            return None, goal
+            return None, None
         start, end = self.active
         p = self.positions[end]
         # Skip the images taken in place: choose a goal showing translation.
@@ -65,7 +61,6 @@ class TeachTurnAssist:
             if abs(err) > self.tolerance:
                 return [0.0, 0.0, math.cos(err), math.sin(err)], goal
             self.completed.add(end)
-            self.forward_goal = goal
             self.phase = "exit"
         if goal == end or self.exit_m <= 0:
             self.active = None
@@ -82,7 +77,7 @@ class TeachTurnAssist:
         if along >= limit:
             self.active = None
             self.phase = "model"
-            return None, goal
+            return None, None
         # Short lookahead along the outgoing line also corrects entry offset.
         lookahead = min(max(0.0, along) + 0.25, limit)
         dx = p[0] + ux * lookahead - xy[0]

@@ -104,7 +104,7 @@ class LoggingTest(unittest.TestCase):
         ns = {"time": time, "math": math}
         exec(compile(ast.Module(body=methods, type_ignores=[]), "callbacks", "exec",
                      flags=__future__.annotations.compiler_flag), ns)
-        node = NS(_last_xy=None, _path_m=0.0, _path_xy=[])
+        node = NS(_last_xy=None, _path_m=0.0, _path_xy=[], _odom_start_stamp=None)
         odom = NS(header=twist().header,
                   pose=NS(pose=NS(position=NS(x=0.8, y=-0.4),
                                   orientation=NS(w=math.cos(0.1), z=math.sin(0.1), x=0, y=0))),

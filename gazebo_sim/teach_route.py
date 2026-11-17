@@ -25,8 +25,10 @@ class TeachRouteAssist:
         self.goal = 0
         self.reached = False
         self.endpoint_error_m = None
+        self.turn_entry_error_m = None
+        self.turn_entry_reason = ""
 
-    def update(self, xy, yaw, step_m):
+    def update(self, xy, yaw, step_m, proximity_m=None):
         if xy is None or yaw is None:
             return [0.0, 0.0, 1.0, 0.0], self.goal
         last = self.positions[-1]
@@ -42,9 +44,20 @@ class TeachRouteAssist:
                 self.leg += 1
                 continue
             target = self.positions[end]
+            endpoint_distance = math.hypot(xy[0] - target[0], xy[1] - target[1])
+            next_is_spin = self.leg + 1 < len(self.legs) and self.legs[self.leg + 1][0] == "spin"
+            # At an obstacle-constrained corner, do not insist on driving to
+            # the exact teaching point before starting its known turn. This
+            # does not relax the navigator's independent proximity stop.
+            capture_corner = (next_is_spin and endpoint_distance <= 0.12
+                              and proximity_m is not None
+                              and math.isfinite(proximity_m) and 0 < proximity_m < 0.25)
             # Advance only by physically reaching this leg's endpoint. A
             # distant projection or a visual node jump cannot complete it.
-            if math.hypot(xy[0] - target[0], xy[1] - target[1]) <= 0.04:
+            if endpoint_distance <= 0.04 or capture_corner:
+                if next_is_spin:
+                    self.turn_entry_error_m = endpoint_distance
+                    self.turn_entry_reason = "near_obstacle" if capture_corner else "endpoint"
                 self.leg += 1
                 continue
             points = self.positions[start:end + 1]
@@ -72,7 +85,9 @@ class TeachRouteAssist:
             err = wrap_angle(math.atan2(dy, dx) - yaw)
             if abs(err) > math.radians(8):
                 return [0.0, 0.0, math.cos(err), math.sin(err)], self.goal
-            step = min(step_m, math.hypot(dx, dy))
+            # Reduce approach speed from 0.2 to 0.08 m/s with the standard
+            # 4 Hz / DT=0.25 controller, covering scan and command latency.
+            step = min(step_m * (0.4 if endpoint_distance < 0.25 else 1.0), math.hypot(dx, dy))
             return [step * math.cos(err), step * math.sin(err)], self.goal
         self.reached = True
         self.phase = "done"

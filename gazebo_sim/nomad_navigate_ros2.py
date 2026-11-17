@@ -312,7 +312,12 @@ class NoMaDNavigate(Node):
         if xy is not None and self._spawn_at_launch:
             xy = (xy[0] + self._teach_anchor[0], xy[1] + self._teach_anchor[1])
         if self._route_assist:
-            return self._route_assist.update(xy, self._odom_yaw, MAX_V / self.args.rate)
+            if (self._scan_stamp is None or self._odom_stamp is None
+                    or self._odom_stamp - self._scan_stamp > 0.35):
+                self._route_assist.phase = "wait_scan"
+                return [0.0, 0.0, 1.0, 0.0], self._route_assist.goal
+            return self._route_assist.update(xy, self._odom_yaw, MAX_V / self.args.rate,
+                                             proximity_m=self._scan_min)
         return self._turn_assist.update(node, xy, self._odom_yaw, MAX_V / self.args.rate)
 
     def _reached_goal(self):
@@ -386,6 +391,8 @@ class NoMaDNavigate(Node):
             "endpoint_error_m": self._route_assist.endpoint_error_m if self._route_assist else None,
             "route_leg": self._route_assist.leg if self._route_assist else None,
             "route_legs_total": len(self._route_assist.legs) if self._route_assist else None,
+            "turn_entry_error_m": self._route_assist.turn_entry_error_m if self._route_assist else None,
+            "turn_entry_reason": self._route_assist.turn_entry_reason if self._route_assist else None,
             "sim_elapsed_s": self._sim_elapsed_s,
             "wall_elapsed_s": time.monotonic() - self._wall_start,
             "finish_reason": self._finish_reason,
@@ -556,6 +563,8 @@ class NoMaDNavigate(Node):
                     "sim_elapsed_s": self._sim_elapsed_s,
                     "route_leg": self._route_assist.leg if self._route_assist else "",
                     "route_goal": self._route_assist.goal if self._route_assist else "",
+                    "turn_entry_error_m": self._route_assist.turn_entry_error_m if self._route_assist else "",
+                    "turn_entry_reason": self._route_assist.turn_entry_reason if self._route_assist else "",
                     "endpoint_error_m": self._route_assist.endpoint_error_m if self._route_assist else "",
                     "localization_window_source": "teacher_pose" if self._route_assist else "visual",
                     "ros_time_s": self.get_clock().now().nanoseconds * 1e-9,
@@ -604,6 +613,8 @@ class NoMaDNavigate(Node):
                     "scan_valid_rays": self._scan_details.get("scan_valid_rays"),
                     "scan_frame_id": self._scan_details.get("scan_frame_id"),
                     "scan_stamp_ros_s": self._scan_stamp,
+                    "scan_odom_lag_sim_s": self._odom_stamp - self._scan_stamp
+                    if self._scan_stamp is not None and self._odom_stamp is not None else "",
                     "scan_age_s": now_mono - self._scan_received_mono
                     if self._scan_received_mono is not None else "",
                     "collision_events": self._collision_events,
@@ -686,6 +697,8 @@ def parse_args():
         p.error("choose --teach-route or --teach-yaw-spin")
     if args.teach_route and args.goal_node != -1:
         p.error("--teach-route follows the whole teacher route; leave --goal-node at -1")
+    if args.teach_route and not args.scan_topic:
+        p.error("--teach-route requires a scan topic for obstacle-aware corner entry")
     return args
 
 

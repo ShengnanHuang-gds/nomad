@@ -53,6 +53,62 @@ class TeachRouteTest(unittest.TestCase):
         wp, _ = TeachRouteAssist(self.xy, self.yaw).update(None, None, 0.05)
         self.assertEqual(self.pd(np.asarray(wp)), (0.0, 0.0))
 
+    def test_corner_approach_slows_before_switching(self):
+        route = TeachRouteAssist(self.xy, self.yaw)
+        route.leg = 4
+        wp, _ = route.update(self.xy[36], self.yaw[36], 0.05, proximity_m=0.4)
+        v, _ = self.pd(np.asarray(wp))
+        self.assertEqual(route.leg, 4)
+        self.assertLessEqual(v, 0.08 + 1e-9)
+
+    def test_recorded_near_obstacle_starts_known_turn_before_stop_threshold(self):
+        import csv
+        path = Path(__file__).parent / "episodes_eval_gpu/house_06_nomad_b40_teach_route_scan.ticks.csv"
+        with path.open() as f:
+            rows = list(csv.DictReader(f))
+        row = rows[566]  # ~11 cm short of turn, laser still ~19.8 cm
+        route = TeachRouteAssist(self.xy, self.yaw)
+        route.leg = 4
+        wp, goal = route.update((float(row['odom_x']), float(row['odom_y'])),
+                                float(row['odom_yaw']), 0.05, float(row['scan_min']))
+        self.assertGreater(float(row['scan_min']), 0.15)
+        self.assertEqual((route.leg, route.phase, goal), (5, "spin", 42))
+        self.assertEqual(wp[:2], [0.0, 0.0])
+        self.assertLess(wp[3], 0)
+        self.assertEqual(route.turn_entry_reason, "near_obstacle")
+        self.assertLessEqual(route.turn_entry_error_m, 0.12)
+
+    def test_near_obstacle_cannot_skip_distant_corner(self):
+        route = TeachRouteAssist(self.xy, self.yaw)
+        route.update(self.xy[5], self.yaw[5], 0.05, proximity_m=0.18)
+        self.assertEqual(route.leg, 0)
+
+    def test_final_endpoint_tolerance_is_not_relaxed_by_proximity(self):
+        route = TeachRouteAssist(self.xy, self.yaw)
+        route.leg = 8
+        route.update(self.xy[61], self.yaw[61], 0.05, proximity_m=0.18)
+        self.assertFalse(route.reached)
+        self.assertEqual(route.leg, 8)
+
+    def test_navigator_waits_for_fresh_scan_then_resumes(self):
+        tree = ast.parse((Path(__file__).parent / "nomad_navigate_ros2.py").read_text(encoding="utf-8"))
+        cls = next(n for n in tree.body if isinstance(n, ast.ClassDef))
+        method = next(n for n in cls.body if getattr(n, "name", "") == "_teach_spin_waypoint")
+        ns = {"MAX_V": 0.2}
+        exec(compile(ast.Module(body=[method], type_ignores=[]), "scan_guard", "exec"), ns)
+        route = TeachRouteAssist(self.xy, self.yaw)
+        route.leg = 4
+        node = SimpleNamespace(_turn_assist=None, _route_assist=route, _spawn_at_launch=False,
+                               _odom_xy=(2.08, -0.967), _odom_yaw=float(self.yaw[38]),
+                               _odom_stamp=21.2, _scan_stamp=20.8, _scan_min=0.198,
+                               args=SimpleNamespace(rate=4))
+        wp, _ = ns["_teach_spin_waypoint"](node, 38)
+        self.assertEqual(route.phase, "wait_scan")
+        self.assertEqual(self.pd(np.asarray(wp)), (0.0, 0.0))
+        node._scan_stamp = 21.2
+        ns["_teach_spin_waypoint"](node, 38)
+        self.assertEqual(route.phase, "spin")
+
     def test_full_route_with_real_pd_at_normal_and_slow_simulation(self):
         for real_time_factor in (1.0, 0.11):
             with self.subTest(real_time_factor=real_time_factor):

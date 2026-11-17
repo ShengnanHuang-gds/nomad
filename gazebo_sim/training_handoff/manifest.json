@@ -1,0 +1,2235 @@
+{
+  "python": "/home/hsnnb/nomad_ros_venv/bin/python",
+  "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "torch": "2.6.0+cu124",
+  "cuda": true,
+  "git_head_visualnav_transformer": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+  "archive": {
+    "path": "gazebo_sim/training_handoff/gazebo_visual_training_inputs.tar.gz",
+    "bytes": 2358837,
+    "sha256": "c66009115b4c7119f185305adb7b0675349a4d38985c9250d43e67b0b6a81eb4",
+    "file_count": 275,
+    "verify_image_decode_count": 254,
+    "verify_hash_mismatches": []
+  },
+  "routes": [
+    {
+      "route": "house_run_00",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00",
+      "image_count": 48,
+      "number_min": 0,
+      "number_max": 47,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 48,
+        "position_shape": [
+          48,
+          2
+        ],
+        "yaw_len": 48,
+        "matches_image_count": true
+      }
+    },
+    {
+      "route": "house_run_01",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01",
+      "image_count": 37,
+      "number_min": 0,
+      "number_max": 36,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 37,
+        "position_shape": [
+          37,
+          2
+        ],
+        "yaw_len": 37,
+        "matches_image_count": true
+      }
+    },
+    {
+      "route": "house_run_02",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02",
+      "image_count": 46,
+      "number_min": 0,
+      "number_max": 45,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 46,
+        "position_shape": [
+          46,
+          2
+        ],
+        "yaw_len": 46,
+        "matches_image_count": true
+      }
+    },
+    {
+      "route": "house_run_03",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03",
+      "image_count": 41,
+      "number_min": 0,
+      "number_max": 40,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 41,
+        "position_shape": [
+          41,
+          2
+        ],
+        "yaw_len": 41,
+        "matches_image_count": true
+      }
+    },
+    {
+      "route": "house_run_04",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04",
+      "image_count": 44,
+      "number_min": 0,
+      "number_max": 43,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 44,
+        "position_shape": [
+          44,
+          2
+        ],
+        "yaw_len": 44,
+        "matches_image_count": true
+      }
+    },
+    {
+      "route": "house_run_05",
+      "source_dir": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05",
+      "image_count": 38,
+      "number_min": 0,
+      "number_max": 37,
+      "duplicate_numbers": [],
+      "missing_numbers": [],
+      "non_numeric_names": [],
+      "decode_errors": [],
+      "sizes": [
+        [
+          320,
+          240
+        ]
+      ],
+      "modes": [
+        "RGB"
+      ],
+      "traj": {
+        "exists": true,
+        "keys": [
+          "position",
+          "yaw"
+        ],
+        "position_len": 38,
+        "position_shape": [
+          38,
+          2
+        ],
+        "yaw_len": 38,
+        "matches_image_count": true
+      }
+    }
+  ],
+  "source": [
+    {
+      "archive_path": "source/train.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/train.py",
+      "sha256": "4448b897bc23ac02c7ee75fd05ac76c85ecf0367d0abfc6a3c8877cf893bbd51",
+      "git_head": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+      "git_status": "M train/train.py"
+    },
+    {
+      "archive_path": "source/train_eval_loop.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_eval_loop.py",
+      "sha256": "9c2e625a80375b359ebfd1d5dd0c415ed7f53915f698b57ba5db2490c4f19d5e",
+      "git_head": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+      "git_status": "M train/vint_train/training/train_eval_loop.py"
+    },
+    {
+      "archive_path": "source/train_utils.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_utils.py",
+      "sha256": "90beb7fa448df81b0f9725f27146d32fcca5a9aad4db289b7d644eb90fa8609c",
+      "git_head": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+      "git_status": "M train/vint_train/training/train_utils.py"
+    },
+    {
+      "archive_path": "source/vint_dataset.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/vint_dataset.py",
+      "sha256": "7b45ba8abd4af82463831d2cd1f16f55c439f30183a2c83528398f5379bc5ee9",
+      "git_head": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+      "git_status": "M train/vint_train/data/vint_dataset.py"
+    },
+    {
+      "archive_path": "source/data_utils.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_utils.py",
+      "sha256": "3087750086519796153df51c15d79713789dfc2ede6bd6caf0f42a92e540e504",
+      "git_head": "593d2411e412c11f82588d80ba141dcaa511ffc0",
+      "git_status": "M train/vint_train/data/data_utils.py"
+    }
+  ],
+  "splits": {
+    "train_traj_names": [
+      "house_run_00",
+      "house_run_01",
+      "house_run_02",
+      "house_run_03",
+      "house_run_04",
+      "house_run_05"
+    ],
+    "test_traj_names": [
+      "house_run_06",
+      "house_run_07"
+    ]
+  },
+  "training_logs": "scheduler_latest.pth present; JSON is the saved checkpoint state only",
+  "checkpoint_dirs": {
+    "gpu_manifest_checkpoint": "/mnt/d/nomad_data/visualnav-transformer/train/logs/nomad/nomad_gazebo_ft_2026_11_16_14_22_52",
+    "desktop_copy": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/logs/nomad/nomad_gazebo_ft_2026_11_16_14_22_52",
+    "load_run": "/mnt/d/nomad_data/visualnav-transformer/train/logs/nomad/nomad_gazebo_ft_2026_11_16_14_21_34"
+  },
+  "files": [
+    {
+      "archive_path": "dataset/house_run_00/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/0.jpg",
+      "bytes": 8353,
+      "sha256": "a314ea8f132e71283cc251fef4986ae5bff999fe8b3e77060946ddcec7d153ef",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/1.jpg",
+      "bytes": 8431,
+      "sha256": "168712119361c9ff0b4a93fe7129f8adc9db76d6fb22021f18ee30f47e2a849f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/10.jpg",
+      "bytes": 8807,
+      "sha256": "267082172c2a06b7f524c364ca139370910890112e26eb559da62de6bd0906f1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/11.jpg",
+      "bytes": 8787,
+      "sha256": "f0adb70952552f611f3a50e37c7b242b3db3b9109eef897433964642381a276c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/12.jpg",
+      "bytes": 10836,
+      "sha256": "f68e517be63e3472b2fb785e06d8a8a206678212f89d38926270fb2428018d26",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/13.jpg",
+      "bytes": 10599,
+      "sha256": "4181c8c484bd3976cf05bc241c4480a6de104e28f9dbba230bb074e7f41d5c36",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/14.jpg",
+      "bytes": 14838,
+      "sha256": "22d0996fbe1708dda6f00193a59e14f4cc5b1646cf75872972798b60c9909232",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/15.jpg",
+      "bytes": 14927,
+      "sha256": "e310067c5547cb0056fa3b91f0b24b67c9b968cf383ef2ab1ebd0d7d6c6059d2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/16.jpg",
+      "bytes": 15201,
+      "sha256": "db06c2aac3c86f4a0c1ae1bc348f5080a7ac6c6fdfcfb517124115b4f96a30a9",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/17.jpg",
+      "bytes": 14951,
+      "sha256": "0120c70ea05f795648aee126074b432192f8d67fa9c374f6936b2c689710e9d1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/18.jpg",
+      "bytes": 15383,
+      "sha256": "a2e698421c5347d3c566fd4858e39bae599dfc38a591caf24a30944dc9d22366",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/19.jpg",
+      "bytes": 14939,
+      "sha256": "5b87af3c908e458cf016a60930d42f405063323514b0afc6644cbc8e968b3008",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/2.jpg",
+      "bytes": 8553,
+      "sha256": "912b526eeb67f71028b099ed004687a7c985473251de0f1509513906742be470",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/20.jpg",
+      "bytes": 14917,
+      "sha256": "d290f14146f602c7b0b7ff79a2e9c56726a576ba10d1710a04fec4fdddd478a7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/21.jpg",
+      "bytes": 15346,
+      "sha256": "67cbe0c4bf6d14517e30217ac9a832999b318a2d2f61d176859a1d91994a8026",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/22.jpg",
+      "bytes": 15037,
+      "sha256": "a5f6d7279dd5462c89f3824c7aec0409fd120026632ba34e372dea4023105627",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/23.jpg",
+      "bytes": 9499,
+      "sha256": "f24e39d90bd4f517a464a67a8f836624d327ac2ca1c7167974167d15f606de87",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/24.jpg",
+      "bytes": 17334,
+      "sha256": "fd90e11c5316dbc25857b4b087b4ac991cd1a2293524f8fdfd190d7a77971489",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/25.jpg",
+      "bytes": 9025,
+      "sha256": "4e13cae949e4dac704a7bd2172988b231aef202f8732da06944c7e63defab580",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/26.jpg",
+      "bytes": 10390,
+      "sha256": "c55af24c435c3975d10ead080e162bfba6ec54867fc2794b907f9a7188afa697",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/27.jpg",
+      "bytes": 9709,
+      "sha256": "338f995a6464d6a74ee21c34aff8128b2c77b9aa932ec4a935f8bb6f2ad487ce",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/28.jpg",
+      "bytes": 7410,
+      "sha256": "dbaad48525466a393fbcd9267b549c8680ee123a64e669ee115813e4858642d7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/29.jpg",
+      "bytes": 9498,
+      "sha256": "bbf86f597f85fb482d95e6440fcdeb88959794ad7edffdca610531c17a5aa734",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/3.jpg",
+      "bytes": 8497,
+      "sha256": "695dfc4c41e1135a8c1e0fd61e12311f072beca7867801c1a008de919318c854",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/30.jpg",
+      "bytes": 10583,
+      "sha256": "9a06dac1ba66abacc256560520cf1d88679f1a44c5ef64e0c85729a4e9ff69ef",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/31.jpg",
+      "bytes": 10088,
+      "sha256": "24f8330588b30b457509807df233c7bf65b5e3e92af57dd9c3bc1145344e3160",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/32.jpg",
+      "bytes": 9581,
+      "sha256": "7d998dc96802a7c0d16547696e76f1d3b806794bf8de5028697789fffcff166b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/33.jpg",
+      "bytes": 5416,
+      "sha256": "c022c4da1f6cf6483f7bd2c5225aa569ae4d34319795196d82e1bf938a20d8a8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/34.jpg",
+      "bytes": 10361,
+      "sha256": "90a9089c2f437f0bf0084029dcf1d522181a82fb30f1fde9ceed802b76177856",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/35.jpg",
+      "bytes": 8850,
+      "sha256": "e235175f807eac2e990fdedc84ecf0aa832039c1d995f31aa2de1395c6a20903",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/36.jpg",
+      "bytes": 8623,
+      "sha256": "38db45061da83382ace8ade124bd632da32d60f34fd4167ff9ffe91efd57827c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/37.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/37.jpg",
+      "bytes": 8689,
+      "sha256": "1c348cb245806507e48b184a9a3c115894bb4418bb14afb6708a13eb7917f339",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/38.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/38.jpg",
+      "bytes": 8601,
+      "sha256": "9a107a9e367dcfa2b010af4b2e699b702577b0b8da52302cfba7dc77e2c39e77",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/39.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/39.jpg",
+      "bytes": 9535,
+      "sha256": "f43e6f48d4359a67371b2a0d99727235c8a17d73c43c0260801bacdaf8a19ae8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/4.jpg",
+      "bytes": 8489,
+      "sha256": "f6d3b274f5a4e588b2d0fee7fdd80bb96ce2a374d1ac81925371cfb3c8e4fcbd",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/40.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/40.jpg",
+      "bytes": 9299,
+      "sha256": "2c375fd69ac758d86ecbe0d5a836c2e56734aea04536ed9f879962d7efed80d5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/41.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/41.jpg",
+      "bytes": 5544,
+      "sha256": "29693814ca89e9223c47ab2cf62cfdab66b85a5d166d2f9fdb8e10edd1215756",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/42.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/42.jpg",
+      "bytes": 8378,
+      "sha256": "17c269eeed18ce636d0f4032fab346c6cfe5198bee9e607613dcc283d9dfe0dd",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/43.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/43.jpg",
+      "bytes": 9376,
+      "sha256": "a765dd98a2b6265c56de575f08c25d4ea34f32ccfa56870406005d9d280fbbf5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/44.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/44.jpg",
+      "bytes": 8880,
+      "sha256": "c09381050fded68c35faa03dbc351d42a5c5707b132e9437196619c503702e51",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/45.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/45.jpg",
+      "bytes": 9097,
+      "sha256": "4d5203a37336800c08689b8aeff227324cef5447e876da7013a489b06a62681f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/46.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/46.jpg",
+      "bytes": 8938,
+      "sha256": "7880bcc0b1328d807302534e2c44b5b48c81ae9d39ce93adb6541903b190dfcd",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/47.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/47.jpg",
+      "bytes": 9456,
+      "sha256": "ef87bc1e70128cb34ba982c8e958e10ed2b67cfbe14070fd9ddce5c9e4902a4f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/5.jpg",
+      "bytes": 8514,
+      "sha256": "12222924bc02719a5c49a5c5eceed9f16d650ad59d2687934f93966c2bfbd08a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/6.jpg",
+      "bytes": 8602,
+      "sha256": "2594b5df00ace08b4c0964f57e0c238d5d729deb871baa185df9e13c46f778c7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/7.jpg",
+      "bytes": 8707,
+      "sha256": "99c6ac5014627b9e0beabb46fdba9355bc9cec18cf5aa1cae9186bf00e7b3030",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/8.jpg",
+      "bytes": 8713,
+      "sha256": "45025c63346397ef0537ab4d4cf07b48acbd0751a46d55f2c5b4c47a3bd9c4c8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/9.jpg",
+      "bytes": 8829,
+      "sha256": "280b2bd5055c845501a7ee8c2149885157c54aeb291cdccfa4f3c0614deb320e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_00/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_00/traj_data.pkl",
+      "bytes": 1358,
+      "sha256": "f79cef4d18473d4c54807e66be1e494dc09f91b90369fc3fef4bbf33b54a612d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/0.jpg",
+      "bytes": 10449,
+      "sha256": "d7eb229aa846ac2ca024bb3a5587da0526b6c8e960fa947b0bd28195ff627a93",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/1.jpg",
+      "bytes": 10517,
+      "sha256": "fa5967eac7ad65c769f7a2f3f73589b0ba25e6e0bac1080fe8fcc1e9bdc3b97b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/10.jpg",
+      "bytes": 8731,
+      "sha256": "f94cbcdb92ca1a3026f7bd21e51c917083e67b0305ed19233248803d75df82ae",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/11.jpg",
+      "bytes": 8088,
+      "sha256": "cc32555e2ca37e4b1090b09509935492a243c2e1049b3573e6dd42c2573e6328",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/12.jpg",
+      "bytes": 7187,
+      "sha256": "ee20e9c803e8172188bd809d40cfed5798c94d2e7f504665bc38ada43f98fa8e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/13.jpg",
+      "bytes": 6757,
+      "sha256": "850508709f3873b25d336c3b29c561a144318a23cceedefa9580a5b4ece741fa",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/14.jpg",
+      "bytes": 6936,
+      "sha256": "c501a12d85640f6249028111ed11e6d3689e6917f9a4a7314dd7773d86292d77",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/15.jpg",
+      "bytes": 6816,
+      "sha256": "0fee7444ee1beb7c1932d9115d1e6efd2d8a5442ec98fa96ea948af314982660",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/16.jpg",
+      "bytes": 6836,
+      "sha256": "34f448d55010cde5889ce0463caeaacd638a07f5ce02231d7b627bb2a11b516b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/17.jpg",
+      "bytes": 6765,
+      "sha256": "f7b34eb6bf6ab05bb58324836c217827ba8bca4aa19d5494430b79748ee9d7b8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/18.jpg",
+      "bytes": 6524,
+      "sha256": "98a868eb1f1c052e93cdb3fa2891365220fa0eb1a59739f1c3a1318e02fb3504",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/19.jpg",
+      "bytes": 7554,
+      "sha256": "c84fc0b750f658044e072a1eced94cb2262eca3a18cf78283a2a266222f6feda",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/2.jpg",
+      "bytes": 11132,
+      "sha256": "8de92b53a2dc5385a3f3c27ae607f95aefaeeeff89eaef6cd6baf6953fd23940",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/20.jpg",
+      "bytes": 8040,
+      "sha256": "6ccb2d025de3e8a3313898a7f2014331bf3f3607bc7b2bd2412ac561fbac92ce",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/21.jpg",
+      "bytes": 8337,
+      "sha256": "a750dd436d5b7bf50c62fb731218d8791ab310e090634055e43d24bc1468f903",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/22.jpg",
+      "bytes": 8824,
+      "sha256": "8d349b87813098bbee6cc62b0b50879fbb5f65285872bf28f88613bac3b41c91",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/23.jpg",
+      "bytes": 9070,
+      "sha256": "a0cc3e48e87d78bfabe702579ac02bb1c533792a0adced616af8d7586ff1ff5f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/24.jpg",
+      "bytes": 9386,
+      "sha256": "33b820d462d2cce288680aa3b6677a32075428077f03d4fc3c1ebeb4f040452f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/25.jpg",
+      "bytes": 9663,
+      "sha256": "5069662d2fa89dc84b1918a1c14e1b92ee27f3a351a3e1665e727239e945e579",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/26.jpg",
+      "bytes": 10015,
+      "sha256": "f3bbbc88ada136a2a7bbe455be2296179b983c2dd794b888f0a41df56b8c86e1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/27.jpg",
+      "bytes": 10497,
+      "sha256": "ecdb9c67f5815bc8ba2688d34cb642f2be5f493ed932734045e3cebdf69aa205",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/28.jpg",
+      "bytes": 10544,
+      "sha256": "f1253d4a53783ce72f0dcd30ba3120e605454b01108a5f4a10717de419419968",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/29.jpg",
+      "bytes": 10476,
+      "sha256": "510d63741ca640d3a7184b359e6089b26d3f6c8570825eea0f24af4fd14df563",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/3.jpg",
+      "bytes": 11254,
+      "sha256": "0946bc06dbcde0e37c1444be6e6c50f4eea5aa9ce5ecf2f452a08bd67a3a56c7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/30.jpg",
+      "bytes": 10516,
+      "sha256": "47cfe76514867c371f464eac43bc32dcd2dacdab7fd39c88876795ee0da258b6",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/31.jpg",
+      "bytes": 10682,
+      "sha256": "eb004b8bbf03f18183015ec7f55a4602260db9bbd65c5acbe1603e63763697a1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/32.jpg",
+      "bytes": 10835,
+      "sha256": "beeb276e56560e7513c4de8152472327c83b7441d5daf009e2ebb8a671488c05",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/33.jpg",
+      "bytes": 11003,
+      "sha256": "da838a84dc2c67a4438c59cbb3b946703fe80b672cdd7fd23424250ea7fe23ec",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/34.jpg",
+      "bytes": 11252,
+      "sha256": "2d6e8843627035e308e7480d97c811b5eb4312c456b499659b0fb62ce1a79dad",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/35.jpg",
+      "bytes": 11513,
+      "sha256": "3778d16406e4f319a4cca1bb7aec913135e5eff0e9d2a9de54693c3b672781bc",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/36.jpg",
+      "bytes": 11871,
+      "sha256": "67fbd50583866d91ddd3aa7cbbd3ca577285dc0a6f533282501da224ab1751c7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/4.jpg",
+      "bytes": 10980,
+      "sha256": "dc2786c57f44957726371e5d2136db08b15fad3b51deaf7ed9a979ab0c1a3e03",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/5.jpg",
+      "bytes": 10981,
+      "sha256": "758b8ebd4ad74b355a72e95b29de98530b5c73025dbf7e45cd79cad952ce5582",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/6.jpg",
+      "bytes": 11177,
+      "sha256": "5c9b648fbbfdf341a8ae6b12843b091cbb2c9e294f42db0d3c4fcb894bf7878b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/7.jpg",
+      "bytes": 11757,
+      "sha256": "b3d1d7a224dcd7e239d4247e89f8a00f44750c1da3f118c361ed9a64d1f91c4e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/8.jpg",
+      "bytes": 12054,
+      "sha256": "62895df70ac24fe23b53e5138071b30a9701e1e0b1daad7fd34c8b99bf4c24ea",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/9.jpg",
+      "bytes": 12206,
+      "sha256": "52178af913e722b4034e0c14f28e47c047b0dab84c23bb31307564d7907514fd",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_01/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_01/traj_data.pkl",
+      "bytes": 1094,
+      "sha256": "3dce9bf5efe8f40275fc55f60bfc3c7ba93ee42e40781984cce6ccb48305ffb8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/0.jpg",
+      "bytes": 12779,
+      "sha256": "b603c8ce654819d1e66d661338eeffb0ddf14fb7899bb078cd2d2004999eb4d2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/1.jpg",
+      "bytes": 12662,
+      "sha256": "45bf3f78ddcbe60c67bceb727be638909114e2eb8965389bc127999be4e5b7d0",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/10.jpg",
+      "bytes": 10640,
+      "sha256": "99d74210a00426a6a2a1ba469f1caf4d3f7432f235abbe72e18683afd1990770",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/11.jpg",
+      "bytes": 10951,
+      "sha256": "1987c9bbfa7a839e6a58574b8de4f217016197af72e0b06058325e49bcb8ff4e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/12.jpg",
+      "bytes": 11241,
+      "sha256": "d6b2fc9993b0393750b049df56cd165b5e7b826af470a9d03c954a991f988d69",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/13.jpg",
+      "bytes": 11597,
+      "sha256": "9a1d721c2311564c92d67c63d94f4ece8ba7629be9e90bf2940a0531aa11c579",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/14.jpg",
+      "bytes": 11291,
+      "sha256": "340ccdc6062f53d9ccbdbad42b9bd3eb4ae24224565dfb2113ca88b7d4e22f01",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/15.jpg",
+      "bytes": 8957,
+      "sha256": "cefeea99850b669341dc47de705df7636eba3206bef5ee02d33c7344d3fe6406",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/16.jpg",
+      "bytes": 8677,
+      "sha256": "2fc5ad21a1e0c9af71fe5b144a5149a950f9f5d72280a40ee59014f62e58d7f2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/17.jpg",
+      "bytes": 8584,
+      "sha256": "d99308ee80097a1b0c2fe4f0b8298b14ef58725eff22f51979cb65cc03394afa",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/18.jpg",
+      "bytes": 8840,
+      "sha256": "692f58f5b0ad29007ff2f3a99f3f562a5d33c26320dfd6c150437e048ce4c773",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/19.jpg",
+      "bytes": 8925,
+      "sha256": "028bc7801666da916744c53e416d4ba3e6fb239abcbfe59c8c840d7e8ec3a7cc",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/2.jpg",
+      "bytes": 12926,
+      "sha256": "45740656c0fee695dbd595682f41be76a5498ee3bec776d9a89ec5ad76f8a9ad",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/20.jpg",
+      "bytes": 10325,
+      "sha256": "875aad617f99c6e49c2e630e1d73f35e987a7f173ac4dea898c907e8b2d9c274",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/21.jpg",
+      "bytes": 10179,
+      "sha256": "377f204c698b21d84de2dfd3150c2212bcba7fd13a542e565c6adf26f78ddcb8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/22.jpg",
+      "bytes": 8949,
+      "sha256": "d32de2e6f21855d7e61befc8dd21e93d8d7f716b026ec68044de61fe07c1e25b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/23.jpg",
+      "bytes": 9794,
+      "sha256": "7562438e28577c97648a0bf3ec90cc5150f6a578424ed79cceef3c41b0ccc234",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/24.jpg",
+      "bytes": 10002,
+      "sha256": "5d9d555943e151e02933dc9f3ad169f6552e1ff6e8abe167665ddd414ea8b02f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/25.jpg",
+      "bytes": 9710,
+      "sha256": "31069feb2cc981ffb6b860ef66fce9f0fddaaa15eec4ac9a0addd92a8f9862df",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/26.jpg",
+      "bytes": 14745,
+      "sha256": "9dafd04b27e9443505cb40b512407ec8772eb38a1a6a16a886d39b7e383926d2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/27.jpg",
+      "bytes": 13925,
+      "sha256": "f670109749db1316c6fcc171c8dae11683ec90517d8cd9ce17d21a187d0d7b3b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/28.jpg",
+      "bytes": 12759,
+      "sha256": "8d9318c244bbd30b48237677b91d4fbe4e5c330b2328679d09c63cfaf3fe6562",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/29.jpg",
+      "bytes": 11690,
+      "sha256": "6325737549850959da2fd9c9ee8ad1be1580c28d33952f0c9ac868a982334eb1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/3.jpg",
+      "bytes": 13270,
+      "sha256": "3516c51e2a0c9d1a258cd2de8833cc04f5fc95afdf936b197e488c3d2ff1826c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/30.jpg",
+      "bytes": 12814,
+      "sha256": "fc76d49c45aeba2e2cfe717c3cfc6bf3a8d22eb3a64431be3b70cdf4a6be0e47",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/31.jpg",
+      "bytes": 5545,
+      "sha256": "ea73ffca9188c86aed7f3c117486ffe6e971fd7a91c25da6e4ca38eeb612b21a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/32.jpg",
+      "bytes": 5691,
+      "sha256": "e5b757b883cebc5ae0f286d16c073ebdd49e0ae7d55e7bc308661bc2bdf227b0",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/33.jpg",
+      "bytes": 14118,
+      "sha256": "e68e5f24f6a452b49f140b33b6236744c14c44ac8dd91de8f6965f0bc2611b80",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/34.jpg",
+      "bytes": 10061,
+      "sha256": "5fc215f28b979aa9709af2bace108a97088730032b3d9b66b489156a72e9aeee",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/35.jpg",
+      "bytes": 8843,
+      "sha256": "27eeda823c05c9f8a535a7c896605f029d314342a6c4fecb827744e8aa840c5d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/36.jpg",
+      "bytes": 12564,
+      "sha256": "b3611e48d9ba14ca4a9cd52b3d711ee18b609a9dda3a0f2a1c53759b3a51499a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/37.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/37.jpg",
+      "bytes": 16886,
+      "sha256": "d1c4112bdc3a8c5fdeb508ca73ddf1963e7af76d7db625f6ef409a397a399cc2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/38.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/38.jpg",
+      "bytes": 17291,
+      "sha256": "3756d5e47a5b86a1df83e0cf03f32f22a5208d2e24b3b7e303a41c629c2fe215",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/39.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/39.jpg",
+      "bytes": 13505,
+      "sha256": "7b3a978d7fdd455a24c07dfe2182938fff5c235d9799e6fb18c66760a3dfa947",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/4.jpg",
+      "bytes": 13546,
+      "sha256": "9398f2f5dfd4310afa68f591a8a799c7ab66046996676404f614858417b1f4a4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/40.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/40.jpg",
+      "bytes": 15258,
+      "sha256": "dca8a5e496e299b2dcedce1d31630c53bd011813a9f8eee47c2498b513ad80a3",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/41.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/41.jpg",
+      "bytes": 11562,
+      "sha256": "108ed746ef0883a0afe08d4fec8bba5d9cc76c72933da69d6028a185c4940fda",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/42.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/42.jpg",
+      "bytes": 10658,
+      "sha256": "1289c77f974a254c06d6d085c58edaa417d0ab0ef679a628d4cfd5318001b0af",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/43.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/43.jpg",
+      "bytes": 8235,
+      "sha256": "380055ebe0c34714da3e571faf0440808c6597c7b468f434863d14944082cd14",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/44.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/44.jpg",
+      "bytes": 7572,
+      "sha256": "b9a77b243a4f3364c0d7439eedfa4b6ac576a800bba0b4db23bfe61a44a9d021",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/45.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/45.jpg",
+      "bytes": 7507,
+      "sha256": "8c0f3f3f57f3a854a4dbe862d164a68d3269991e6759c286c0a7714ab1684d04",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/5.jpg",
+      "bytes": 13623,
+      "sha256": "c83bc38834bf648d3eae40a002675c7ad2e0490f62b9977a1f7d5e45a14fe164",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/6.jpg",
+      "bytes": 13678,
+      "sha256": "05a555e0671d1cc2dd4cdc1190f124e494b2f7c01b812e2cbb6a87015abe1d37",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/7.jpg",
+      "bytes": 13761,
+      "sha256": "91f2cf7b7af19b184351cf2530b23fc300d031def0909410ffeedf5c6479efde",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/8.jpg",
+      "bytes": 13800,
+      "sha256": "e623c106bf528f51ce788c0078136fe8ea7625edfddcf5a2ed2e846a7964b82c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/9.jpg",
+      "bytes": 10351,
+      "sha256": "c4c4f01f094eb90b226865d52f8f98dfe8027a4e98ffed1e959a77b68066cd6d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_02/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_02/traj_data.pkl",
+      "bytes": 1310,
+      "sha256": "4334dfa3eb81a497eb2f6c45dd86bbfa775b53820162c3a9f4f3203be94671fa",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/0.jpg",
+      "bytes": 15329,
+      "sha256": "bf9f851261cf3208f540004cecf2b727922541a1c9564ab87bc43522f1674a70",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/1.jpg",
+      "bytes": 14933,
+      "sha256": "4e1ac50ab4179a3734999c8549ae281bf4cb1e945c83582b83c636565f13018d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/10.jpg",
+      "bytes": 12019,
+      "sha256": "4e83abc61188f8b716cee252ec2e4600bb05c46d08e08fc75ce3cfd04b5e01f6",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/11.jpg",
+      "bytes": 15740,
+      "sha256": "34e30025525c027efb4281fb1090d6f6a2a44333fc56e4123e1d0f76d4355d63",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/12.jpg",
+      "bytes": 15343,
+      "sha256": "4f4e21d8b34aa207fcac88974f5f3c9e460af245d66e05e44a448c2bc82c7803",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/13.jpg",
+      "bytes": 13986,
+      "sha256": "e929cf6764ebc552268094d8306f766740ad29082cdb83b2d209750a5e917829",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/14.jpg",
+      "bytes": 13586,
+      "sha256": "39142b593142cb6a8f541fa935943f091f97badacb2d760200c484c7f4f5efbc",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/15.jpg",
+      "bytes": 14364,
+      "sha256": "e17351ba78aae7720768944cbf872f8ad268d4d757961a7f2298bb22bee453db",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/16.jpg",
+      "bytes": 15846,
+      "sha256": "5bf13811dab6b72e5bddc0fa36a31acdd812fce9fe7bd51e5005c936ae0523ad",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/17.jpg",
+      "bytes": 16750,
+      "sha256": "8b15e7350c98cc9c4fe368c77a47355dfe9c22999a0d40ca3c207c0ffebeee99",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/18.jpg",
+      "bytes": 16405,
+      "sha256": "11511162e76701d8b8ec862a991b6e90e904aa14e99d90a47ee247148c993df9",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/19.jpg",
+      "bytes": 16245,
+      "sha256": "ff8e5ee233cc8bf201da0a096bd5ea5ff870107d751f10d479940b9c0237001b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/2.jpg",
+      "bytes": 14416,
+      "sha256": "dc39fd66b73ec8ce6c9f9aaacab7fb811c1264f3d006b709d61e51e6bc5cfd79",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/20.jpg",
+      "bytes": 16143,
+      "sha256": "369a7b482339fc77d629c906ce047c6c7966e79089b4048fc7e59c7559312716",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/21.jpg",
+      "bytes": 17215,
+      "sha256": "ec975c28badfc750dfa586d62d4847ff799b9f59a359fc2cdbed85788f8873da",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/22.jpg",
+      "bytes": 15940,
+      "sha256": "ec3dd8d9cb477dcd63ee2777a8cc3c0f19326183d08cf9b411589238c8d4f2ee",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/23.jpg",
+      "bytes": 15027,
+      "sha256": "aa07be11699f069b75c7076fb2ed352fdaf84a00c5610e9507abb34741c0e963",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/24.jpg",
+      "bytes": 14929,
+      "sha256": "898079d2f606e4022e9324c8ce15d3a126585b8bcc3c5b7e2e897126bd54d5ca",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/25.jpg",
+      "bytes": 15522,
+      "sha256": "a47d787d140563ca15ffc7dfe9e5279f27c1753161c782e4deff8ab8105770da",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/26.jpg",
+      "bytes": 16694,
+      "sha256": "a7567df8dee583844dd1cd4bdaeda0cb5f0d665939d503b8008da8ce8b78fbd9",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/27.jpg",
+      "bytes": 16239,
+      "sha256": "2f7e525f8262cc316d68f824ba8f4185e64c8ba84fd8c6473791b29b35e275c2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/28.jpg",
+      "bytes": 15197,
+      "sha256": "a6ac2488485d7b7fdd3f93a16bcb8babd1ddb7f8880a57321168446a969fd5e4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/29.jpg",
+      "bytes": 15146,
+      "sha256": "65d62da87b5b03a82c87886cca7638ae974a348750964946b1c6962303601b18",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/3.jpg",
+      "bytes": 13681,
+      "sha256": "8d1f7a02aaf6c8df787e1d932abbc44c929603abf727b9f1a342d06c5e67490c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/30.jpg",
+      "bytes": 14868,
+      "sha256": "069662ccfcd0c70115274894a5e3343771314953b76311d344bbe1131d1ee03d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/31.jpg",
+      "bytes": 15186,
+      "sha256": "12f1065b5b1baf7bb8e4e39a82d5d08ae2e73407b9687c94093571f9bce3d893",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/32.jpg",
+      "bytes": 16129,
+      "sha256": "95e5aa840d001c462ce05848dfeb8b4db274565de542ef9bdb4a5ed15442f23e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/33.jpg",
+      "bytes": 15808,
+      "sha256": "4cccf513c23bc1ead709bdd055484923ff37d23f42f4d059aaa0550280c4f518",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/34.jpg",
+      "bytes": 15400,
+      "sha256": "1280b4e9b7b56cb811ebd6283f6504c08bf980beda7c0f9136d34c5bbf3da928",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/35.jpg",
+      "bytes": 15049,
+      "sha256": "69a8e70c879415804a887f3f8f9cba2ae905ed9ed8c4268dd4c63cddcf3ec2d5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/36.jpg",
+      "bytes": 15138,
+      "sha256": "fab1e0571c6405a27bfc2f3c5b9b8dec42d73a462c846888443d0186672d523a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/37.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/37.jpg",
+      "bytes": 15604,
+      "sha256": "293e179473d3e10e18423ababe2f8e198ef9e1b963a7fbe9a06f8c85fb31f5ca",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/38.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/38.jpg",
+      "bytes": 15498,
+      "sha256": "d7f157b67995dc0c282e9a7a4a8a220ea4fe4412a274e333d4eb8f417d15e123",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/39.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/39.jpg",
+      "bytes": 14685,
+      "sha256": "d5f1c9e42cfbe1ec7767565979969a9d51371aa2995ad3f52407c1ed8873ab90",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/4.jpg",
+      "bytes": 12018,
+      "sha256": "bca50218f72141a3c47cc7bd8e62187361688c01b30aad46bd26367c6a3fc9d2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/40.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/40.jpg",
+      "bytes": 14144,
+      "sha256": "3fededab6e7825558f4e3b53e8ff97f1ad8113931c364b9000c93cc704d773ae",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/5.jpg",
+      "bytes": 12103,
+      "sha256": "f0d3a1d52bf7b5a9add04a61a57fd2ad5942538dcbc97ae738830114532af4fb",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/6.jpg",
+      "bytes": 12069,
+      "sha256": "364699679f79e9286afafefafb543273e6de731be4dbf8e95b171f9059602bb4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/7.jpg",
+      "bytes": 11993,
+      "sha256": "769b74ffa9761dbae7573115ac0da37bcd3be8b425929560961d986ea3d2cb3c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/8.jpg",
+      "bytes": 12122,
+      "sha256": "bbe388dd4feb3314ef203ca6ae7c9fe771d589cc71d098d6178c6db99df54a47",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/9.jpg",
+      "bytes": 11988,
+      "sha256": "ccb316d1e1559fa74b55e64c5a20c9bc5efb8e6f8953c83b05cbfd5936991a84",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_03/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_03/traj_data.pkl",
+      "bytes": 1190,
+      "sha256": "7a30419ea93fbb8a124f2e1f20c79ae4cee8d1b7989c01d98d77a7454cc07552",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/0.jpg",
+      "bytes": 7867,
+      "sha256": "ba4b4303096877bd8ca1115488886113d4d6d9c6331ac9e67a06278199257296",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/1.jpg",
+      "bytes": 8063,
+      "sha256": "14e2f3bfb9e491a01cc68bf3c66a720f7f6bc6a84b09321ab97232e4eec94081",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/10.jpg",
+      "bytes": 7036,
+      "sha256": "611c484fada6dc84d57d8475b57bd5e9b40489a5a32d8b98e5c17fd4ac8529d4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/11.jpg",
+      "bytes": 7033,
+      "sha256": "fc36d522dd21fb5723adc4a9df8643eb0c59ddfc3f9cc925535b9ce574c268df",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/12.jpg",
+      "bytes": 7033,
+      "sha256": "e08a009ea7eeebb279b3b55a05833a910d78f0421237197cd9f6420c5e4b33a7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/13.jpg",
+      "bytes": 6995,
+      "sha256": "5f1e9ddf46126ca8fc731aaa52dcb6293e589c2a2e2ed1feebc858a5427324c8",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/14.jpg",
+      "bytes": 6888,
+      "sha256": "d1b0443de2f8911bcd8ed866285e8535d359d2f0287637d0b133e113de39fe8b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/15.jpg",
+      "bytes": 6841,
+      "sha256": "b86646066559583cb48bfe497715d6467b2c2a164f6356ee2a80f659b22efaa7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/16.jpg",
+      "bytes": 6764,
+      "sha256": "6028aea44bdddc03d0b9bf0b37035d2bd07f5b93aa25ec2678a7008be2bbf6c9",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/17.jpg",
+      "bytes": 6733,
+      "sha256": "fd92242a233efeefb1e599f2cfde63d63a1dab728d5a5db134475224951ecfda",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/18.jpg",
+      "bytes": 6772,
+      "sha256": "0e8b73408a233cf3cc29c212b083408ce4c512bc20be5051347d6518aec0fd2e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/19.jpg",
+      "bytes": 7914,
+      "sha256": "de0bfb736c2ae79c287d286c2b2b952c8365c8c55464362bb5bd64d0abe128b7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/2.jpg",
+      "bytes": 8075,
+      "sha256": "ca633306ae29ff42d0b35c6407aa92b302f30beca1deb1a3a659c7b18adb4d8f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/20.jpg",
+      "bytes": 7983,
+      "sha256": "f67cbc3079bcabc64189a1ababbecb5048eebdbd229f8e27755a4c2a55acc697",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/21.jpg",
+      "bytes": 7958,
+      "sha256": "95d6d501db8e51348e16b51997a8ef42e05b4ae1c3c5ad4c4a1fef2db9ae6da1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/22.jpg",
+      "bytes": 7966,
+      "sha256": "de1fd3ceff8ca7c6b5c6b5f5c95458b454f229cbd814f230b4055720c693aa4d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/23.jpg",
+      "bytes": 7989,
+      "sha256": "12ef2948e749d55dc5d57db8c77374af92d8f5267262d2eeab3f303424088dc3",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/24.jpg",
+      "bytes": 7903,
+      "sha256": "e957bb327d2fab852943beb761a08cc2700e56b5540676e51c8823fbc671d2e5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/25.jpg",
+      "bytes": 7938,
+      "sha256": "28e659733a07393cbe52101a18012e3ca71615c7b49050c4598f4e953a48826c",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/26.jpg",
+      "bytes": 7903,
+      "sha256": "97ca85309be43968c75bd092bac8cf29fe9d727363ede7e6c5252d037f653ab4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/27.jpg",
+      "bytes": 6282,
+      "sha256": "f17f49a47138b81fdf16bc1fdb61668575a06d3209f1f8dc87c398906f77733f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/28.jpg",
+      "bytes": 6442,
+      "sha256": "55529a78f42e914661d64f847f41a2e5a89121c4117bfe68e152ff1b7f543460",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/29.jpg",
+      "bytes": 6408,
+      "sha256": "d8409a9700bfbd81a10d589e9cfd8460ea8bf83a7a270691c0c9c6aa5dd47b02",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/3.jpg",
+      "bytes": 8324,
+      "sha256": "cc062f105f522ece35d778e323e196b14eafbf931b6106f420cf256367fbfb1b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/30.jpg",
+      "bytes": 6364,
+      "sha256": "02e1fad189082efc0da60798a4eace1fc2388ac3d5d8c9c0eb661315af819baf",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/31.jpg",
+      "bytes": 6230,
+      "sha256": "cf575cdcf4d8d228b47438befc50b1ee68d8f38b8234dc934f0faae39508f96e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/32.jpg",
+      "bytes": 6144,
+      "sha256": "fbe4037e2bf0a02233d81feb1d6e4c46ec03f1a4749b7b9598a2b0507272b9b4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/33.jpg",
+      "bytes": 6003,
+      "sha256": "d24ac0d7d73fe4d946f9e3014a723454e3824c6701f3b9dbd2ed1a3ecead4f06",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/34.jpg",
+      "bytes": 5803,
+      "sha256": "95a3714ee9ae2aef41c3051323270165b41346a06db32558ae7ae9d61b4db768",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/35.jpg",
+      "bytes": 5818,
+      "sha256": "5f7e410a5d1ab90579e5da56fe0c409ee4c1c930ba6e936d263445abf71bacd2",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/36.jpg",
+      "bytes": 5725,
+      "sha256": "2678eb90af90725b6423531a36bfe1b8758dec5724c1bf14077f7e0209573942",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/37.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/37.jpg",
+      "bytes": 6374,
+      "sha256": "2b8f28b20c4d21e6b75d9a54c90799f6c7d91eae29b82233b157ab176ab6b367",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/38.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/38.jpg",
+      "bytes": 6513,
+      "sha256": "920573d2adbd3040729e3e9423e4754a993577da460c659c393312f3247efdee",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/39.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/39.jpg",
+      "bytes": 6513,
+      "sha256": "3d00efc669c1465c5442363e4fe3c0b57af3f62ae616f83f043d957f0d18c4e5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/4.jpg",
+      "bytes": 8398,
+      "sha256": "0b56ef5c3e91079629f74e8a2a5039d498c38f78e0b7320fc06256d592426ea4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/40.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/40.jpg",
+      "bytes": 6520,
+      "sha256": "ecc7b6ece4b306d1990945196c8fbd9f3f83c7b738a7be4e26523cac988ba5ce",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/41.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/41.jpg",
+      "bytes": 6457,
+      "sha256": "5a087a0b6139a824cd74a7bbbe96201dc48cace0588efe3f023513ef96651689",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/42.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/42.jpg",
+      "bytes": 6404,
+      "sha256": "7b04b91061ffe30b9f60113e30caa47b963b3b42322a0074977dce970f9fc324",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/43.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/43.jpg",
+      "bytes": 6405,
+      "sha256": "b91a9a6a6c4c8552932b14369b517df66f0014d79cd4e7eb0acfa7ee868fcb50",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/5.jpg",
+      "bytes": 8605,
+      "sha256": "f8b6807de7009f672e633d602b9f12b3b70557315ada49c8921e8b3fb1ec6b8a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/6.jpg",
+      "bytes": 8620,
+      "sha256": "045653c04ea6ca0ff5078834afa8ebadb96f1d5b2bd1f511ebeb0dd949a0e6a7",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/7.jpg",
+      "bytes": 8681,
+      "sha256": "1c46d720c135e7a020ddebf4bb2ccc1f7b008f9e1050d9081cf86e0b8e6cfbd4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/8.jpg",
+      "bytes": 8672,
+      "sha256": "2f8353177d3bdfba1317bfb1400831c710489321cd0e795d8dbe8d49630712e5",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/9.jpg",
+      "bytes": 7035,
+      "sha256": "21035cbe263a9a5480a6481a333f3ac875f7be545ded7b2cd970ac1defb54b42",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_04/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_04/traj_data.pkl",
+      "bytes": 1262,
+      "sha256": "dee241a44b3f262b191fafbb01be22c559d24dd915f914f1cb9c352e82ddb35b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/0.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/0.jpg",
+      "bytes": 15213,
+      "sha256": "4955082900d15f151e1bbf3d63a5e62c06e233b2a7563781a046dd7f3d8e518d",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/1.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/1.jpg",
+      "bytes": 16479,
+      "sha256": "2ff7e9c6ee303f95b1babf46313cb387b25484d8379fee2924c4aaa5d593a14b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/10.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/10.jpg",
+      "bytes": 7664,
+      "sha256": "5f293ce8e18ab930be38421c9884ad86cfaee6a9e12bc7e64ca76c5f6c822a97",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/11.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/11.jpg",
+      "bytes": 10025,
+      "sha256": "cd0d68f35d3ef1b5f849b10e872b289ad215d0c7e1a07d4f3ee20b84ae07cbea",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/12.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/12.jpg",
+      "bytes": 9388,
+      "sha256": "6ae8bd1f92f2d5d3994305ab63737440bc9b9d6c459491913414b654b9489efd",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/13.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/13.jpg",
+      "bytes": 17811,
+      "sha256": "69bb4485801903aed3474dd101008c2a386485bc233fa2449b71b2b7b33346cb",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/14.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/14.jpg",
+      "bytes": 12539,
+      "sha256": "507157098b519467c88393edfe3a99de2d78bec07539cd2535f7e9ef4fe27be1",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/15.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/15.jpg",
+      "bytes": 10197,
+      "sha256": "4390e0793012a8cc39ea6ed214e61f3629b55c2c371e8c47e3dde67fbacdae27",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/16.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/16.jpg",
+      "bytes": 7561,
+      "sha256": "5af8103a4afec91081a1a7efbcad22a5125222825a2a8fc8c7241684778c4248",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/17.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/17.jpg",
+      "bytes": 10241,
+      "sha256": "808cbc697ebac30b726540e463eba0079ec67f1f73dccd629ea634af971e3417",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/18.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/18.jpg",
+      "bytes": 12190,
+      "sha256": "9d658be8f9405a1014d552dc29fcb4be0c748b8f8ed9eeccd6023edeee9a3f00",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/19.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/19.jpg",
+      "bytes": 8669,
+      "sha256": "cd49149aaf864994458ca07b7cd4c64b09332f1756a96e4edc441bb69a91be64",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/2.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/2.jpg",
+      "bytes": 16342,
+      "sha256": "2359abf959af15d3067d9a8b2c5d3dae55c74a5a24d25550de56600236f55bfa",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/20.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/20.jpg",
+      "bytes": 10550,
+      "sha256": "05de773bcd720fdea1cf2f7eb929c76c21e0bb9a323cccefbde1fcd1558879fe",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/21.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/21.jpg",
+      "bytes": 8581,
+      "sha256": "be375f4125018d9e411d200b10b1d1b681308d4ab3104838b40e2180710951b0",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/22.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/22.jpg",
+      "bytes": 11025,
+      "sha256": "6f09257af7828f3de22b842bc471fd630acf693f0064f2ff8cbf309b6d126cbe",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/23.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/23.jpg",
+      "bytes": 11203,
+      "sha256": "3fa479dab1e06c0c992ddfef43286c6def50c426db61c0008cc5143fe2eed7cc",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/24.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/24.jpg",
+      "bytes": 11696,
+      "sha256": "bc561623e810e67d5d3e8a525e1f5189b164636cae12f5da014b75e02f305380",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/25.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/25.jpg",
+      "bytes": 11674,
+      "sha256": "eb9d176204b5eb9840b6800199b5f573569abecd3ab1da562442dfe3460d15cb",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/26.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/26.jpg",
+      "bytes": 11889,
+      "sha256": "a5211e46ca0e9555498a435e690bd88dc04a4d678e2d74d61d57c4638d67d82b",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/27.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/27.jpg",
+      "bytes": 7747,
+      "sha256": "ede73fb041d695fe47f4be5cd660329f0d6480aacc09df0bb095880011b14afb",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/28.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/28.jpg",
+      "bytes": 7519,
+      "sha256": "db63e79209236232108503754e47e54c4fe1b568e29010396459d0dfef7e8467",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/29.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/29.jpg",
+      "bytes": 7607,
+      "sha256": "7c3675e5e7668416346866a2b565b98c28859704cb976854d3f2fb837148f979",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/3.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/3.jpg",
+      "bytes": 16638,
+      "sha256": "0cba5bf04a17999f0cde4064d56139db43dedacb01c27bcce7feda5b69064e7a",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/30.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/30.jpg",
+      "bytes": 8669,
+      "sha256": "ffaf051b4009746c344cde9c04c05a57065849ca52848af312af1e80cab3e1c4",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/31.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/31.jpg",
+      "bytes": 7746,
+      "sha256": "33d07c23edfe768031b675c3e091beb30cc29ab5712387e753e20c6e6eaf9cfc",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/32.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/32.jpg",
+      "bytes": 7742,
+      "sha256": "75e6f4ca520a72e104d1f216dd32e18f74e7c83d85cdd3552532837079dca493",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/33.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/33.jpg",
+      "bytes": 7980,
+      "sha256": "5c383e156c016db0cd836042cb94c4166ed81c72680c83f737e9c9d5b040f3ea",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/34.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/34.jpg",
+      "bytes": 7497,
+      "sha256": "731103909fdfccb2f73c1b66a78c4ffeff28923986db8e5afe25d4ae59f5cfed",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/35.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/35.jpg",
+      "bytes": 7573,
+      "sha256": "bb697deb1872df7f721e5c8b0fdd58369a3ae80063fe60ffe2d1a6354de270c6",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/36.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/36.jpg",
+      "bytes": 7842,
+      "sha256": "a7882a750b4f5698f4bcb1569632f3fa3147ca17036e0e38b1ef1cd62aad7d38",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/37.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/37.jpg",
+      "bytes": 8565,
+      "sha256": "1a230b156ab8d46627bb9978ff2086c4a946fb70be78b0e379bf7159bfb0434f",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/4.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/4.jpg",
+      "bytes": 18301,
+      "sha256": "46fc23b2dee71ca06985cc845a973a920455db86bc9d54f7999caa4d413d9d22",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/5.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/5.jpg",
+      "bytes": 9659,
+      "sha256": "5bdc03431ff04ef70fda2957699e71d18bdf99b7ed6043bd505a7ea718f5f9d0",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/6.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/6.jpg",
+      "bytes": 10334,
+      "sha256": "9c9e55b545b549580c43f7de3a73c7d941ec1bcf100a39be141275bc1574b639",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/7.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/7.jpg",
+      "bytes": 10214,
+      "sha256": "06684ead4d844dbb7100ff5038a2dc5a72e71ee88f239b911d70655a5b04fb8e",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/8.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/8.jpg",
+      "bytes": 7914,
+      "sha256": "ea94346ef0192d6d3fe161cdff24741412365cf0bd0e8645a15f19a9f3405d26",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/9.jpg",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/9.jpg",
+      "bytes": 9077,
+      "sha256": "48a7a1fdff28295fb3a265aa8bc5c0bcb380eaa49c1151d9242aa3508d1d0a48",
+      "note": ""
+    },
+    {
+      "archive_path": "dataset/house_run_05/traj_data.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/house_run_05/traj_data.pkl",
+      "bytes": 1118,
+      "sha256": "d4071daa6be34b5629865d4e49b72397abe5e5c99a910ef81a96a0ed1a1d67b7",
+      "note": ""
+    },
+    {
+      "archive_path": "config/nomad_gazebo.yaml",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/config/nomad_gazebo.yaml",
+      "bytes": 1270,
+      "sha256": "e1d139b302aa4e4c85db77c0663651fed344031b26b108ce65669bfda17f29d1",
+      "note": ""
+    },
+    {
+      "archive_path": "config/defaults.yaml",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/config/defaults.yaml",
+      "bytes": 1462,
+      "sha256": "b04ad5f0c05780bf8aa6a8fc5b894be3da4bd85be9cf113004baa74801817ad3",
+      "note": ""
+    },
+    {
+      "archive_path": "config/data_config.yaml",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_config.yaml",
+      "bytes": 1405,
+      "sha256": "b71d0f34965eec3c50a701f85e4edfe875b14c9b43ce45c9b96af52f9bf7ba50",
+      "note": ""
+    },
+    {
+      "archive_path": "splits/train/dataset_dist_0_to_20_context_temporal_n3_slack_0_pred_8.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/train/dataset_dist_0_to_20_context_temporal_n3_slack_0_pred_8.pkl",
+      "bytes": 4350,
+      "sha256": "ac62c8b592b349c8c15d560f5fefbd025e59f970acce6336756440d8fb2f1ea8",
+      "note": ""
+    },
+    {
+      "archive_path": "splits/train/traj_names.txt",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/train/traj_names.txt",
+      "bytes": 84,
+      "sha256": "a027e83e43ea22dbb3bf450948347cc2742fbff8e5cedbad3de403b0eb095781",
+      "note": ""
+    },
+    {
+      "archive_path": "splits/test/dataset_dist_0_to_20_context_temporal_n3_slack_0_pred_8.pkl",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/test/dataset_dist_0_to_20_context_temporal_n3_slack_0_pred_8.pkl",
+      "bytes": 1244,
+      "sha256": "5b11d9afa2d9c7c8efff345b7cda64a7d38f86e3596521b89a0b231eeb3df5e2",
+      "note": ""
+    },
+    {
+      "archive_path": "splits/test/traj_names.txt",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/test/traj_names.txt",
+      "bytes": 28,
+      "sha256": "f5d69aa4d49965526755a0de9d456832d6042d95497cfc4fac9689fe16e540c9",
+      "note": ""
+    },
+    {
+      "archive_path": "source/train.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/train.py",
+      "bytes": 19530,
+      "sha256": "4448b897bc23ac02c7ee75fd05ac76c85ecf0367d0abfc6a3c8877cf893bbd51",
+      "note": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/train.py"
+    },
+    {
+      "archive_path": "source/train_eval_loop.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_eval_loop.py",
+      "bytes": 11989,
+      "sha256": "9c2e625a80375b359ebfd1d5dd0c415ed7f53915f698b57ba5db2490c4f19d5e",
+      "note": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_eval_loop.py"
+    },
+    {
+      "archive_path": "source/train_utils.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_utils.py",
+      "bytes": 46309,
+      "sha256": "90beb7fa448df81b0f9725f27146d32fcca5a9aad4db289b7d644eb90fa8609c",
+      "note": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/training/train_utils.py"
+    },
+    {
+      "archive_path": "source/vint_dataset.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/vint_dataset.py",
+      "bytes": 16759,
+      "sha256": "7b45ba8abd4af82463831d2cd1f16f55c439f30183a2c83528398f5379bc5ee9",
+      "note": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/vint_dataset.py"
+    },
+    {
+      "archive_path": "source/data_utils.py",
+      "source_path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_utils.py",
+      "bytes": 4056,
+      "sha256": "3087750086519796153df51c15d79713789dfc2ede6bd6caf0f42a92e540e504",
+      "note": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_utils.py"
+    },
+    {
+      "archive_path": "logs/checkpoint_listing.json",
+      "source_path": "/tmp/gazebo_handoff_stage/logs/checkpoint_listing.json",
+      "bytes": 6251,
+      "sha256": "c50dfc3380100c6affd918a7402d9afeb5c9306110eb8bb6216336938a33f562",
+      "note": "generated listing, not an original training log"
+    },
+    {
+      "archive_path": "logs/scheduler_latest.pth",
+      "source_path": "/mnt/d/nomad_data/visualnav-transformer/train/logs/nomad/nomad_gazebo_ft_2026_11_16_14_22_52/scheduler_latest.pth",
+      "bytes": 1443,
+      "sha256": "740ad9e87331d2507e41e632e85644c3c09ba0de9005d0be941e3ccd6901fe1b",
+      "note": "state at checkpoint save time, not the learning-rate trace"
+    },
+    {
+      "archive_path": "logs/scheduler_state.json",
+      "source_path": "/tmp/gazebo_handoff_stage/logs/scheduler_state.json",
+      "bytes": 347,
+      "sha256": "1a73a7dc61bb2a3b2b836393f6a7d472b36f2ea84982cec8ade3f9860b1d3a7f",
+      "note": ""
+    }
+  ],
+  "missing_or_excluded": [
+    {
+      "path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/train/dataset_go_stanford.lmdb/data.mdb",
+      "rel": "splits/train/dataset_go_stanford.lmdb/data.mdb",
+      "bytes": 8589934592,
+      "reason": "excluded: LMDB map is 8 GiB per split and is not a small split file; traj_names.txt and the dataset pkl are included"
+    },
+    {
+      "path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/train/dataset_go_stanford.lmdb/lock.mdb",
+      "rel": "splits/train/dataset_go_stanford.lmdb/lock.mdb",
+      "bytes": 8192,
+      "reason": "excluded: LMDB map is 8 GiB per split and is not a small split file; traj_names.txt and the dataset pkl are included"
+    },
+    {
+      "path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/test/dataset_go_stanford.lmdb/data.mdb",
+      "rel": "splits/test/dataset_go_stanford.lmdb/data.mdb",
+      "bytes": 8589934592,
+      "reason": "excluded: LMDB map is 8 GiB per split and is not a small split file; traj_names.txt and the dataset pkl are included"
+    },
+    {
+      "path": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/train/vint_train/data/data_splits/gazebo_house/test/dataset_go_stanford.lmdb/lock.mdb",
+      "rel": "splits/test/dataset_go_stanford.lmdb/lock.mdb",
+      "bytes": 8192,
+      "reason": "excluded: LMDB map is 8 GiB per split and is not a small split file; traj_names.txt and the dataset pkl are included"
+    },
+    {
+      "item": "training stdout/stderr, metrics, saved training config, launch command",
+      "reason": "unavailable: the finetune directories contain only .pth files"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "checkpoint": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/best.pth",
+  "checkpoint_sha256": "48a963373cfb1f49c22bd7129e36122d945b67603949008ef15d0a9d20937d56",
+  "config": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/model.yaml",
+  "model_params": {
+    "project_name": "vint",
+    "run_name": "nomad_visual_clean_stage",
+    "use_wandb": true,
+    "train": true,
+    "batch_size": 400,
+    "eval_batch_size": 400,
+    "epochs": 30,
+    "gpu_ids": [
+      0
+    ],
+    "num_workers": 4,
+    "lr": "5e-4",
+    "optimizer": "adam",
+    "seed": 0,
+    "clipping": false,
+    "train_subset": 1.0,
+    "model_type": "nomad",
+    "obs_encoding_size": 1024,
+    "goal_encoding_size": 1024,
+    "normalize": true,
+    "context_type": "temporal",
+    "context_size": 3,
+    "alpha": 0.5,
+    "beta": 0.1,
+    "obs_type": "image",
+    "goal_type": "image",
+    "scheduler": null,
+    "distance": {
+      "max_dist_cat": 20,
+      "min_dist_cat": 0
+    },
+    "action": {
+      "max_dist_cat": 20,
+      "min_dist_cat": 3
+    },
+    "close_far_threshold": 10,
+    "len_traj_pred": 8,
+    "learn_angle": false,
+    "image_size": [
+      96,
+      96
+    ],
+    "print_log_freq": 100,
+    "image_log_freq": 1000,
+    "num_images_log": 8,
+    "pairwise_test_freq": 10,
+    "eval_fraction": 0.25,
+    "wandb_log_freq": 10,
+    "eval_freq": 1,
+    "attn_unet": false,
+    "cond_predict_scale": false,
+    "datasets": {
+      "go_stanford": {
+        "data_folder": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/handoff/dataset",
+        "note": "cache-free train_visual_stage.py; dataset name retains the 0.12m action-unit convention",
+        "train_routes": [
+          "house_run_00",
+          "house_run_01",
+          "house_run_02",
+          "house_run_03",
+          "house_run_04"
+        ],
+        "validation_routes": [
+          "house_run_05"
+        ]
+      }
+    },
+    "down_dims": [
+      64,
+      128,
+      256
+    ],
+    "encoding_size": 256,
+    "goal_mask_prob": 0.0,
+    "inference_only_config": true,
+    "mha_ff_dim_factor": 4,
+    "mha_num_attention_heads": 4,
+    "mha_num_attention_layers": 4,
+    "num_diffusion_iters": 10,
+    "obs_encoder": "efficientnet-b0",
+    "training_recipe": "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_stage_clean/stage_config.json",
+    "vision_encoder": "nomad_vint"
+  },
+  "strict_checkpoint_load": true,
+  "device": "cuda",
+  "torch": "2.6.0+cu124",
+  "seed": 0,
+  "samples": 32,
+  "topomap": "/mnt/c/Users/61078/Desktop/nomad/visualnav-transformer/deployment/topomaps/images/house_06",
+  "context_modes": {
+    "temporal": "previous teaching images",
+    "repeat": "same image repeated"
+  },
+  "caveat": "teacher-image offline audit, not live-camera or closed-loop performance"
+}

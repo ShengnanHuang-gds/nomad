@@ -1,0 +1,33 @@
+source gazebo_sim/nomad_wsl_env.sh
+"$NOMAD_PY" - <<'PY'
+import hashlib
+from pathlib import Path
+p = Path("gazebo_sim/visual_stage_clean/best.pth")
+h = hashlib.sha256(p.read_bytes()).hexdigest()
+print(p.stat().st_size, h)
+assert p.stat().st_size == 76439885
+assert h == "48a963373cfb1f49c22bd7129e36122d945b67603949008ef  --out gazebo_sim/visual_audit_clean_gpuean/best.pth \       
+76439885 48a963373cfb1f49c22bd7129e36122d945b67603949008ef15d0a9d20937d56
+checkpoint ok
+/home/hsnnb/nomad_ros_venv/lib/python3.12/site-packages/torch/nn/modules/transformer.py:385: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+temporal obs=0: best_goal=0 self_dist=1.501 elapsed=1.2s
+temporal obs=8: best_goal=8 self_dist=1.628 elapsed=1.8s
+temporal obs=12: best_goal=12 self_dist=1.428 elapsed=2.3s
+temporal obs=22: best_goal=22 self_dist=1.571 elapsed=2.7s
+temporal obs=30: best_goal=29 self_dist=1.525 elapsed=3.1s
+temporal obs=38: best_goal=38 self_dist=1.706 elapsed=3.5s
+temporal obs=42: best_goal=42 self_dist=1.450 elapsed=3.9s
+temporal obs=51: best_goal=51 self_dist=1.449 elapsed=4.4s
+temporal obs=56: best_goal=56 self_dist=1.434 elapsed=4.8s
+repeat obs=0: best_goal=0 self_dist=1.501 elapsed=5.1s
+repeat obs=8: best_goal=8 self_dist=1.582 elapsed=5.7s
+repeat obs=12: best_goal=12 self_dist=1.213 elapsed=6.3s
+repeat obs=22: best_goal=22 self_dist=1.554 elapsed=6.8s
+repeat obs=30: best_goal=29 self_dist=1.625 elapsed=7.2s
+repeat obs=38: best_goal=38 self_dist=1.822 elapsed=7.7s
+repeat obs=42: best_goal=42 self_dist=1.449 elapsed=8.2s
+repeat obs=51: best_goal=51 self_dist=1.468 elapsed=8.7s
+repeat obs=56: best_goal=56 self_dist=1.844 elapsed=9.2s
+Wrote offline visual audit to /mnt/c/Users/61078/Desktop/nomad/gazebo_sim/visual_audit_clean_gpu
+hsnnb@localhost:/mnt/c/Users/61078/Desktop/nomad$ 

@@ -52,6 +52,8 @@ def write_csv(path, rows):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--model", default="nomad_b40")
+    p.add_argument("--config", default="", help="explicit model YAML, paired with --checkpoint")
+    p.add_argument("--checkpoint", default="", help="explicit EMA state_dict, paired with --config")
     p.add_argument("--topomap", default="house_06")
     p.add_argument("--run", default="house_run_06")
     p.add_argument("--samples", type=int, default=32)
@@ -61,6 +63,8 @@ def main():
     args = p.parse_args()
     if args.samples < 1:
         p.error("--samples must be positive")
+    if bool(args.config) != bool(args.checkpoint):
+        p.error("provide both --config and --checkpoint")
 
     import numpy as np
     import torch
@@ -72,10 +76,13 @@ def main():
     if not args.cpu and not torch.cuda.is_available():
         p.error("CUDA is unavailable in this Python. Use the WSL NOMAD_PY with GPU support, or explicitly --cpu.")
     device = torch.device("cpu" if args.cpu else "cuda")
-    models = yaml.safe_load((runtime.DEPLOY / "config/models.yaml").read_text(encoding="utf-8"))
-    entry = models[args.model]
-    cfg = runtime.resolve_path(runtime.DEPLOY / "config", entry["config_path"])
-    checkpoint = runtime.resolve_path(runtime.DEPLOY, entry["ckpt_path"])
+    if args.config:
+        cfg, checkpoint = Path(args.config).resolve(), Path(args.checkpoint).resolve()
+    else:
+        models = yaml.safe_load((runtime.DEPLOY / "config/models.yaml").read_text(encoding="utf-8"))
+        entry = models[args.model]
+        cfg = runtime.resolve_path(runtime.DEPLOY / "config", entry["config_path"])
+        checkpoint = runtime.resolve_path(runtime.DEPLOY, entry["ckpt_path"])
     mp = runtime.load_train_config(cfg)
     model = runtime.load_model(str(checkpoint), mp, device).eval()
     try:

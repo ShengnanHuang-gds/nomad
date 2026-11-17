@@ -14,5 +14,16 @@ nomad:
   config_path: "../../train/config/nomad.yaml"
   ckpt_path: "../model_weights/nomad.pth"
 
+nomad_b40:
+  config_path: "../../train/config/nomad_b40.yaml"
+  ckpt_path: "../train/logs/nomad/nomad_b40_2026_09_30_07_52_31/ema_29.pth"
 
-# add your own model configs here after saving the *.pth file to ../model_weight
+nomad_gazebo:
+  config_path: "../../train/config/nomad_gazebo.yaml"
+  ckpt_path: "../train/logs/nomad/nomad_gazebo_ft_2026_11_16_14_22_52/ema_latest.pth"
+
+nomad_gazebo_task:
+  config_path: "../../train/config/nomad_gazebo_task.yaml"
+  ckpt_path: "../train/logs/nomad/nomad_gazebo_task_2026_11_16_21_00_00/ema_latest.pth"
+
+# add your own model configs here after saving the *.pth file to ../model_weights

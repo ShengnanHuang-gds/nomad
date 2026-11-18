@@ -1,0 +1,7 @@
+burger_id=271
+verify_exit=0
+scan_pause count=8
+scan_recovered count=8
+RuntimeError: reference recording stopped for scan proximity: 0.14120030403137207 m
+record_exit=1
+frames=36

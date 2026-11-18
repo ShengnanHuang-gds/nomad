@@ -1,0 +1,11 @@
+burger_id=271
+spawn-at-launch record house_run_06: skip set_pose
+frame 0 stamp_ns=11220000000
+frame 1 stamp_ns=12210000000
+frame 2 stamp_ns=13069000000
+frame 3 stamp_ns=13927000000
+frame 4 stamp_ns=14785000000
+frame 5 stamp_ns=15643000000
+frame 6 stamp_ns=16501000000
+RuntimeError: reference recording requires a fresh scan
+record_exit=1

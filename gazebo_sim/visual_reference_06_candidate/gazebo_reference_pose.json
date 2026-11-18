@@ -1,0 +1,134 @@
+{
+  "run": "house_run_06",
+  "model_entity_id": 271,
+  "passed": false,
+  "failure": "reference recording requires a fresh scan",
+  "frames": [
+    {
+      "image_stamp_ns": 11220000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -2.198636191839624,
+          1.1964835930017659,
+          0.010007498365068746
+        ],
+        "roll_pitch_yaw_deg": [
+          -2.934087584718539e-07,
+          -0.3148560710326952,
+          -27.287967563469074
+        ],
+        "before_stamp_ns": 11212000000,
+        "after_stamp_ns": 11221000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 12210000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -2.1028353659848085,
+          1.147415570934538,
+          0.0100077717846295
+        ],
+        "roll_pitch_yaw_deg": [
+          5.891456270270115e-07,
+          -0.4215679924055287,
+          -27.28946753066118
+        ],
+        "before_stamp_ns": 12201000000,
+        "after_stamp_ns": 12211000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 13069000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -2.0040330613907997,
+          1.0967176546663817,
+          0.010008833063486194
+        ],
+        "roll_pitch_yaw_deg": [
+          8.929135978470221e-07,
+          -0.6938475903748645,
+          -27.29063187026454
+        ],
+        "before_stamp_ns": 13060000000,
+        "after_stamp_ns": 13070000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 13927000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -1.9057695031040955,
+          1.0465313357191455,
+          0.010008894986729409
+        ],
+        "roll_pitch_yaw_deg": [
+          2.376617033660302e-05,
+          -0.7138975518360723,
+          -27.26858015053944
+        ],
+        "before_stamp_ns": 13919000000,
+        "after_stamp_ns": 13928000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 14785000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -1.7989980691162315,
+          0.9914979612890344,
+          0.010008936858099223
+        ],
+        "roll_pitch_yaw_deg": [
+          -3.3680774181234935e-07,
+          -0.7139156716272039,
+          -27.268580106377804
+        ],
+        "before_stamp_ns": 14778000000,
+        "after_stamp_ns": 14786000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 15643000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -1.6922266261405987,
+          0.936464579618328,
+          0.010008936837603876
+        ],
+        "roll_pitch_yaw_deg": [
+          -3.522529269946661e-07,
+          -0.7139156170199952,
+          -27.2685797361612
+        ],
+        "before_stamp_ns": 15635000000,
+        "after_stamp_ns": 15644000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 16501000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -1.5854551818769307,
+          0.8814311980221678,
+          0.010008936836645724
+        ],
+        "roll_pitch_yaw_deg": [
+          -3.5274218545478126e-07,
+          -0.7139156163141123,
+          -27.26857973605077
+        ],
+        "before_stamp_ns": 16500000000,
+        "after_stamp_ns": 16502000000
+      },
+      "tilt_ok": true
+    }
+  ]
+}

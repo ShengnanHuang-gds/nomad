@@ -1,0 +1,86 @@
+[
+  {
+    "anchor": "house_run_00_05",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "87a3945d8e8f8c06550d4a7de292669533c644147e711fe498ad7c1e69b348aa"
+  },
+  {
+    "anchor": "house_run_00_17",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "67b683f8d398432b4d8234744ccf6d096fbad97c493a6bfecd8f876a4d6cd7c6"
+  },
+  {
+    "anchor": "house_run_00_29",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "705c68f2791ca0a0fa1dc2b692378d51bfc7b2698485ce31587a48adc8e9c836"
+  },
+  {
+    "anchor": "house_run_01_04",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "d7fb9c6737b99e55bf8503c3a305618c921ccd0177d38c5f56c5a664c6b83b16"
+  },
+  {
+    "anchor": "house_run_01_14",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "b0662c39a7251564785f7e051fd1cc6a745f00572eb87621b23af8a33640a5bf"
+  },
+  {
+    "anchor": "house_run_01_22",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "f6d3d3fdf4134834fa49bd5ca0faa9b34708d67f9eff527a8647d0ff3aaf179c"
+  },
+  {
+    "anchor": "house_run_02_00",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "efa0f7c364e2b1ff5deb02243327f46c4e1bd6a0419b991ed437bbca6a609f90"
+  },
+  {
+    "anchor": "house_run_02_09",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "315a1c8cf5aee25d92530a506c2a7fcbd1fd4b12c7fed53d126327521181fe75"
+  },
+  {
+    "anchor": "house_run_02_22",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "9107b6e0377c369bf64c916082cf1890eac063ef9ae0ea92206d243c857656b2"
+  },
+  {
+    "anchor": "house_run_02_33",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "8af8f974dc321d70d5831a059374a7928b722bc629b3f4177708aae9a92b38a0"
+  },
+  {
+    "anchor": "house_run_03_04",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "4f8bbbb1319fed4d871164ae5fcaa980b088c18e3a9b58ff3084bce45b3be86f"
+  },
+  {
+    "anchor": "house_run_03_15",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "bc3024a5ff50abb40b1eafda76e9dafd83a80e99f4c5388c597d90dc66ec847d"
+  },
+  {
+    "anchor": "house_run_04_03",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "f7ab90671d74ef119e6c16cb6b12e1a34753e2baede2aa3be73c1271b9664b50"
+  },
+  {
+    "anchor": "house_run_04_16",
+    "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+    "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+    "camera_only_sdf_sha256": "7feec3ed10971d788313545b9baaf7d422b8a9a529126b32fbd617400f735546"
+  }
+]

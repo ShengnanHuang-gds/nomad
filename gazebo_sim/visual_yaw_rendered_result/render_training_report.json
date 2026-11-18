@@ -1,0 +1,142 @@
+[
+  {
+    "anchor": "house_run_00_05",
+    "route": "house_run_00",
+    "frame": 5,
+    "manifest_sha256": "08cee37e2959d00419c985213f4dfd7b637ca2d1b7a9476171172308fba9f09b",
+    "consistent_adjacent": 11,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_00_17",
+    "route": "house_run_00",
+    "frame": 17,
+    "manifest_sha256": "6ea3a27dd42edca3d6dd2106dabc35c88a19e698e61aba3805bb70b1a89da9d4",
+    "consistent_adjacent": 9,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_00_29",
+    "route": "house_run_00",
+    "frame": 29,
+    "manifest_sha256": "64d7dc65ecf7e3807354a09055ae2f466971745f474d627d2b42bbd52b22eb51",
+    "consistent_adjacent": 8,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_01_04",
+    "route": "house_run_01",
+    "frame": 4,
+    "manifest_sha256": "bb7c1f43ae0c489e1bd68fb2aa52e5437f5b6f14827af088f30289f38f5870ad",
+    "consistent_adjacent": 11,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_01_14",
+    "route": "house_run_01",
+    "frame": 14,
+    "manifest_sha256": "e51850e2a3b14eb0e2e4f1e16e656202105e332ca66730b8554df6bef2c54676",
+    "consistent_adjacent": 12,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_01_22",
+    "route": "house_run_01",
+    "frame": 22,
+    "manifest_sha256": "0f8b81b85781a9078cd3117346de0ba98e8118d3da930c78fc13587c895f70dc",
+    "consistent_adjacent": 11,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_02_00",
+    "route": "house_run_02",
+    "frame": 0,
+    "manifest_sha256": "3c45f1edb7460b54bde41a0812ddf073f1822025013daf272a88c3f8138344f2",
+    "consistent_adjacent": 11,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_02_09",
+    "route": "house_run_02",
+    "frame": 9,
+    "manifest_sha256": "785c3b2e8881877a64a37db78d69fe43e7c11e89f36c484be4f8343ff259ba62",
+    "consistent_adjacent": 12,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_02_22",
+    "route": "house_run_02",
+    "frame": 22,
+    "manifest_sha256": "1a7b4432c48b836461d1f102f3e8b3ffae1e320ee33b36e288f9d2e9068079ae",
+    "consistent_adjacent": 12,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_02_33",
+    "route": "house_run_02",
+    "frame": 33,
+    "manifest_sha256": "bb232c272800fcd82179b93da7c2929a6b732b0674680ebac2c0ad72bc67bf9d",
+    "consistent_adjacent": 12,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_03_04",
+    "route": "house_run_03",
+    "frame": 4,
+    "manifest_sha256": "e6efa5b6bdd2c83c2f30ee08dff803850f4d1088a377a9eae95fd85db1e5e149",
+    "consistent_adjacent": 11,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": true
+  },
+  {
+    "anchor": "house_run_03_15",
+    "route": "house_run_03",
+    "frame": 15,
+    "manifest_sha256": "684addf1db2b9d3a709b3b6ad1b6574ad220f56c47c2747d9bd1602abf5e2548",
+    "consistent_adjacent": 5,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": false
+  },
+  {
+    "anchor": "house_run_04_03",
+    "route": "house_run_04",
+    "frame": 3,
+    "manifest_sha256": "10de9457b2f6a63bda92efbcca02c552e2472337cae57d3bd6f366becc54675e",
+    "consistent_adjacent": 2,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": false
+  },
+  {
+    "anchor": "house_run_04_16",
+    "route": "house_run_04",
+    "frame": 16,
+    "manifest_sha256": "13fd9691f38fdfd009951a0caa97643b6287b1f4049f3a5fa491ffbe1c894e30",
+    "consistent_adjacent": 3,
+    "separated": true,
+    "duplicate_group": false,
+    "accepted": false
+  }
+]

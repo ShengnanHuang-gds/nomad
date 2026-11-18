@@ -2,6 +2,8 @@
 
 import math
 
+SCAN_RECEIPT_STALE = "scan_receipt_over_2_wall_s_old"
+
 
 def scan_timing(scan, odom_stamp_ns, now):
     """Describe the latest scan using separate wall and simulation clocks."""
@@ -17,7 +19,7 @@ def scan_timing(scan, odom_stamp_ns, now):
     if scan_stamp_ns <= 0:
         issues.append("invalid_scan_stamp")
     if age > 2:
-        issues.append("scan_receipt_over_2_wall_s_old")
+        issues.append(SCAN_RECEIPT_STALE)
     if odom_stamp_ns <= 0:
         issues.append("no_valid_odom_stamp")
     if offset is not None and abs(offset) > 350_000_000:

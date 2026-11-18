@@ -20,12 +20,13 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image, LaserScan
 
 from route_frame_sync import RouteFrameSync, stamp_ns, wrapped_delta
-from scan_diagnostics import scan_timing, summarize_scan
+from scan_diagnostics import SCAN_RECEIPT_STALE, scan_timing, summarize_scan
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SPACING = 0.12
 YAW_SPACING = math.radians(8)
 MAX_YAW_GAP = math.radians(12)
+SCAN_RECOVERY_WAIT_S = 2.0
 
 PLANS = {
     "house_run_03": {
@@ -110,6 +111,10 @@ def set_pose(x, y, yaw):
     print(f"set_pose ok entity={ent} x={x:.3f} y={y:.3f} yaw={yaw:.3f}", flush=True)
 
 
+class ScanReceiptTimeout(RuntimeError):
+    """An otherwise synchronized reference scan has stopped arriving on time."""
+
+
 class Recorder(Node):
     def __init__(self, out, reference_pose=None):
         super().__init__("house_rec")
@@ -121,6 +126,8 @@ class Recorder(Node):
         self.sync = RouteFrameSync()
         self.reference_pose = reference_pose
         self.scan = None
+        self.scan_pauses = 0
+        self.scan_recoveries = 0
         qos = QoSProfile(
             depth=10,
             reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -150,13 +157,32 @@ class Recorder(Node):
     def check_reference(self):
         self.reference_pose.check_upright(self.sync.last_odom_stamp)
         timing = scan_timing(self.scan, self.sync.last_odom_stamp, time.monotonic())
+        if self.count_publishers("/cmd_vel") > 1:
+            raise RuntimeError("another cmd_vel publisher is present")
         if timing["issues"]:
-            raise RuntimeError(f"reference recording requires a fresh scan: {', '.join(timing['issues'])}")
+            error = f"reference recording requires a fresh scan: {', '.join(timing['issues'])}"
+            if timing["issues"] == [SCAN_RECEIPT_STALE]:
+                raise ScanReceiptTimeout(error)
+            raise RuntimeError(error)
         distance = timing["scan_min_m"]
         if distance is None or distance < 0.15:
             raise RuntimeError(f"reference recording stopped for scan proximity: {distance} m")
-        if self.count_publishers("/cmd_vel") > 1:
-            raise RuntimeError("another cmd_vel publisher is present")
+
+    def wait_for_new_scan(self):
+        previous_stamp = self.scan[0]
+        self.publish_twist(0.0, 0.0)
+        self.scan_pauses += 1
+        deadline = time.monotonic() + SCAN_RECOVERY_WAIT_S
+        print(f"scan_pause stamp_ns={previous_stamp}", flush=True)
+        while rclpy.ok() and time.monotonic() < deadline:
+            rclpy.spin_once(self, timeout_sec=0.05)
+            if self.scan[0] > previous_stamp and time.monotonic() < deadline:
+                self.check_reference()
+                self.scan_recoveries += 1
+                print(f"scan_recovered stamp_ns={self.scan[0]}", flush=True)
+                return
+            self.publish_twist(0.0, 0.0)
+        raise RuntimeError("reference recording stayed stopped waiting for a newer scan")
 
     def publish_twist(self, v, w):
         msg = TwistStamped()
@@ -215,7 +241,11 @@ class Recorder(Node):
         if time.monotonic() - self.odom_received_at > 2:
             raise RuntimeError("odometry stopped during recording")
         if self.reference_pose is not None:
-            self.check_reference()
+            try:
+                self.check_reference()
+            except ScanReceiptTimeout:
+                self.wait_for_new_scan()
+                return
         self.save_ready()
         self.publish_twist(v, w)
 
@@ -313,7 +343,8 @@ def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT, reference_mod
                         failure = reference_pose.error or "one or more frames lack a valid upright Gazebo pose bracket"
                     report = {"run": name, "model_entity_id": reference_model_id,
                               "passed": failure is None and bool(rows), "failure": failure,
-                              "stop_context": stop_context, "frames": rows}
+                              "stop_context": stop_context, "scan_pauses": node.scan_pauses,
+                              "scan_recoveries": node.scan_recoveries, "frames": rows}
                     with open(os.path.join(out, "gazebo_reference_pose.json"), "w", encoding="utf-8") as stream:
                         json.dump(report, stream, indent=2)
             finally:

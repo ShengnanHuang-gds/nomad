@@ -1,0 +1,62 @@
+=== model ===
+
+Requesting state for world [default]...
+
+[1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="turtlebot3_burger_cam"]/link[@name="base_scan"]/sensor[@name="hls_lfcd_lds"]/gz_frame_id:<data-string>:L163]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="turtlebot3_burger_cam"]/link[@name="camera_link"]/sensor[@name="camera"]/gz_frame_id:<data-string>:L363]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+Model: [271]
+  - Name: burger_cam
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.009076 3.836740 0.009986]
+    [-0.000012 -0.012636 -0.008670]
+=== ros cmd_vel ===
+Type: geometry_msgs/msg/TwistStamped
+
+Publisher count: 0
+
+Subscription count: 1
+
+Node name: ros_gz_bridge
+Node namespace: /
+Topic type: geometry_msgs/msg/TwistStamped
+Topic type hash: RIHS01_5f0fcd4f81d5d06ad9b4c4c63e3ea51b82d6ae4d0558f1d475229b1121db6f64
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.f3.0d.d0.a7.ec.9f.00.00.00.00.00.00.18.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+=== ros image ===
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: ros_gz_image
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Topic type hash: RIHS01_d31d41a9a4c4bc8eae9be757b0beed306564f7526c88ea6a4588fb9582527d47
+=== ros odom ===
+Type: nav_msgs/msg/Odometry
+
+Publisher count: 1
+
+Node name: ros_gz_bridge
+Node namespace: /
+Topic type: nav_msgs/msg/Odometry
+Topic type hash: RIHS01_3cc97dc7fb7502f8714462c526d369e35b603cfc34d946e3f2eda2766dfec6e0
+=== gz cmd_vel ===
+Publishers [Address, Message Type]:
+  tcp://127.0.0.1:37481, gz.msgs.Twist
+Subscribers [Address, Message Type]:
+  tcp://127.0.0.1:37229, gz.msgs.Twist
+=== sim transport ===
+gz_pid=42957
+GZ_PARTITION=
+GZ_RELAY=127.0.0.1
+GZ_IP=127.0.0.1
+ROS_DOMAIN_ID=unset

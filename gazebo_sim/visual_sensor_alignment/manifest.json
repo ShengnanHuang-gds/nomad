@@ -1,0 +1,54 @@
+{
+  "source_commit": "f1ad416",
+  "world": "default",
+  "model": "burger_cam",
+  "entity_id": 271,
+  "model_sdf_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2659,
+      "sha256": "b922e3bb19d28a184e1eab185b28c8c5965bba1a8e406ac2654810d9ec529dc8"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 8291,
+      "sha256": "89921eaac7f7ac80ff68ea50c9c3ef222272e097aa7ff95d344b17602bdae0e6"
+    },
+    {
+      "path": "representatives.tar.gz",
+      "bytes": 1220642,
+      "sha256": "70f9924f5998c64ea12a29fe854f90cc7df4f5c06547df3b6f50fb216358f7bd"
+    },
+    {
+      "path": "stationary/samples.json",
+      "bytes": 448261,
+      "sha256": "7deb29fa3d8127d21b6dc69530dabeb41505f7e9570ada8f3c31d3ace00bcd4a"
+    },
+    {
+      "path": "stationary/sift_matches.json",
+      "bytes": 11894,
+      "sha256": "70ae48fc543ebd31cf8ce5fbeaaf5a9c77393af58c74e5aafe006300c5de2c6e"
+    },
+    {
+      "path": "left/samples.json",
+      "bytes": 447841,
+      "sha256": "6c6e26e31214f111cc3cec5a9a6e68fb487502a2f31826213df86753810d93cc"
+    },
+    {
+      "path": "left/sift_matches.json",
+      "bytes": 4931,
+      "sha256": "a843d7c10ecfaeeaf4e589f99d882dc08ce5fc368075f8fb6f9e44a489d66367"
+    },
+    {
+      "path": "right/samples.json",
+      "bytes": 453900,
+      "sha256": "44a26eca69e2aebd62f7581288353e7128bce4b9b70f87583fd805483f630814"
+    },
+    {
+      "path": "right/sift_matches.json",
+      "bytes": 5570,
+      "sha256": "20caae3a1b997d8bea3647a6f741756f39c3028e8c87fe9969c835f74d367d03"
+    }
+  ]
+}

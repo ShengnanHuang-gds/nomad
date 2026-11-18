@@ -1,0 +1,376 @@
+{
+  "stationary": {
+    "errors": [],
+    "zero_stamp_count": {
+      "Gazebo model": 0,
+      "odom": 0,
+      "image": 0,
+      "/clock": 0
+    },
+    "wall_seconds": 30.992591032001656,
+    "sim_seconds": 4.0,
+    "image_count": 122,
+    "jointly_aligned_image_count": 120,
+    "unique_files": true,
+    "unique_stamps": true,
+    "max_bracket_side_ms": 19.0,
+    "before_count": 120,
+    "during_count": 0,
+    "after_count": 0,
+    "endpoints": {
+      "complete": true,
+      "before_file": "images/0002.png",
+      "after_file": "images/0121.png",
+      "before_stamp_ns": 15445000000,
+      "after_stamp_ns": 19372000000,
+      "model_yaw_delta_deg": 7.450244083884172e-07,
+      "odom_yaw_delta_deg": -1.7053025658242404e-13,
+      "delta_difference_deg": 7.450245789186738e-07,
+      "before_bracket_ms": {
+        "model": [
+          8.0,
+          1.0
+        ],
+        "odom": [
+          5.0,
+          15.0
+        ]
+      },
+      "after_bracket_ms": {
+        "model": [
+          5.0,
+          1.0
+        ],
+        "odom": [
+          12.0,
+          8.0
+        ]
+      },
+      "model_displacement_m": [
+        -0.0007474646092648918,
+        -3.263469494640958e-10,
+        8.673272260464882e-08
+      ],
+      "odom_displacement_m": [
+        2.394322145359342e-15,
+        -5.477113915811656e-27,
+        0.0
+      ],
+      "model_rpy_deg_before": [
+        -3.9093679146024254e-07,
+        -0.20559913769307497,
+        3.277093776003884e-06
+      ],
+      "model_rpy_deg_after": [
+        -3.9094586247289803e-07,
+        -0.2630540061304438,
+        4.022133613907745e-06
+      ],
+      "odom_rpy_deg_before": [
+        0.0,
+        0.0,
+        -1.3130396789568613e-10
+      ],
+      "odom_rpy_deg_after": [
+        0.0,
+        0.0,
+        -1.3149203337878739e-10
+      ]
+    },
+    "sift": {
+      "matches": 76,
+      "median_dx_px": 0.006313323974609375,
+      "median_dy_px": 0.009149551391601562
+    },
+    "representatives": [
+      {
+        "file": "images/0002.png",
+        "stamp_ns": 15445000000
+      },
+      {
+        "file": "images/0032.png",
+        "stamp_ns": 16435000000
+      },
+      {
+        "file": "images/0062.png",
+        "stamp_ns": 17424000000
+      },
+      {
+        "file": "images/0092.png",
+        "stamp_ns": 18414000000
+      },
+      {
+        "file": "images/0121.png",
+        "stamp_ns": 19372000000
+      }
+    ]
+  },
+  "left": {
+    "errors": [],
+    "zero_stamp_count": {
+      "Gazebo model": 0,
+      "odom": 0,
+      "image": 0,
+      "/clock": 0
+    },
+    "wall_seconds": 31.370391092001228,
+    "sim_seconds": 4.0,
+    "image_count": 122,
+    "jointly_aligned_image_count": 120,
+    "unique_files": true,
+    "unique_stamps": true,
+    "max_bracket_side_ms": 19.0,
+    "before_count": 21,
+    "during_count": 41,
+    "after_count": 58,
+    "endpoints": {
+      "complete": true,
+      "before_file": "images/0022.png",
+      "after_file": "images/0064.png",
+      "before_stamp_ns": 27754000000,
+      "after_stamp_ns": 29140000000,
+      "model_yaw_delta_deg": 9.521625847330341,
+      "odom_yaw_delta_deg": 9.529434048603889,
+      "delta_difference_deg": -0.007808201273547866,
+      "before_bracket_ms": {
+        "model": [
+          7.0,
+          1.0
+        ],
+        "odom": [
+          14.0,
+          6.0
+        ]
+      },
+      "after_bracket_ms": {
+        "model": [
+          7.0,
+          1.0
+        ],
+        "odom": [
+          0.0,
+          0.0
+        ]
+      },
+      "model_displacement_m": [
+        -0.0018183709752834787,
+        0.0011622526453216597,
+        6.119428002018118e-07
+      ],
+      "odom_displacement_m": [
+        7.776328909077953e-16,
+        -1.2841808222938657e-16,
+        0.0
+      ],
+      "model_rpy_deg_before": [
+        5.368922605972861e-07,
+        -0.47879866880523214,
+        0.14305295863995823
+      ],
+      "model_rpy_deg_after": [
+        6.537808861753858e-05,
+        -0.6193181521626494,
+        9.664678647162356
+      ],
+      "odom_rpy_deg_before": [
+        0.0,
+        0.0,
+        0.094932376883821
+      ],
+      "odom_rpy_deg_after": [
+        0.0,
+        0.0,
+        9.7206233350697
+      ]
+    },
+    "sift": {
+      "matches": 32,
+      "median_dx_px": 15.693367004394531,
+      "median_dy_px": 0.1189727783203125
+    },
+    "representatives": [
+      {
+        "file": "images/0002.png",
+        "stamp_ns": 27094000000
+      },
+      {
+        "file": "images/0007.png",
+        "stamp_ns": 27259000000
+      },
+      {
+        "file": "images/0012.png",
+        "stamp_ns": 27423000000
+      },
+      {
+        "file": "images/0017.png",
+        "stamp_ns": 27589000000
+      },
+      {
+        "file": "images/0023.png",
+        "stamp_ns": 27787000000
+      },
+      {
+        "file": "images/0033.png",
+        "stamp_ns": 28117000000
+      },
+      {
+        "file": "images/0043.png",
+        "stamp_ns": 28447000000
+      },
+      {
+        "file": "images/0053.png",
+        "stamp_ns": 28777000000
+      },
+      {
+        "file": "images/0064.png",
+        "stamp_ns": 29140000000
+      },
+      {
+        "file": "images/0078.png",
+        "stamp_ns": 29601000000
+      },
+      {
+        "file": "images/0092.png",
+        "stamp_ns": 30064000000
+      },
+      {
+        "file": "images/0106.png",
+        "stamp_ns": 30526000000
+      }
+    ]
+  },
+  "right": {
+    "errors": [],
+    "zero_stamp_count": {
+      "Gazebo model": 0,
+      "odom": 0,
+      "image": 0,
+      "/clock": 0
+    },
+    "wall_seconds": 31.648457647002942,
+    "sim_seconds": 4.0,
+    "image_count": 122,
+    "jointly_aligned_image_count": 120,
+    "unique_files": true,
+    "unique_stamps": true,
+    "max_bracket_side_ms": 19.0,
+    "before_count": 20,
+    "during_count": 41,
+    "after_count": 59,
+    "endpoints": {
+      "complete": true,
+      "before_file": "images/0021.png",
+      "after_file": "images/0063.png",
+      "before_stamp_ns": 33562000000,
+      "after_stamp_ns": 34948000000,
+      "model_yaw_delta_deg": -9.519740403527663,
+      "odom_yaw_delta_deg": -9.529434048597437,
+      "delta_difference_deg": 0.009693645069773993,
+      "before_bracket_ms": {
+        "model": [
+          9.0,
+          1.0
+        ],
+        "odom": [
+          2.0,
+          18.0
+        ]
+      },
+      "after_bracket_ms": {
+        "model": [
+          7.0,
+          1.0
+        ],
+        "odom": [
+          8.0,
+          12.0
+        ]
+      },
+      "model_displacement_m": [
+        0.0011722014735702224,
+        -0.0013830217131665101,
+        -1.6668947351063113e-07
+      ],
+      "odom_displacement_m": [
+        -5.402189790339532e-15,
+        -5.545099071617909e-16,
+        0.0
+      ],
+      "model_rpy_deg_before": [
+        -2.5323036967544738e-08,
+        -0.6287506126560396,
+        9.902488752354076
+      ],
+      "model_rpy_deg_after": [
+        5.837668122329772e-07,
+        -0.603633010199991,
+        0.36899721639909816
+      ],
+      "odom_rpy_deg_before": [
+        0.0,
+        0.0,
+        9.860779340168186
+      ],
+      "odom_rpy_deg_after": [
+        0.0,
+        0.0,
+        0.37259825282015857
+      ]
+    },
+    "sift": {
+      "matches": 36,
+      "median_dx_px": -15.844535827636719,
+      "median_dy_px": -0.06454086303710938
+    },
+    "representatives": [
+      {
+        "file": "images/0002.png",
+        "stamp_ns": 32935000000
+      },
+      {
+        "file": "images/0007.png",
+        "stamp_ns": 33100000000
+      },
+      {
+        "file": "images/0012.png",
+        "stamp_ns": 33265000000
+      },
+      {
+        "file": "images/0017.png",
+        "stamp_ns": 33429000000
+      },
+      {
+        "file": "images/0022.png",
+        "stamp_ns": 33595000000
+      },
+      {
+        "file": "images/0032.png",
+        "stamp_ns": 33925000000
+      },
+      {
+        "file": "images/0042.png",
+        "stamp_ns": 34255000000
+      },
+      {
+        "file": "images/0052.png",
+        "stamp_ns": 34585000000
+      },
+      {
+        "file": "images/0063.png",
+        "stamp_ns": 34948000000
+      },
+      {
+        "file": "images/0077.png",
+        "stamp_ns": 35409000000
+      },
+      {
+        "file": "images/0091.png",
+        "stamp_ns": 35872000000
+      },
+      {
+        "file": "images/0105.png",
+        "stamp_ns": 36334000000
+      }
+    ]
+  }
+}

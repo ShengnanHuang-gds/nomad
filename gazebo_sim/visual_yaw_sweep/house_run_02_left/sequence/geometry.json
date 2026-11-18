@@ -1,0 +1,561 @@
+{
+  "reference_image": {
+    "file": "images/0002.png",
+    "stamp_ns": 5512000000,
+    "model": {
+      "yaw_deg": -0.49729059890106614,
+      "before_ms": 0.0,
+      "after_ms": 0.0
+    },
+    "odom": {
+      "yaw_deg": -0.49731206692564456,
+      "before_ms": 12.0,
+      "after_ms": 8.0
+    }
+  },
+  "rows": [
+    {
+      "file": "images/0007.png",
+      "stamp_ns": 6172000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -0.00014852447091584509,
+        "odom": 0.0009015519360389135
+      },
+      "direct_from_first": {
+        "matches": 46,
+        "inliers": 46,
+        "yaw_deg": 3.0517578125e-05
+      },
+      "increment": {
+        "matches": 46,
+        "inliers": 46,
+        "yaw_deg": 3.0517578125e-05
+      },
+      "chained_from_first_deg": 3.0517578125e-05
+    },
+    {
+      "file": "images/0012.png",
+      "stamp_ns": 6831000000,
+      "step_seconds": 0.659,
+      "pose_delta_from_first_deg": {
+        "model": -0.00013251313811224463,
+        "odom": 0.0035814779681118125
+      },
+      "direct_from_first": {
+        "matches": 43,
+        "inliers": 43,
+        "yaw_deg": 0.00048828125
+      },
+      "increment": {
+        "matches": 46,
+        "inliers": 46,
+        "yaw_deg": 0.000244140625
+      },
+      "chained_from_first_deg": 0.000274658203125
+    },
+    {
+      "file": "images/0017.png",
+      "stamp_ns": 7459000000,
+      "step_seconds": 0.628,
+      "pose_delta_from_first_deg": {
+        "model": -0.00011713001924817945,
+        "odom": 0.006135438052695008
+      },
+      "direct_from_first": {
+        "matches": 42,
+        "inliers": 42,
+        "yaw_deg": 5.340576171875e-05
+      },
+      "increment": {
+        "matches": 52,
+        "inliers": 52,
+        "yaw_deg": -0.00018310546875
+      },
+      "chained_from_first_deg": 9.1552734375e-05
+    },
+    {
+      "file": "images/0022.png",
+      "stamp_ns": 8119000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -0.0001009439073698104,
+        "odom": 0.008819583679382959
+      },
+      "direct_from_first": {
+        "matches": 38,
+        "inliers": 38,
+        "yaw_deg": 0.000213623046875
+      },
+      "increment": {
+        "matches": 46,
+        "inliers": 45,
+        "yaw_deg": 0.0008697509765625
+      },
+      "chained_from_first_deg": 0.0009613037109375
+    },
+    {
+      "file": "images/0027.png",
+      "stamp_ns": 8779000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -8.475261802232126e-05,
+        "odom": 0.011503753643580694
+      },
+      "direct_from_first": {
+        "matches": 37,
+        "inliers": 37,
+        "yaw_deg": 0.0018310546875
+      },
+      "increment": {
+        "matches": 49,
+        "inliers": 49,
+        "yaw_deg": -1.52587890625e-05
+      },
+      "chained_from_first_deg": 0.000946044921875
+    },
+    {
+      "file": "images/0032.png",
+      "stamp_ns": 9439000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -6.850544650660595e-05,
+        "odom": 0.014187938068204176
+      },
+      "direct_from_first": {
+        "matches": 34,
+        "inliers": 34,
+        "yaw_deg": 0.00191497802734375
+      },
+      "increment": {
+        "matches": 55,
+        "inliers": 55,
+        "yaw_deg": 1.52587890625e-05
+      },
+      "chained_from_first_deg": 0.0009613037109375
+    },
+    {
+      "file": "images/0037.png",
+      "stamp_ns": 10099000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -5.226262072710597e-05,
+        "odom": 0.01687213299496193
+      },
+      "direct_from_first": {
+        "matches": 34,
+        "inliers": 34,
+        "yaw_deg": 0.003040313720703125
+      },
+      "increment": {
+        "matches": 48,
+        "inliers": 48,
+        "yaw_deg": 0.000186920166015625
+      },
+      "chained_from_first_deg": 0.001148223876953125
+    },
+    {
+      "file": "images/0042.png",
+      "stamp_ns": 10726000000,
+      "step_seconds": 0.627,
+      "pose_delta_from_first_deg": {
+        "model": -3.68531416654605e-05,
+        "odom": 0.0194221263768668
+      },
+      "direct_from_first": {
+        "matches": 31,
+        "inliers": 31,
+        "yaw_deg": 0.00327301025390625
+      },
+      "increment": {
+        "matches": 51,
+        "inliers": 51,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.001148223876953125
+    },
+    {
+      "file": "images/0047.png",
+      "stamp_ns": 11386000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -2.0598900704271728e-05,
+        "odom": 0.022106337890022587
+      },
+      "direct_from_first": {
+        "matches": 31,
+        "inliers": 31,
+        "yaw_deg": 0.0033416748046875
+      },
+      "increment": {
+        "matches": 54,
+        "inliers": 54,
+        "yaw_deg": 0.00070953369140625
+      },
+      "chained_from_first_deg": 0.001857757568359375
+    },
+    {
+      "file": "images/0052.png",
+      "stamp_ns": 12046000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -4.331994034600939e-06,
+        "odom": 0.02479055727172863
+      },
+      "direct_from_first": {
+        "matches": 31,
+        "inliers": 30,
+        "yaw_deg": 0.003574371337890625
+      },
+      "increment": {
+        "matches": 56,
+        "inliers": 56,
+        "yaw_deg": 9.1552734375e-05
+      },
+      "chained_from_first_deg": 0.001949310302734375
+    },
+    {
+      "file": "images/0057.png",
+      "stamp_ns": 12706000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 1.1940885173089555e-05,
+        "odom": 0.027474784401903207
+      },
+      "direct_from_first": {
+        "matches": 29,
+        "inliers": 28,
+        "yaw_deg": 0.00328826904296875
+      },
+      "increment": {
+        "matches": 53,
+        "inliers": 53,
+        "yaw_deg": -6.866455078125e-05
+      },
+      "chained_from_first_deg": 0.001880645751953125
+    },
+    {
+      "file": "images/0062.png",
+      "stamp_ns": 13366000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 2.821804065433753e-05,
+        "odom": 0.030159019233934714
+      },
+      "direct_from_first": {
+        "matches": 27,
+        "inliers": 27,
+        "yaw_deg": -0.001495361328125
+      },
+      "increment": {
+        "matches": 47,
+        "inliers": 47,
+        "yaw_deg": 0.00148773193359375
+      },
+      "chained_from_first_deg": 0.003368377685546875
+    },
+    {
+      "file": "images/0067.png",
+      "stamp_ns": 13993000000,
+      "step_seconds": 0.627,
+      "pose_delta_from_first_deg": {
+        "model": 4.369655269442774e-05,
+        "odom": 0.032709049445571736
+      },
+      "direct_from_first": {
+        "matches": 26,
+        "inliers": 26,
+        "yaw_deg": 0.002674102783203125
+      },
+      "increment": {
+        "matches": 47,
+        "inliers": 47,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.003368377685546875
+    },
+    {
+      "file": "images/0072.png",
+      "stamp_ns": 14653000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 5.999664875844246e-05,
+        "odom": 0.03539329926832124
+      },
+      "direct_from_first": {
+        "matches": 26,
+        "inliers": 25,
+        "yaw_deg": 0.00238800048828125
+      },
+      "increment": {
+        "matches": 53,
+        "inliers": 53,
+        "yaw_deg": 0.0006256103515625
+      },
+      "chained_from_first_deg": 0.003993988037109375
+    },
+    {
+      "file": "images/0077.png",
+      "stamp_ns": 15313000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 7.62960592055606e-05,
+        "odom": 0.038077556781018984
+      },
+      "direct_from_first": {
+        "matches": 25,
+        "inliers": 23,
+        "yaw_deg": 0.00289154052734375
+      },
+      "increment": {
+        "matches": 44,
+        "inliers": 43,
+        "yaw_deg": 0.00099945068359375
+      },
+      "chained_from_first_deg": 0.004993438720703125
+    },
+    {
+      "file": "images/0082.png",
+      "stamp_ns": 15973000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 9.26030128880484e-05,
+        "odom": 0.040761821991253555
+      },
+      "direct_from_first": {
+        "matches": 25,
+        "inliers": 24,
+        "yaw_deg": 0.005191802978515625
+      },
+      "increment": {
+        "matches": 50,
+        "inliers": 50,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.004993438720703125
+    },
+    {
+      "file": "images/0087.png",
+      "stamp_ns": 16633000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 0.00010891476665619848,
+        "odom": 0.04344609490459561
+      },
+      "direct_from_first": {
+        "matches": 24,
+        "inliers": 23,
+        "yaw_deg": 0.00513458251953125
+      },
+      "increment": {
+        "matches": 43,
+        "inliers": 43,
+        "yaw_deg": 3.0517578125e-05
+      },
+      "chained_from_first_deg": 0.005023956298828125
+    },
+    {
+      "file": "images/0092.png",
+      "stamp_ns": 17260000000,
+      "step_seconds": 0.627,
+      "pose_delta_from_first_deg": {
+        "model": 0.00012440208234920647,
+        "odom": 0.04599616131352491
+      },
+      "direct_from_first": {
+        "matches": 23,
+        "inliers": 22,
+        "yaw_deg": 0.005191802978515625
+      },
+      "increment": {
+        "matches": 42,
+        "inliers": 42,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.005023956298828125
+    },
+    {
+      "file": "images/0097.png",
+      "stamp_ns": 17920000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 0.0001407277682972108,
+        "odom": 0.04868044926922721
+      },
+      "direct_from_first": {
+        "matches": 22,
+        "inliers": 21,
+        "yaw_deg": 0.00510406494140625
+      },
+      "increment": {
+        "matches": 42,
+        "inliers": 42,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.005023956298828125
+    },
+    {
+      "file": "images/0102.png",
+      "stamp_ns": 18580000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 0.0001570728006754507,
+        "odom": 0.05136474494847221
+      },
+      "direct_from_first": {
+        "matches": 22,
+        "inliers": 19,
+        "yaw_deg": 0.0036468505859375
+      },
+      "increment": {
+        "matches": 43,
+        "inliers": 43,
+        "yaw_deg": 0.00026702880859375
+      },
+      "chained_from_first_deg": 0.005290985107421875
+    },
+    {
+      "file": "images/0107.png",
+      "stamp_ns": 19240000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 0.00017340889206707288,
+        "odom": 0.05404904835822322
+      },
+      "direct_from_first": {
+        "matches": 23,
+        "inliers": 20,
+        "yaw_deg": 0.00186920166015625
+      },
+      "increment": {
+        "matches": 43,
+        "inliers": 43,
+        "yaw_deg": 6.103515625e-05
+      },
+      "chained_from_first_deg": 0.005352020263671875
+    },
+    {
+      "file": "images/0112.png",
+      "stamp_ns": 19900000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": 2.6404440433225318e-05,
+        "odom": 0.05495991305923553
+      },
+      "direct_from_first": {
+        "matches": 23,
+        "inliers": 20,
+        "yaw_deg": 0.00218963623046875
+      },
+      "increment": {
+        "matches": 44,
+        "inliers": 43,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.005352020263671875
+    },
+    {
+      "file": "images/0117.png",
+      "stamp_ns": 20527000000,
+      "step_seconds": 0.627,
+      "pose_delta_from_first_deg": {
+        "model": -0.00021623198915676767,
+        "odom": 0.054715956693740964
+      },
+      "direct_from_first": {
+        "matches": 22,
+        "inliers": 19,
+        "yaw_deg": -0.0001678466796875
+      },
+      "increment": {
+        "matches": 45,
+        "inliers": 45,
+        "yaw_deg": -1.52587890625e-05
+      },
+      "chained_from_first_deg": 0.005336761474609375
+    },
+    {
+      "file": "images/0122.png",
+      "stamp_ns": 21187000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -0.000471718765282958,
+        "odom": 0.05445896831884056
+      },
+      "direct_from_first": {
+        "matches": 22,
+        "inliers": 20,
+        "yaw_deg": 0.002254486083984375
+      },
+      "increment": {
+        "matches": 44,
+        "inliers": 44,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.005336761474609375
+    },
+    {
+      "file": "images/0127.png",
+      "stamp_ns": 21847000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -0.0007272780231630804,
+        "odom": 0.05420183018216562
+      },
+      "direct_from_first": {
+        "matches": 23,
+        "inliers": 20,
+        "yaw_deg": 0.00225067138671875
+      },
+      "increment": {
+        "matches": 43,
+        "inliers": 43,
+        "yaw_deg": 1.52587890625e-05
+      },
+      "chained_from_first_deg": 0.005352020263671875
+    },
+    {
+      "file": "images/0132.png",
+      "stamp_ns": 22507000000,
+      "step_seconds": 0.66,
+      "pose_delta_from_first_deg": {
+        "model": -0.0009828382950445302,
+        "odom": 0.05394456186468233
+      },
+      "direct_from_first": {
+        "matches": 22,
+        "inliers": 20,
+        "yaw_deg": 0.002208709716796875
+      },
+      "increment": {
+        "matches": 44,
+        "inliers": 44,
+        "yaw_deg": 0.0002040863037109375
+      },
+      "chained_from_first_deg": 0.0055561065673828125
+    },
+    {
+      "file": "images/0135.png",
+      "stamp_ns": 22903000000,
+      "step_seconds": 0.396,
+      "pose_delta_from_first_deg": {
+        "model": -0.0011364401770492805,
+        "odom": 0.053790141813777836
+      },
+      "direct_from_first": {
+        "matches": 20,
+        "inliers": 19,
+        "yaw_deg": 0.004669189453125
+      },
+      "increment": {
+        "matches": 46,
+        "inliers": 46,
+        "yaw_deg": 0.0
+      },
+      "chained_from_first_deg": 0.0055561065673828125
+    }
+  ],
+  "image_count": 138,
+  "selected_count": 28,
+  "sim_seconds": 18.0
+}

@@ -1,0 +1,2 @@
+capture ready: image, odom, model pose and advancing /clock
+gazebo_sim/visual_yaw_sweep/house_run_02_left/sequence: 137/138 images aligned with both pose streams

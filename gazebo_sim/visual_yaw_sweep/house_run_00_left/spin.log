@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/align_spin_once.py", line 161, in <module>
+    main()
+  File "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/align_spin_once.py", line 126, in main
+    node.check()
+  File "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/align_spin_once.py", line 75, in check
+    raise RuntimeError(f"scan clearance <= 0.3 m: {self.scan[2]:.3f}")
+RuntimeError: scan clearance <= 0.3 m: 0.120

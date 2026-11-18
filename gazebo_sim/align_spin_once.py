@@ -3,6 +3,7 @@
 
 import argparse
 import math
+from pathlib import Path
 import time
 
 import rclpy
@@ -130,12 +131,20 @@ def main():
     parser.add_argument("--model", default="burger_cam")
     parser.add_argument("--target-deg", type=float, default=10.0)
     parser.add_argument("--wall-seconds", type=float, default=30.0)
+    parser.add_argument("--wheel-state-log", type=Path,
+                        help="save Harmonic ECS wheel targets and measured velocities during a short probe")
     args = parser.parse_args()
     if (args.entity_id <= 0 or not 0 < abs(args.angular) <= 0.12
             or not 8 <= args.target_deg <= 90 or not 0 < args.wall_seconds <= 210):
         parser.error("use a positive ID, angular speed within ±0.12 rad/s and nonzero, "
                      "target in [8, 90] deg, wall seconds in (0, 210]")
     motion_limit = min(16.0, math.radians(args.target_deg) / abs(args.angular) + 0.5)
+
+    trace = None
+    trace_file = None
+    motion_start = motion_stop = None
+    if args.wheel_state_log and (args.model != "burger_cam" or args.target_deg > 10):
+        parser.error("--wheel-state-log expects a burger_cam turn of at most 10 degrees")
 
     rclpy.init()
     node = Spin(args.world, args.model, args.entity_id)
@@ -147,6 +156,18 @@ def main():
                     and node.count_subscribers(CMD)):
                 break
         node.check()
+        if args.wheel_state_log:
+            from gazebo_wheel_state import WheelStateTrace
+
+            trace_file = args.wheel_state_log.open("x", encoding="utf-8", newline="")
+            trace = WheelStateTrace(args.world, args.model, args.entity_id)
+            trace.worker.start()
+            state_deadline = time.monotonic() + 4
+            while rclpy.ok() and time.monotonic() < state_deadline and not trace.ready.is_set():
+                rclpy.spin_once(node, timeout_sec=0.05)
+            if not trace.ready.is_set():
+                raise RuntimeError("wheel state service unavailable; no turn was commanded")
+            node.check()
         node.cmd = node.create_publisher(TwistStamped, CMD, 10)
         deadline = time.monotonic() + args.wall_seconds
         node.hold(0.5, deadline)
@@ -178,6 +199,7 @@ def main():
             if delta * direction >= args.target_deg or sim_seconds >= motion_limit:
                 break
             node.tick(args.angular, deadline)
+        motion_stop = node.clock[0]
         node.publish(0.0)
         node.hold(0.5, deadline)
         final = math.degrees(math.remainder(node.pose[2] - start_yaw, 2 * math.pi))
@@ -185,16 +207,25 @@ def main():
         if final * direction < args.target_deg - 2.0:
             raise SystemExit("target angle not reached")
     finally:
-        if node.cmd is not None:
-            for _ in range(20):
-                if not rclpy.ok():
-                    break
-                node.publish(0.0)
-                time.sleep(0.04)
-        node.gz.unsubscribe(node.pose_topic)
-        node.gz.unsubscribe(CMD)
-        node.destroy_node()
-        rclpy.try_shutdown()
+        if motion_start is not None and motion_stop is None:
+            motion_stop = node.clock[0]
+        try:
+            if node.cmd is not None:
+                for _ in range(20):
+                    if not rclpy.ok():
+                        break
+                    node.publish(0.0)
+                    time.sleep(0.04)
+        finally:
+            try:
+                if trace is not None:
+                    with trace_file:
+                        trace.finish(trace_file, motion_start, motion_stop, args.angular)
+            finally:
+                node.gz.unsubscribe(node.pose_topic)
+                node.gz.unsubscribe(CMD)
+                node.destroy_node()
+                rclpy.try_shutdown()
 
 
 if __name__ == "__main__":

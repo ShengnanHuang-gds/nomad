@@ -1,0 +1,135 @@
+"""Read DiffDrive's target and measured wheel velocities from Harmonic ECS state."""
+
+import csv
+import math
+from threading import Event, Thread
+
+WHEELS = ("wheel_left_joint", "wheel_right_joint")
+VECTORS = {"target_rad_s": "JointVelocityCmd", "velocity_rad_s": "JointVelocity",
+           "position_rad": "JointPosition"}
+
+
+def component_id(name):
+    """gz-common5 hash64; SerializedEntityMap uses signed int64 map keys."""
+    key = ("gz_sim_components." + name).encode("ascii")
+    value = 0xcbf29ce484222325
+    for byte in key:
+        value = ((value ^ byte) * 0x100000001b3) & (2**64 - 1)
+    return value if value < 2**63 else value - 2**64
+
+
+def read_wheels(reply, entity_id, model, vector_type):
+    entities = reply.state.entities
+    name_key = component_id("Name")
+    parent_key = component_id("ParentEntity")
+    joint_key = component_id("Joint")
+    model_key = component_id("Model")
+    current = entities.get(entity_id)
+    if (current is None or current.remove or model_key not in current.components
+            or name_key not in current.components or current.components[name_key].component != model.encode()):
+        raise ValueError(f"ECS state has no model {model!r} with ID {entity_id}")
+    wheels = {}
+    for joint_id, entity in entities.items():
+        components = entity.components
+        if entity.remove or joint_key not in components or parent_key not in components or name_key not in components:
+            continue
+        if int(components[parent_key].component) != entity_id:
+            continue
+        name = components[name_key].component.decode()
+        if name not in WHEELS:
+            continue
+        if name in wheels:
+            raise ValueError(f"duplicate joint {name!r} for model {entity_id}")
+        wheel = {"entity_id": joint_id}
+        for key, component in VECTORS.items():
+            entry = components.get(component_id(component))
+            value = None
+            if entry is not None and not entry.remove:
+                numbers = vector_type.FromString(entry.component).data
+                if len(numbers) == 1 and math.isfinite(numbers[0]):
+                    value = numbers[0]
+            wheel[key] = value
+        wheels[name] = wheel
+    if set(wheels) != set(WHEELS):
+        raise ValueError(f"missing wheel joints for model {entity_id}: {sorted(set(WHEELS) - wheels.keys())}")
+    stamp = reply.stats.sim_time
+    return {"sim_stamp_ns": stamp.sec * 10**9 + stamp.nsec, "paused": reply.stats.paused, "wheels": wheels}
+
+
+def summarize(rows, start, stop, expected):
+    if stop is None or start is None:
+        return "turn did not start"
+    active = [row for row in rows if not row["paused"] and start + 150_000_000 <= row["sim_stamp_ns"] < stop]
+    if len(active) < 2:
+        return "fewer than two ECS snapshots during nonzero command"
+    readable = [row for row in active if all(row["wheels"][w]["target_rad_s"] is not None for w in WHEELS)]
+    if len(readable) < 2:
+        return "JointVelocityCmd unavailable during command"
+    applied = [
+        row for row in readable
+        if all(math.isclose(row["wheels"][w]["target_rad_s"], expected[w], abs_tol=0.03)
+               for w in WHEELS)
+    ]
+    if not applied:
+        return "ECS wheel targets did not match requested turn"
+    if len(applied) == 1:
+        return "expected ECS wheel targets observed once; execution evidence incomplete"
+    measured = [row for row in applied if all(row["wheels"][w]["velocity_rad_s"] is not None for w in WHEELS)]
+    if len(measured) < 2:
+        return "expected wheel targets observed; measured velocity unavailable"
+    if all(abs(row["wheels"][w]["velocity_rad_s"]) < abs(expected[w]) * 0.2
+           for row in measured for w in WHEELS):
+        return "expected ECS wheel targets present but measured wheels stayed near zero"
+    return "expected ECS wheel targets and some measured wheel motion observed"
+
+
+class WheelStateTrace:
+    def __init__(self, world, model, entity_id):
+        self.world, self.model, self.entity_id = world, model, entity_id
+        self.rows = []
+        self.errors = set()
+        self.stop = Event()
+        self.ready = Event()
+        self.worker = Thread(target=self.collect, daemon=True)
+
+    def collect(self):
+        try:
+            from gz.msgs10.double_v_pb2 import Double_V
+            from gz.msgs10.empty_pb2 import Empty
+            from gz.msgs10.serialized_map_pb2 import SerializedStepMap
+            from gz.transport13 import Node
+
+            node = Node()
+            service = f"/world/{self.world}/state"
+            while not self.stop.is_set():
+                received, reply = node.request(service, Empty(), Empty, SerializedStepMap, 600)
+                if received:
+                    row = read_wheels(reply, self.entity_id, self.model, Double_V)
+                    if not self.rows or row["sim_stamp_ns"] > self.rows[-1]["sim_stamp_ns"]:
+                        self.rows.append(row)
+                        self.ready.set()
+                else:
+                    self.errors.add(f"no reply from {service}")
+                self.stop.wait(0.3)
+        except Exception as exc:
+            self.errors.add(f"{type(exc).__name__}: {exc}")
+
+    def finish(self, file, start, stop, angular):
+        self.stop.set()
+        self.worker.join()
+        speed = angular * 0.160 / (2 * 0.033)
+        expected = dict(zip(WHEELS, (-speed, speed), strict=True))
+        fields = ["sim_stamp_ns", "phase", "paused"]
+        fields += [f"{w}_{field}" for w in WHEELS for field in ("entity_id", *VECTORS)]
+        writer = csv.DictWriter(file, fieldnames=fields)
+        writer.writeheader()
+        for row in self.rows:
+            stamp = row["sim_stamp_ns"]
+            phase = "before" if start is None or stamp < start else "after" if stop is not None and stamp >= stop else "turn"
+            values = {"sim_stamp_ns": stamp, "phase": phase, "paused": row["paused"]}
+            for wheel in WHEELS:
+                values.update({f"{wheel}_{k}": v for k, v in row["wheels"][wheel].items()})
+            writer.writerow(values)
+        print(f"wheel_state_samples={len(self.rows)}: {summarize(self.rows, start, stop, expected)}", flush=True)
+        for error in sorted(self.errors):
+            print(f"wheel_state_error={error}", flush=True)

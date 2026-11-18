@@ -1,19 +1,29 @@
-# 给 Cursor：先修复 Gazebo 02 速度命令无响应
+# 给 Cursor：定位 burger_cam 左右轮目标与实际响应
 
-先拉取最新 main，保留现有本地修改，读 `gazebo_sim/visual_yaw_sweep/README.md`。已知 00、01 的出生点净空不足，02 的净空充足但是车轮 odom 和模型几乎都没变化。先解决 02 的命令通路，暂停 90° 扫转和训练。不在 00/01 试发指令，不改净空条件，不切到 05/06/07。
+拉取最新 main，保留现有本地修改。先读 `gazebo_sim/visual_yaw_sweep/motion_fix/README.md`。提交 `3a25cd6` 已确认 02 的 Gazebo 原生 `/cmd_vel` 收到 +0.120 rad/s，轮式 yaw 只变化 +0.004°，车身 yaw 几乎为零。停车后读到的关节状态没有覆盖发命令时段。现在直接读取 Gazebo ECS 中的左右轮目标与实测值。
 
-在实际 WSL 仓库中 source `gazebo_sim/nomad_wsl_env.sh`，用 `$NOMAD_PY`。只用确认隔离的 02 Gazebo 仿真。保留现有运行环境；如果需要重新启动，使用 02 原生 spawn 和现有镜头。核对当次 world、burger_cam 模型 ID、ROS 发布/订阅、Gazebo 原生 `/cmd_vel` 的消息类型及发布/订阅端点。核对实际 bridge 映射和 DiffDrive 订阅的 topic，比较 launch、bridge 和观察进程的 `GZ_PARTITION`、`GZ_IP`、`GZ_RELAY` 和 ROS domain。只报告环境网络配置，别提交环境变量全量或凭据。不要接管已有控制器。
-
-在确认没有其他控制发布者、扫描净空仍大于 0.3 m 后，用新脚本发一次小幅旋转，并保存输出。目标 8°，若 1 s 仿真时间没有响应，脚本会停车并给出故障层级。实体 ID 必须来自当前仿真：
+仅使用条件已经确认的隔离 02 仿真。复用本轮仿真，若已关停则用相同配置原生启动。继续要求扫描净空 >0.3 m、时钟和姿态持续更新、无其他 ROS 或 Gazebo 速度发布者、目标模型和 world 已核实。不要运行导航、训练、90° 扫转，或改镜头、净空、速度与现有轨迹。
 
 ```bash
-"$NOMAD_PY" gazebo_sim/align_spin_once.py 0.12 \
-  --world default --model burger_cam --entity-id "$BURGER_ID" --target-deg 8
+source gazebo_sim/nomad_wsl_env.sh
+"$NOMAD_PY" -c 'from gz.msgs10.serialized_map_pb2 import SerializedStepMap; from gz.msgs10.double_v_pb2 import Double_V; from gz.transport13 import Node'
+gz service -i -s /world/default/state
 ```
 
-- ROS 发布者没有 QoS 匹配：检查 `ros2 topic info /cmd_vel --verbose` 中 bridge 的实际话题、类型、命名空间和 QoS。修复已证实的映射或 QoS 不一致。
-- ROS 已匹配、Gazebo 观察不到非零命令：检查同一仿真两端的 topic 名、类型、方向、传输域和 bridge 日志。只修证据指向的 bridge 配置或启动环境。
-- 原生 Gazebo 收到非零命令、车轮未响应：先只读核对实际 SDF 的 DiffDrive、轮关节和 `/joint_states`，确认实际插件订阅者、安装版本、启用状态及仿真状态。车轮转而车身未转时检查地面接触、轮和出生位姿，不修改朝向或跳过障碍。缺证据时保存已定位的层，停止重复发命令。
-- 如果做了明确的配置修复，就用相同的短动作复验一次。记录 Gazebo 模型实际 yaw 变化，成功标准是命令经过预期通路、模型按预期方向响应并停稳。仍不要跑大扫转、训练或导航闭环。
+用当前 `gz model -m burger_cam -p` 查询真实模型 ID 并赋给 `BURGER_ID`。只做下面一次短动作，记录输出：
 
-把诊断及有证据的修复推到 main，并记录失败层级、改变了什么和实测结果。可以将记录追加到新的 `gazebo_sim/visual_yaw_sweep/motion_fix/`，原始归档保留。
+```bash
+out="$(mktemp -d)"
+"$NOMAD_PY" gazebo_sim/align_spin_once.py 0.12 \
+  --world default --model burger_cam --entity-id "$BURGER_ID" --target-deg 8 \
+  --wheel-state-log "$out/wheel_state.csv" >"$out/spin.log" 2>&1
+```
+
+程序先等只读状态服务有有效回包，再发速度。它会记录同一对轮关节在 motion 窗口内的 `JointVelocityCmd`、`JointVelocity` 和 `JointPosition`。当前轮距 0.160 m、轮半径 0.033 m，因此正转预期左轮约 −0.291 rad/s，右轮约 +0.291 rad/s。按以下证据处理：
+
+- Gazebo 原生话题看到 +0.120，但发令期间 ECS 两轮目标一直为零或同号：故障在设定轮目标一侧。核对实际加载的 DiffDrive、是否有其它关节控制插件覆盖、插件是否禁用及其实际配置。保存插件日志和证据，再修已确认的问题。
+- ECS 持续给到预期反向目标，但关节速度和角度都几乎不动：检查实际物理引擎、轮关节限制和碰撞接触。根据实测修改仿真配置，并保留原配置可恢复。
+- 两轮实际反向转动但车身不跟随：检查车轮接触和滑移，分别记录 odom 与真实车身 yaw。
+- 状态服务不可用或有效样本不足：保留输出和实际 Gazebo 版本，不从空数据推断故障层，也不反复重发。
+
+如果证据说明具体可修的配置错误，由 Cursor 修正并用同一个短动作复验。把日志、CSV、结论，以及实际改动推到 main 的 `gazebo_sim/visual_yaw_sweep/wheel_response/`，保留原始 motion_fix 记录。此处的 Gazebo 姿态只用于离线诊断。

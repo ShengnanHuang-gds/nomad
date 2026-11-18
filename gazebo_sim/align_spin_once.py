@@ -132,7 +132,7 @@ def main():
     parser.add_argument("--target-deg", type=float, default=10.0)
     parser.add_argument("--wall-seconds", type=float, default=30.0)
     parser.add_argument("--wheel-state-log", type=Path,
-                        help="save Harmonic ECS wheel targets and measured velocities during a short probe")
+                        help="save measured wheel motion from Harmonic ECS state during a short probe")
     args = parser.parse_args()
     if (args.entity_id <= 0 or not 0 < abs(args.angular) <= 0.12
             or not 8 <= args.target_deg <= 90 or not 0 < args.wall_seconds <= 210):

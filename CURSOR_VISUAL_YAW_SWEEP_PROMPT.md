@@ -1,5 +1,7 @@
 # 给 Cursor：验证大转弯中的连续视觉对应
 
+这份扫转流程暂不执行。02 的驱动问题独立记录，现有试验不把它作为推进 house_06 视觉导航的前置条件。[02 诊断更正](gazebo_sim/visual_yaw_sweep/wheel_response/README.md)
+
 先读 `gazebo_sim/YAW_GEOMETRY_REVIEW.md`，拉取最新 main 并保留本地修改。使用 WSL 的现有 ROS Jazzy/Gazebo Harmonic 工作流，仓库通常在 `/mnt/c/Users/61078/Desktop/nomad`。本轮只做独立传感器实验和离线评估，不训练、不重录已有路线、不运行部署导航或 PD，不把诊断图写入训练集。保持镜头、渲染参数和权重现状。
 
 ```bash

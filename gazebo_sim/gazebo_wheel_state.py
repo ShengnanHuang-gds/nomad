@@ -1,12 +1,13 @@
-"""Read DiffDrive's target and measured wheel velocities from Harmonic ECS state."""
+"""Read measured wheel motion from Harmonic's post-physics ECS state."""
 
 import csv
 import math
 import queue
+from statistics import median
 from multiprocessing import get_context
 
 WHEELS = ("wheel_left_joint", "wheel_right_joint")
-VECTORS = {"target_rad_s": "JointVelocityCmd", "velocity_rad_s": "JointVelocity",
+VECTORS = {"post_step_velocity_cmd_rad_s": "JointVelocityCmd", "velocity_rad_s": "JointVelocity",
            "position_rad": "JointPosition"}
 
 
@@ -57,31 +58,30 @@ def read_wheels(reply, entity_id, model, vector_type):
     return {"sim_stamp_ns": stamp.sec * 10**9 + stamp.nsec, "paused": reply.stats.paused, "wheels": wheels}
 
 
-def summarize(rows, start, stop, expected):
+def summarize(rows, start, stop, angular):
     if stop is None or start is None:
         return "turn did not start"
     active = [row for row in rows if not row["paused"] and start + 150_000_000 <= row["sim_stamp_ns"] < stop]
     if len(active) < 2:
         return "fewer than two ECS snapshots during nonzero command"
-    readable = [row for row in active if all(row["wheels"][w]["target_rad_s"] is not None for w in WHEELS)]
-    if len(readable) < 2:
-        return "JointVelocityCmd unavailable during command"
-    applied = [
-        row for row in readable
-        if all(math.isclose(row["wheels"][w]["target_rad_s"], expected[w], abs_tol=0.03)
-               for w in WHEELS)
-    ]
-    if not applied:
-        return "ECS wheel targets did not match requested turn"
-    if len(applied) == 1:
-        return "expected ECS wheel targets observed once; execution evidence incomplete"
-    measured = [row for row in applied if all(row["wheels"][w]["velocity_rad_s"] is not None for w in WHEELS)]
-    if len(measured) < 2:
-        return "expected wheel targets observed; measured velocity unavailable"
-    if all(abs(row["wheels"][w]["velocity_rad_s"]) < abs(expected[w]) * 0.2
-           for row in measured for w in WHEELS):
-        return "expected ECS wheel targets present but measured wheels stayed near zero"
-    return "expected ECS wheel targets and some measured wheel motion observed"
+    # Physics::Update clears JointVelocityCmd before SceneBroadcaster::PostUpdate
+    # serializes this state. Only measured velocities can characterize the response.
+    differences = []
+    for row in active:
+        left, right = (row["wheels"][wheel]["velocity_rad_s"] for wheel in WHEELS)
+        if left is not None and right is not None:
+            differences.append(right - left)
+    if len(differences) < 2:
+        return "measured wheel velocity unavailable during command"
+    observed = median(differences)
+    expected = angular * 0.160 / 0.033
+    response = observed / expected
+    level = f"measured right-minus-left={observed:+.4f} rad/s; request implies {expected:+.4f} rad/s"
+    if response < -0.2:
+        return f"wheel response has the opposite sign ({level})"
+    if response < 0.2:
+        return f"little measured turning response ({level})"
+    return f"measured wheels responded in the requested direction ({level})"
 
 
 def _collect_wheels(world, model, entity_id, stop, ready, out):
@@ -141,8 +141,6 @@ class WheelStateTrace:
             else:
                 self.rows.append(item)
         self.rows.sort(key=lambda row: row["sim_stamp_ns"])
-        speed = angular * 0.160 / (2 * 0.033)
-        expected = dict(zip(WHEELS, (-speed, speed), strict=True))
         fields = ["sim_stamp_ns", "phase", "paused"]
         fields += [f"{w}_{field}" for w in WHEELS for field in ("entity_id", *VECTORS)]
         writer = csv.DictWriter(file, fieldnames=fields)
@@ -154,6 +152,6 @@ class WheelStateTrace:
             for wheel in WHEELS:
                 values.update({f"{wheel}_{k}": v for k, v in row["wheels"][wheel].items()})
             writer.writerow(values)
-        print(f"wheel_state_samples={len(self.rows)}: {summarize(self.rows, start, stop, expected)}", flush=True)
+        print(f"wheel_state_samples={len(self.rows)}: {summarize(self.rows, start, stop, angular)}", flush=True)
         for error in sorted(self.errors):
             print(f"wheel_state_error={error}", flush=True)

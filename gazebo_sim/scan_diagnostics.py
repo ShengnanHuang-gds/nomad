@@ -3,6 +3,30 @@
 import math
 
 
+def scan_timing(scan, odom_stamp_ns, now):
+    """Describe the latest scan using separate wall and simulation clocks."""
+    if scan is None:
+        return {"issues": ["no_scan_received"], "scan_stamp_ns": None,
+                "odom_stamp_ns": odom_stamp_ns, "receipt_age_wall_s": None,
+                "scan_minus_odom_ns": None, "scan_min_m": None}
+
+    scan_stamp_ns, received_at, distance = scan
+    age = now - received_at
+    offset = scan_stamp_ns - odom_stamp_ns if scan_stamp_ns > 0 and odom_stamp_ns > 0 else None
+    issues = []
+    if scan_stamp_ns <= 0:
+        issues.append("invalid_scan_stamp")
+    if age > 2:
+        issues.append("scan_receipt_over_2_wall_s_old")
+    if odom_stamp_ns <= 0:
+        issues.append("no_valid_odom_stamp")
+    if offset is not None and abs(offset) > 350_000_000:
+        issues.append("scan_behind_odom" if offset < 0 else "scan_ahead_of_odom")
+    return {"issues": issues, "scan_stamp_ns": scan_stamp_ns,
+            "odom_stamp_ns": odom_stamp_ns, "receipt_age_wall_s": age,
+            "scan_minus_odom_ns": offset, "scan_min_m": distance}
+
+
 def summarize_scan(msg):
     hits = []
     for i, raw in enumerate(msg.ranges):

@@ -2,7 +2,7 @@ import math
 import unittest
 from types import SimpleNamespace as NS
 
-from scan_diagnostics import summarize_scan
+from scan_diagnostics import scan_timing, summarize_scan
 
 
 def scan(ranges, start=0, increment=math.pi/2):
@@ -11,6 +11,25 @@ def scan(ranges, start=0, increment=math.pi/2):
 
 
 class ScanDiagnosticsTest(unittest.TestCase):
+    def test_scan_timing_distinguishes_missing_data_and_invalid_stamps(self):
+        self.assertEqual(scan_timing(None, 5_000_000_000, 10)["issues"], ["no_scan_received"])
+        invalid = scan_timing((0, 9.0, 0.8), 0, 10)
+        self.assertEqual(invalid["issues"], ["invalid_scan_stamp", "no_valid_odom_stamp"])
+        self.assertIsNone(invalid["scan_minus_odom_ns"])
+
+    def test_scan_timing_reports_wall_age_and_signed_simulation_offset(self):
+        odom_stamp = 5_000_000_000
+        behind = scan_timing((4_640_000_000, 7.0, 0.8), odom_stamp, 10.0)
+        self.assertEqual(behind["issues"], ["scan_receipt_over_2_wall_s_old", "scan_behind_odom"])
+        self.assertEqual(behind["scan_minus_odom_ns"], -360_000_000)
+        self.assertEqual(behind["receipt_age_wall_s"], 3.0)
+        ahead = scan_timing((5_360_000_000, 9.0, 0.8), odom_stamp, 10.0)
+        self.assertEqual(ahead["issues"], ["scan_ahead_of_odom"])
+
+    def test_scan_timing_keeps_existing_cutoffs(self):
+        at_limit = scan_timing((4_650_000_000, 8.0, 0.8), 5_000_000_000, 10.0)
+        self.assertEqual(at_limit["issues"], [])
+
     def test_side_proximity_is_distinct_from_front_obstacle(self):
         result = summarize_scan(scan([1.0, 0.1469, 2.0, 0.8]))
         self.assertEqual(result["scan_min"], 0.1469)

@@ -20,7 +20,7 @@ from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image, LaserScan
 
 from route_frame_sync import RouteFrameSync, stamp_ns, wrapped_delta
-from scan_diagnostics import summarize_scan
+from scan_diagnostics import scan_timing, summarize_scan
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SPACING = 0.12
@@ -149,10 +149,10 @@ class Recorder(Node):
 
     def check_reference(self):
         self.reference_pose.check_upright(self.sync.last_odom_stamp)
-        if (self.scan is None or self.scan[0] <= 0 or time.monotonic() - self.scan[1] > 2
-                or abs(self.scan[0] - self.sync.last_odom_stamp) > 350_000_000):
-            raise RuntimeError("reference recording requires a fresh scan")
-        distance = self.scan[2]
+        timing = scan_timing(self.scan, self.sync.last_odom_stamp, time.monotonic())
+        if timing["issues"]:
+            raise RuntimeError(f"reference recording requires a fresh scan: {', '.join(timing['issues'])}")
+        distance = timing["scan_min_m"]
         if distance is None or distance < 0.15:
             raise RuntimeError(f"reference recording stopped for scan proximity: {distance} m")
         if self.count_publishers("/cmd_vel") > 1:
@@ -267,25 +267,33 @@ def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT, reference_mod
         reference_pose = ReferenceMapPose(reference_model_id)
     node = Recorder(out, reference_pose)
     failure = None
+    stop_context = None
+    segment_index = None
+    segment = None
     try:
         if reference_pose is not None:
             deadline = time.monotonic() + 8
             while rclpy.ok() and time.monotonic() < deadline:
-                if reference_pose.samples and node.scan is not None and node.st is not None:
+                timing = scan_timing(node.scan, node.sync.last_odom_stamp, time.monotonic())
+                if reference_pose.samples and not timing["issues"]:
                     break
                 rclpy.spin_once(node, timeout_sec=0.05)
             node.check_reference()
             node.sync.images.clear()
         node.save_endpoint()
-        for seg in plan["segs"]:
-            if seg[0] == "dist":
-                _, v, w, dist = seg
+        for segment_index, segment in enumerate(plan["segs"], start=1):
+            if segment[0] == "dist":
+                _, v, w, dist = segment
                 node.drive_dist(v, w, dist)
             else:
-                _, w, dyaw = seg
+                _, w, dyaw = segment
                 node.drive_yaw(w, dyaw)
     except (Exception, KeyboardInterrupt) as exc:
         failure = str(exc) or type(exc).__name__
+        if reference_pose is not None:
+            stop_context = {"segment_index": segment_index, "segment": segment,
+                            "scan": scan_timing(node.scan, node.sync.last_odom_stamp, time.monotonic()),
+                            "last_image_stamp_ns": node.sync.last_image_stamp}
         raise
     finally:
         try:
@@ -304,7 +312,8 @@ def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT, reference_mod
                     if not failure and (reference_pose.error or any(not row.get("tilt_ok", False) for row in rows)):
                         failure = reference_pose.error or "one or more frames lack a valid upright Gazebo pose bracket"
                     report = {"run": name, "model_entity_id": reference_model_id,
-                              "passed": failure is None and bool(rows), "failure": failure, "frames": rows}
+                              "passed": failure is None and bool(rows), "failure": failure,
+                              "stop_context": stop_context, "frames": rows}
                     with open(os.path.join(out, "gazebo_reference_pose.json"), "w", encoding="utf-8") as stream:
                         json.dump(report, stream, indent=2)
             finally:

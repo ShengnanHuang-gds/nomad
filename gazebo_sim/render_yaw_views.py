@@ -11,6 +11,8 @@ import os
 from pathlib import Path
 import signal
 import subprocess
+import sys
+import tempfile
 import time
 import uuid
 import xml.etree.ElementTree as ET
@@ -18,6 +20,7 @@ import xml.etree.ElementTree as ET
 from PIL import Image
 
 WORLD_NAME = "nomad_yaw_views"
+HERE = Path(__file__).resolve().parent
 # Verified clear in the WSL house_run_02 sensor capture. This is an offline
 # training-area anchor. It is not loaded by navigation or a map exporter.
 CENTER = (0.008, 3.837)
@@ -28,7 +31,7 @@ def digest(path):
     return sha256(path.read_bytes()).hexdigest()
 
 
-def build_world(house, burger, destination):
+def build_world(house, burger, destination, center=CENTER, base_yaw=0.0):
     scene = ET.parse(house)
     world = scene.find("world")
     if world is None:
@@ -64,10 +67,11 @@ def build_world(house, burger, destination):
     ET.SubElement(rig, "static").text = "true"
     views = []
     dx, dy, dz = offset[:3]
-    for index, yaw_deg in enumerate(range(-90, 91, 15)):
+    for index, relative_yaw in enumerate(range(-90, 91, 15)):
+        yaw_deg = base_yaw + relative_yaw
         yaw = math.radians(yaw_deg)
-        position = [CENTER[0] + dx * math.cos(yaw) - dy * math.sin(yaw),
-                    CENTER[1] + dx * math.sin(yaw) + dy * math.cos(yaw), BASE_Z + dz]
+        position = [center[0] + dx * math.cos(yaw) - dy * math.sin(yaw),
+                    center[1] + dx * math.sin(yaw) + dy * math.cos(yaw), BASE_Z + dz]
         name = f"view_{index:02d}"
         topic = f"/{WORLD_NAME}/{name}/image"
         view_link = ET.SubElement(rig, "link", name=name)
@@ -160,12 +164,57 @@ def capture(world, output, resources, views, deadline_s):
         view.update(image_stamp_ns=stamp_ns, png_sha256=digest(path))
 
 
+def training_anchor(raw):
+    import pickle
+
+    from rendered_yaw_data import TRAINING_ANCHORS
+    from visual_stage_data import extract_verified_handoff
+
+    try:
+        route, index = raw.split(":")
+        frame = int(index)
+    except ValueError:
+        raise ValueError("expected a training anchor in route:frame format") from None
+    if frame not in TRAINING_ANCHORS.get(route, ()):
+        raise ValueError(f"unplanned training anchor: {raw}")
+    with tempfile.TemporaryDirectory(prefix="nomad-render-handoff-") as tmp:
+        extract_verified_handoff(HERE / "training_handoff", tmp)
+        with (Path(tmp) / "dataset" / route / "traj_data.pkl").open("rb") as stream:
+            poses = pickle.load(stream)
+        center = [float(value) for value in poses["position"][frame]]
+        base_yaw = math.degrees(float(poses["yaw"].reshape(-1)[frame]))
+    return route, frame, center, base_yaw
+
+
+def render_batch(share, output, timeout, prepare_only):
+    from rendered_yaw_data import TRAINING_ANCHORS
+
+    statuses = []
+    for route, frames in TRAINING_ANCHORS.items():
+        for frame in frames:
+            group = f"{route}_{frame:02d}"
+            print(f"rendering {group}", flush=True)
+            cmd = [sys.executable, str(Path(__file__).resolve()), "--share", str(share),
+                   "--out", str(output / group), "--timeout", str(timeout),
+                   "--training-anchor", f"{route}:{frame}"]
+            if prepare_only:
+                cmd.append("--prepare-only")
+            with (output / f"{group}.log").open("w", encoding="utf-8") as stream:
+                proc = subprocess.run(cmd, stdout=stream, stderr=subprocess.STDOUT)
+            statuses.append({"anchor": group, "exit_code": proc.returncode})
+    (output / "batch_status.json").write_text(json.dumps(statuses, indent=2) + "\n", encoding="utf-8")
+    print(f"{sum(not s['exit_code'] for s in statuses)}/{len(statuses)} rendered or planned at {output}")
+
+
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--out", required=True, type=Path, help="new output directory")
     parser.add_argument("--share", type=Path, help="installed turtlebot3_gazebo package share directory")
     parser.add_argument("--prepare-only", action="store_true", help="build SDF without running Gazebo")
     parser.add_argument("--timeout", type=float, default=150, help="renderer timeout in wall seconds")
+    dataset = parser.add_mutually_exclusive_group()
+    dataset.add_argument("--training-batch", action="store_true", help="render planned anchors from training routes")
+    dataset.add_argument("--training-anchor", help="render one planned route:frame anchor")
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         parser.error("timeout must be positive and finite")
@@ -177,12 +226,21 @@ def main():
     burger = share / "models/turtlebot3_burger_cam/model.sdf"
     output = args.out.resolve()
     output.mkdir(parents=True)
+    if args.training_batch:
+        render_batch(share, output, args.timeout, args.prepare_only)
+        return
+    center, base_yaw = CENTER, 0.0
+    provenance = {"kind": "synthetic_heading_pilot", "anchor": "house_run_02 training-area spawn"}
+    if args.training_anchor:
+        route, frame, center, base_yaw = training_anchor(args.training_anchor)
+        provenance = {"kind": "synthetic_heading_training_v1", "source_route": route,
+                      "source_frame": frame, "anchor_xy_m": center, "center_yaw_degrees": base_yaw}
     world = output / "camera_only.sdf"
-    views = build_world(house, burger, world)
+    views = build_world(house, burger, world, center, base_yaw)
     manifest = {
-        "kind": "synthetic_heading_pilot", "world_source_sha256": digest(house),
+        **provenance, "world_source_sha256": digest(house),
         "camera_model_source_sha256": digest(burger), "camera_only_sdf_sha256": digest(world),
-        "anchor": "house_run_02 training-area spawn", "camera_pitch_degrees": 0,
+        "camera_pitch_degrees": 0,
         "intended_use": "offline data generation only", "views": views,
     }
     if not args.prepare_only:

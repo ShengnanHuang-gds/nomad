@@ -25,12 +25,25 @@ def main():
     p.add_argument("--steps-per-epoch", type=int, default=32)
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--lr", type=float, default=5e-5)
+    p.add_argument("--rendered-data", type=Path, help="optional labeled training-only render batch")
     args = p.parse_args()
     if min(args.epochs, args.steps_per_epoch, args.batch_size) < 1 or not math.isfinite(args.lr) or args.lr <= 0:
         p.error("positive training counts and finite positive lr required")
     out = Path(args.out).resolve()
     if out.exists() and any(out.iterdir()):
         p.error("output directory must be new or empty")
+    rendered_groups, rendered_pairs, render_report = {}, [], []
+    if args.rendered_data is not None:
+        from rendered_yaw_data import load_rendered_training
+
+        rendered_groups, rendered_pairs, render_report = load_rendered_training(args.rendered_data)
+        rendered_routes = {row["route"] for row in render_report if row["accepted"]}
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "render_training_report.json").write_text(
+            json.dumps(render_report, indent=2) + "\n", encoding="utf-8")
+        if len(rendered_groups) < 6 or len(rendered_routes) < 3:
+            p.error(f"only {len(rendered_groups)} distinct accepted render locations from {len(rendered_routes)} "
+                    f"training routes; need at least 6 locations across 3 routes ({out}/render_training_report.json)")
 
     import torch
     import nomad_navigate_ros2 as runtime
@@ -49,6 +62,12 @@ def main():
     data = VisualStageData(out / "handoff/dataset")
     train_pairs = yaw_pairs(data, TRAIN_ROUTES)
     valid_pairs = yaw_pairs(data, VALID_ROUTES)
+    # Keep the old near-zero examples and give distinct rendered views
+    # half the sampling probability, balanced over left and right turns.
+    probabilities = pair_weights(train_pairs)
+    if rendered_pairs:
+        probabilities = np.concatenate((0.5 * probabilities, 0.5 * pair_weights(rendered_pairs)))
+    combined_pairs = train_pairs + rendered_pairs
     torch.manual_seed(42)
     rng = np.random.default_rng(42)
     mp = runtime.load_train_config(base_config)
@@ -61,9 +80,11 @@ def main():
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.epochs)
     images = {}
-    for route, values in data.routes.items():
+    paths_by_route = {route: values["paths"] for route, values in data.routes.items()}
+    paths_by_route.update(rendered_groups)
+    for route, paths in paths_by_route.items():
         images[route] = []
-        for path in values["paths"]:
+        for path in paths:
             with Image.open(path) as pil:
                 images[route].append(runtime.transform_images(pil.convert("RGB"), mp["image_size"], center_crop=False).squeeze(0))
 
@@ -84,10 +105,14 @@ def main():
                 targets.extend(target.cpu().tolist())
         return yaw_metrics(predictions, targets)
 
-    config = {**vars(args), "kind": "image_pair_yaw_v1", "base_config": str(base_config),
+    config = {**vars(args), "rendered_data": None if args.rendered_data is None else str(args.rendered_data.resolve()),
+              "kind": "image_pair_yaw_v1", "base_config": str(base_config),
               "base_checkpoint": str(base_checkpoint), "base_checkpoint_sha256": base_hash,
               "train_routes": list(TRAIN_ROUTES), "validation_routes": list(VALID_ROUTES),
-              "train_pairs": len(train_pairs), "validation_pairs": len(valid_pairs),
+              "train_pairs": len(combined_pairs), "legacy_train_pairs": len(train_pairs),
+              "rendered_train_pairs": len(rendered_pairs), "rendered_locations": len(rendered_groups),
+              "rendered_sampling_mass": 0.5 if rendered_pairs else 0.0,
+              "validation_pairs": len(valid_pairs),
               "max_pair_frame_gap": 20, "seed": 42, "input": "current RGB and goal RGB only",
               "output": "cos/sin of relative heading", "angle_supervision": "wrapped goal yaw minus current yaw",
               "loss": "MSE(raw_vector, target_cos_sin) + 0.25 * circular_cosine_loss",
@@ -119,15 +144,14 @@ def main():
                 "selected_on": "house_run_05", **metrics}, indent=2), encoding="utf-8")
         print(f"epoch={epoch} updates={updates} validation={metrics} elapsed={time.monotonic()-started:.1f}s", flush=True)
 
-    probabilities = pair_weights(train_pairs)
     try:
         assess(-1)
         for epoch in range(args.epochs):
             model.train()
             losses = []
             for _ in range(args.steps_per_epoch):
-                choices = rng.choice(len(train_pairs), size=args.batch_size, p=probabilities)
-                a, b, angle = batch([train_pairs[int(i)] for i in choices])
+                choices = rng.choice(len(combined_pairs), size=args.batch_size, p=probabilities)
+                a, b, angle = batch([combined_pairs[int(i)] for i in choices])
                 unit, raw = model(a, b, return_raw=True)
                 target = torch.stack([torch.cos(angle), torch.sin(angle)], dim=1)
                 loss = (raw-target).square().mean()+0.25*(1-(unit*target).sum(dim=1)).mean()

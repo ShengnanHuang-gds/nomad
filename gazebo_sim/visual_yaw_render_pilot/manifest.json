@@ -1,0 +1,167 @@
+{
+  "kind": "synthetic_heading_pilot",
+  "world_source_sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c",
+  "camera_model_source_sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493",
+  "camera_only_sdf_sha256": "55623d8e4da3466be3e752716baae7722030bf26bc13f87ad4ca9ec7d21f4f18",
+  "anchor": "house_run_02 training-area spawn",
+  "camera_pitch_degrees": 0,
+  "intended_use": "offline data generation only",
+  "views": [
+    {
+      "file": "view_00.png",
+      "topic": "/nomad_yaw_views/view_00/image",
+      "camera_position_xyz_m": [
+        0.008000000000000005,
+        3.761,
+        0.103
+      ],
+      "yaw_degrees": -90,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "3ecdadd134d432c691074add0fa6198168bb2d94bb36e3d015933971fef85501"
+    },
+    {
+      "file": "view_01.png",
+      "topic": "/nomad_yaw_views/view_01/image",
+      "camera_position_xyz_m": [
+        0.027670247427791575,
+        3.763589637202031,
+        0.103
+      ],
+      "yaw_degrees": -75,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "e2702f4ae1167115ddad26806201a689cd09613630adac9827ccd549384add42"
+    },
+    {
+      "file": "view_02.png",
+      "topic": "/nomad_yaw_views/view_02/image",
+      "camera_position_xyz_m": [
+        0.046000000000000006,
+        3.771182069312383,
+        0.103
+      ],
+      "yaw_degrees": -60,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "bc42a2306a9d5559641a6289bf1a40018a4fe267e70cdc90aab8a87530f5e967"
+    },
+    {
+      "file": "view_03.png",
+      "topic": "/nomad_yaw_views/view_03/image",
+      "camera_position_xyz_m": [
+        0.061740115370177616,
+        3.7832598846298224,
+        0.103
+      ],
+      "yaw_degrees": -45,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "c51a02b3dd42221c0749f791993df18750af886494dc1b5e6ee7e95497f85d21"
+    },
+    {
+      "file": "view_04.png",
+      "topic": "/nomad_yaw_views/view_04/image",
+      "camera_position_xyz_m": [
+        0.07381793068761733,
+        3.7990000000000004,
+        0.103
+      ],
+      "yaw_degrees": -30,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "e3e303bec8b5079f403e4d93f13942e8bf8c493e7c95df785df6d35087c721a9"
+    },
+    {
+      "file": "view_05.png",
+      "topic": "/nomad_yaw_views/view_05/image",
+      "camera_position_xyz_m": [
+        0.08141036279796918,
+        3.8173297525722085,
+        0.103
+      ],
+      "yaw_degrees": -15,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "96f94940dde2f148a4bf0bc987879e586ca01076626f52ef1843f5c9dab3fcfc"
+    },
+    {
+      "file": "view_06.png",
+      "topic": "/nomad_yaw_views/view_06/image",
+      "camera_position_xyz_m": [
+        0.08399999999999999,
+        3.837,
+        0.103
+      ],
+      "yaw_degrees": 0,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "360a4b95606181167186d728cc170c0c65c67a258bc8c46e8f1c5d9508cffd9a"
+    },
+    {
+      "file": "view_07.png",
+      "topic": "/nomad_yaw_views/view_07/image",
+      "camera_position_xyz_m": [
+        0.08141036279796918,
+        3.856670247427792,
+        0.103
+      ],
+      "yaw_degrees": 15,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "c53596de1041b0663d1b25712f9857ef5317579bf93ec71e093e8b0a16d29ce8"
+    },
+    {
+      "file": "view_08.png",
+      "topic": "/nomad_yaw_views/view_08/image",
+      "camera_position_xyz_m": [
+        0.07381793068761733,
+        3.875,
+        0.103
+      ],
+      "yaw_degrees": 30,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "13c3acd2401d341f7364356a215820b8aa9ba3113f86310c8d9631653a4738f0"
+    },
+    {
+      "file": "view_09.png",
+      "topic": "/nomad_yaw_views/view_09/image",
+      "camera_position_xyz_m": [
+        0.061740115370177616,
+        3.890740115370178,
+        0.103
+      ],
+      "yaw_degrees": 45,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "028cd33279935ba93106d18ef0b5d01af5e98a48d7322419a6ef022f09bb773c"
+    },
+    {
+      "file": "view_10.png",
+      "topic": "/nomad_yaw_views/view_10/image",
+      "camera_position_xyz_m": [
+        0.046000000000000006,
+        3.9028179306876174,
+        0.103
+      ],
+      "yaw_degrees": 60,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "7a9fab5e6a911f0a5ebb9f362e46411d79b67c50c436282068afb9c6817382fc"
+    },
+    {
+      "file": "view_11.png",
+      "topic": "/nomad_yaw_views/view_11/image",
+      "camera_position_xyz_m": [
+        0.027670247427791575,
+        3.910410362797969,
+        0.103
+      ],
+      "yaw_degrees": 75,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "7ed82f57b3860098fa4efead7dddaf336b086191b379543d275716133ea7899e"
+    },
+    {
+      "file": "view_12.png",
+      "topic": "/nomad_yaw_views/view_12/image",
+      "camera_position_xyz_m": [
+        0.008000000000000005,
+        3.9130000000000003,
+        0.103
+      ],
+      "yaw_degrees": 90,
+      "image_stamp_ns": 2000000,
+      "png_sha256": "9bf2c614457ea512cbb0a0437bd53246c390fbefaeef71dddef872c4e1ead290"
+    }
+  ]
+}

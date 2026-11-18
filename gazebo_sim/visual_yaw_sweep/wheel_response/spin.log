@@ -1,0 +1,8 @@
+gazebo_cmd_rad_s=+0.120 wheel_delta_deg=+0.004 model_delta_deg=+0.000
+wheel_state_samples=25: ECS wheel targets did not match requested turn
+Traceback (most recent call last):
+  File "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/align_spin_once.py", line 232, in <module>
+    main()
+  File "/mnt/c/Users/61078/Desktop/nomad/gazebo_sim/align_spin_once.py", line 196, in main
+    raise RuntimeError("Gazebo received velocity but wheels and body did not respond")
+RuntimeError: Gazebo received velocity but wheels and body did not respond

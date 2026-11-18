@@ -162,7 +162,7 @@ def main():
             trace_file = args.wheel_state_log.open("x", encoding="utf-8", newline="")
             trace = WheelStateTrace(args.world, args.model, args.entity_id)
             trace.worker.start()
-            state_deadline = time.monotonic() + 4
+            state_deadline = time.monotonic() + 8
             while rclpy.ok() and time.monotonic() < state_deadline and not trace.ready.is_set():
                 rclpy.spin_once(node, timeout_sec=0.05)
             if not trace.ready.is_set():

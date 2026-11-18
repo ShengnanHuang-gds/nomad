@@ -2,7 +2,8 @@
 
 import csv
 import math
-from threading import Event, Thread
+import queue
+from multiprocessing import get_context
 
 WHEELS = ("wheel_left_joint", "wheel_right_joint")
 VECTORS = {"target_rad_s": "JointVelocityCmd", "velocity_rad_s": "JointVelocity",
@@ -83,40 +84,63 @@ def summarize(rows, start, stop, expected):
     return "expected ECS wheel targets and some measured wheel motion observed"
 
 
+def _collect_wheels(world, model, entity_id, stop, ready, out):
+    """A pose subscription in this process makes /world/<world>/state stop replying."""
+    try:
+        from gz.msgs10.double_v_pb2 import Double_V
+        from gz.msgs10.empty_pb2 import Empty
+        from gz.msgs10.serialized_map_pb2 import SerializedStepMap
+        from gz.transport13 import Node
+
+        node = Node()
+        service = f"/world/{world}/state"
+        last = None
+        while not stop.is_set():
+            received, reply = node.request(service, Empty(), Empty, SerializedStepMap, 2500)
+            if received:
+                row = read_wheels(reply, entity_id, model, Double_V)
+                if last is None or row["sim_stamp_ns"] > last:
+                    last = row["sim_stamp_ns"]
+                    out.put(row)
+                    ready.set()
+            else:
+                out.put(("error", f"no reply from {service}"))
+            stop.wait(0.3)
+    except Exception as exc:
+        out.put(("error", f"{type(exc).__name__}: {exc}"))
+
+
 class WheelStateTrace:
     def __init__(self, world, model, entity_id):
         self.world, self.model, self.entity_id = world, model, entity_id
         self.rows = []
         self.errors = set()
-        self.stop = Event()
-        self.ready = Event()
-        self.worker = Thread(target=self.collect, daemon=True)
-
-    def collect(self):
-        try:
-            from gz.msgs10.double_v_pb2 import Double_V
-            from gz.msgs10.empty_pb2 import Empty
-            from gz.msgs10.serialized_map_pb2 import SerializedStepMap
-            from gz.transport13 import Node
-
-            node = Node()
-            service = f"/world/{self.world}/state"
-            while not self.stop.is_set():
-                received, reply = node.request(service, Empty(), Empty, SerializedStepMap, 600)
-                if received:
-                    row = read_wheels(reply, self.entity_id, self.model, Double_V)
-                    if not self.rows or row["sim_stamp_ns"] > self.rows[-1]["sim_stamp_ns"]:
-                        self.rows.append(row)
-                        self.ready.set()
-                else:
-                    self.errors.add(f"no reply from {service}")
-                self.stop.wait(0.3)
-        except Exception as exc:
-            self.errors.add(f"{type(exc).__name__}: {exc}")
+        context = get_context("spawn")
+        self.stop = context.Event()
+        self.ready = context.Event()
+        self.out = context.Queue()
+        self.worker = context.Process(
+            target=_collect_wheels,
+            args=(world, model, entity_id, self.stop, self.ready, self.out),
+            daemon=True,
+        )
 
     def finish(self, file, start, stop, angular):
         self.stop.set()
-        self.worker.join()
+        self.worker.join(8)
+        if self.worker.is_alive():
+            self.worker.terminate()
+            self.worker.join(2)
+        while True:
+            try:
+                item = self.out.get(timeout=0.2)
+            except queue.Empty:
+                break
+            if isinstance(item, tuple) and item and item[0] == "error":
+                self.errors.add(item[1])
+            else:
+                self.rows.append(item)
+        self.rows.sort(key=lambda row: row["sim_stamp_ns"])
         speed = angular * 0.160 / (2 * 0.033)
         expected = dict(zip(WHEELS, (-speed, speed), strict=True))
         fields = ["sim_stamp_ns", "phase", "paused"]

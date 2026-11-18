@@ -1,0 +1,16 @@
+=== imports ===
+imports_ok
+=== service ===
+Service providers [Address, Request Message Type, Response Message Type]:
+  tcp://127.0.0.1:44399, gz.msgs.Empty, gz.msgs.SerializedStepMap
+=== model ===
+
+Requesting state for world [default]...
+
+[1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="turtlebot3_burger_cam"]/link[@name="base_scan"]/sensor[@name="hls_lfcd_lds"]/gz_frame_id:<data-string>:L163]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+[1;33mWarning [Utils.cc:132][0m [/sdf/model[@name="turtlebot3_burger_cam"]/link[@name="camera_link"]/sensor[@name="camera"]/gz_frame_id:<data-string>:L363]: XML Element[gz_frame_id], child of element[sensor], not defined in SDF. Copying[gz_frame_id] as children of [sensor].
+Model: [271]
+  - Name: burger_cam
+  - Pose [ XYZ (m) ] [ RPY (rad) ]:
+    [0.041439 3.836550 0.009986]
+    [-0.000012 -0.012638 -0.008907]

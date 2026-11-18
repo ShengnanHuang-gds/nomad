@@ -1,0 +1,69 @@
+{
+  "executed": true,
+  "publisher_check": "Publisher count: 0 before this process published",
+  "stop_delta_yaw_rad": 0.02856017950994927,
+  "stop_sim_s": 1.51939092,
+  "stop_wall_s": 1.5194401741027832,
+  "comparison": {
+    "convention": "ZYX yaw from quaternion; positive is right-handed about that source z axis. Absolute zeros are not compared.",
+    "gazebo_model_start": {
+      "yaw_rad": -5.9303660412953923e-08,
+      "pitch_rad": -0.012458526673955072,
+      "roll_rad": -6.825405517704576e-09,
+      "position": {
+        "x": -2.207175341114423,
+        "y": 1.1999999970820323,
+        "z": 0.010008872882692341
+      },
+      "stamp": {
+        "sec": 55,
+        "nsec": 401000000
+      }
+    },
+    "gazebo_model_end": {
+      "yaw_rad": 0.02955017169863957,
+      "pitch_rad": -0.012460178161343803,
+      "roll_rad": -6.2956923589005884e-09,
+      "position": {
+        "x": -2.207440896571837,
+        "y": 1.2000045101846157,
+        "z": 0.010008936841798856
+      },
+      "stamp": {
+        "sec": 55,
+        "nsec": 764000000
+      }
+    },
+    "gazebo_yaw_delta_rad": 0.02955023100229992,
+    "odom_start": {
+      "yaw_rad": -2.260012166233713e-12,
+      "pitch_rad": 0.0,
+      "roll_rad": 0.0
+    },
+    "odom_end": {
+      "yaw_rad": 0.02955022562227857,
+      "pitch_rad": 0.0,
+      "roll_rad": 0.0
+    },
+    "odom_yaw_delta_rad": 0.029550225624538573,
+    "scan_min_before_m": 0.853728175163269
+  },
+  "camera_link_raw": {
+    "name": "camera_link",
+    "stamp": {
+      "sec": 55,
+      "nsec": 764000000
+    },
+    "recv_unix": 1794964689.8953183,
+    "position": {
+      "x": 0.07599999999999918,
+      "y": -2.220446049250313e-16,
+      "z": 0.093
+    },
+    "orientation": {
+      "x": -1.3552527156068805e-20,
+      "y": 3.1488449814178615e-19,
+      "w": 1.0
+    }
+  }
+}

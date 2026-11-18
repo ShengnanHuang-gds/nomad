@@ -1,0 +1,353 @@
+[
+  {
+    "file": "images/00.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 330000000
+    },
+    "recv_unix": 1794964591.7632837,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/01.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 363000000
+    },
+    "recv_unix": 1794964592.0017147,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/02.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 396000000
+    },
+    "recv_unix": 1794964592.2515354,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/03.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 428000000
+    },
+    "recv_unix": 1794964592.5615368,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/04.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 462000000
+    },
+    "recv_unix": 1794964592.827753,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/05.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 495000000
+    },
+    "recv_unix": 1794964593.0690787,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/06.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 528000000
+    },
+    "recv_unix": 1794964593.3038714,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/07.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 561000000
+    },
+    "recv_unix": 1794964593.5473301,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/08.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 594000000
+    },
+    "recv_unix": 1794964593.7752423,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/09.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 626000000
+    },
+    "recv_unix": 1794964594.0431557,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/10.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 660000000
+    },
+    "recv_unix": 1794964594.2785528,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/11.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 693000000
+    },
+    "recv_unix": 1794964594.5206523,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/12.png",
+    "stamp": {
+      "sec": 43,
+      "nanosec": 726000000
+    },
+    "recv_unix": 1794964594.744564,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/00.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 276000000
+    },
+    "recv_unix": 1794964686.569723,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/01.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 309000000
+    },
+    "recv_unix": 1794964686.813187,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/02.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 342000000
+    },
+    "recv_unix": 1794964687.0697463,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/03.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 375000000
+    },
+    "recv_unix": 1794964687.3240879,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/04.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 407000000
+    },
+    "recv_unix": 1794964687.6286538,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/05.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 441000000
+    },
+    "recv_unix": 1794964687.8722596,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/06.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 474000000
+    },
+    "recv_unix": 1794964688.122851,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/07.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 507000000
+    },
+    "recv_unix": 1794964688.3713653,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/08.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 540000000
+    },
+    "recv_unix": 1794964688.6161997,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/09.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 573000000
+    },
+    "recv_unix": 1794964688.8620186,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/10.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 605000000
+    },
+    "recv_unix": 1794964689.8893616,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/11.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 639000000
+    },
+    "recv_unix": 1794964689.9109666,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/12.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 672000000
+    },
+    "recv_unix": 1794964689.9311755,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  },
+  {
+    "file": "images/13.png",
+    "stamp": {
+      "sec": 55,
+      "nanosec": 705000000
+    },
+    "recv_unix": 1794964689.9523895,
+    "frame_id": "burger_cam/camera_link/camera",
+    "encoding": "rgb8",
+    "width": 320,
+    "height": 240,
+    "step": 960
+  }
+]

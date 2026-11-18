@@ -1,0 +1,21 @@
+ROS topics observed while turtlebot3_house was already running:
+/camera/camera_info [sensor_msgs/msg/CameraInfo] publisher ros_gz_bridge
+/camera/image_raw [sensor_msgs/msg/Image] publisher ros_gz_image
+/clock [rosgraph_msgs/msg/Clock]
+/cmd_vel [geometry_msgs/msg/TwistStamped] subscriber ros_gz_bridge; publisher count 0 before the probe
+/imu [sensor_msgs/msg/Imu]
+/joint_states [sensor_msgs/msg/JointState]
+/odom [nav_msgs/msg/Odometry] publisher ros_gz_bridge
+/scan [sensor_msgs/msg/LaserScan]
+/tf [tf2_msgs/msg/TFMessage]
+/tf_static [tf2_msgs/msg/TFMessage]
+robot_state_publisher use_sim_time: true
+
+Gazebo topics required GZ_IP=127.0.0.1 and GZ_RELAY=127.0.0.1, matching the running sim process.
+/world/default/dynamic_pose/info gz.msgs.Pose_V
+/world/default/pose/info gz.msgs.Pose_V
+/odom gz.msgs.Odometry
+/camera/image_raw gz.msgs.Image
+/cmd_vel
+world name in turtlebot3_house.world: default
+spawned entity name: burger_cam

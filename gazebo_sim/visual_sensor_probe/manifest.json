@@ -1,0 +1,101 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4530,
+      "sha256": "c66f6e85bdb1ff1ed6920d783f96394aad666de90454529fe9f73260bd1bb7a0"
+    },
+    {
+      "path": "camera_info.json",
+      "bytes": 581,
+      "sha256": "6e2e1b2e9a60da0a85b9ee99fafb942a4a37961b718ebd3d8cd6cb231535de08"
+    },
+    {
+      "path": "cmd_vel_info_before_probe.txt",
+      "bytes": 78,
+      "sha256": "c1952193d0dbaccb57d7d6eb3bddecb411ec9c598699ce9d8919babab228fe91"
+    },
+    {
+      "path": "config_snapshot/launch_tb3_house_at_run.sh",
+      "bytes": 556,
+      "sha256": "b492df1e7a7708bbfc73bc68d3f35634e8e94b4ef836f9517269d186d2a6140c"
+    },
+    {
+      "path": "config_snapshot/model.config",
+      "bytes": 418,
+      "sha256": "8adc91dd655d4c73adcd1f968b307ed9b6d0e3fcba6df8fcc545b201f031ebe1"
+    },
+    {
+      "path": "config_snapshot/model.sdf",
+      "bytes": 13146,
+      "sha256": "394a0403aecd8cb0e251dff31eb455c527145d745b1ef05e36096379de8b2493"
+    },
+    {
+      "path": "config_snapshot/robot_state_publisher.launch.py",
+      "bytes": 2150,
+      "sha256": "52603c81a1cd5d5b08020c025493bc7955cff72776a4675a95c37d19a0c59230"
+    },
+    {
+      "path": "config_snapshot/spawn_turtlebot3.launch.py",
+      "bytes": 3077,
+      "sha256": "e765e80cf1a6bd2afede9a6286808a86d4d2d848cabed4a64f22aa232f988c27"
+    },
+    {
+      "path": "config_snapshot/turtlebot3_burger_cam.urdf",
+      "bytes": 6250,
+      "sha256": "b57bc94942491cf162bf7a8991d431ea75d57bebf74480380dca42ff55421bce"
+    },
+    {
+      "path": "config_snapshot/turtlebot3_burger_cam_bridge.yaml",
+      "bytes": 1582,
+      "sha256": "0d12e2135421f803df7370fbab7c093f2d39a263ef0df614f6220033cd1fb20c"
+    },
+    {
+      "path": "config_snapshot/turtlebot3_house.launch.py",
+      "bytes": 3161,
+      "sha256": "80a436319f752297f275cc5877259fdcb3431e07a4a6f039238df58686a94fcf"
+    },
+    {
+      "path": "config_snapshot/turtlebot3_house.world",
+      "bytes": 2121,
+      "sha256": "700013da999368ad97bb1782612fcf81097196d09ee95ac36249a6afbcb5a06c"
+    },
+    {
+      "path": "config_sources.json",
+      "bytes": 3143,
+      "sha256": "ee9140b596a171a46e36fbcd4274d0ceb7db84f451c06ac738c2be2d1e1346d6"
+    },
+    {
+      "path": "images_index.json",
+      "bytes": 7206,
+      "sha256": "1f2c7841cd2549071fa9122bdadffd49122e623a3fdb7b3600ea956374c99d82"
+    },
+    {
+      "path": "probe.json",
+      "bytes": 1813,
+      "sha256": "ecd006e237a6b900dd6c71747a8342c436e63848c06f6a628ffc08148d55f762"
+    },
+    {
+      "path": "sync.jsonl",
+      "bytes": 184859,
+      "sha256": "5e302f453ab067aad1663588d4c4d45056c41cf9e0c3682c1f6b672c05ad1ab0"
+    },
+    {
+      "path": "tf_static.json",
+      "bytes": 3856,
+      "sha256": "8e30713b9b5c058747f6618044adf428f157922c23ab681a0bd77f421a9b6301"
+    },
+    {
+      "path": "topics.txt",
+      "bytes": 929,
+      "sha256": "530a6bd86d5e90d459f1c4b4a4e192b72f01fffc01d72bc57d8563d52cb929b8"
+    },
+    {
+      "path": "images.tar.gz",
+      "bytes": 586890,
+      "sha256": "3d0ad777ba24405dc8f2718e4644327ee4787f0f3e81c1428eee6c36132599e4",
+      "note": "png frames; paths inside the archive are images/*.png"
+    }
+  ],
+  "image_count": 14
+}

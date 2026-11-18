@@ -18,9 +18,12 @@ from geometry_msgs.msg import TwistStamped
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 
+from route_frame_sync import RouteFrameSync, stamp_ns, wrapped_delta
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SPACING = 0.12
-YAW_SPACING = math.radians(12)
+YAW_SPACING = math.radians(8)
+MAX_YAW_GAP = math.radians(12)
 
 PLANS = {
     "house_run_03": {
@@ -112,29 +115,28 @@ class Recorder(Node):
         os.makedirs(out, exist_ok=True)
         self.pub = self.create_publisher(TwistStamped, "/cmd_vel", 10)
         self.st = None
-        self.img = None
+        self.odom_received_at = None
+        self.sync = RouteFrameSync()
         qos = QoSProfile(
-            depth=1,
+            depth=10,
             reliability=ReliabilityPolicy.BEST_EFFORT,
             history=HistoryPolicy.KEEP_LAST,
         )
         self.create_subscription(Odometry, "/odom", self.odom_cb, 10)
         self.create_subscription(Image, "/camera/image_raw", self.img_cb, qos)
         self.frames = []
-        self.last_save = None
-        self.idx = 0
 
     def odom_cb(self, msg):
         p = msg.pose.pose.position
-        self.st = (p.x, p.y, yaw_of(msg.pose.pose.orientation))
+        state = (p.x, p.y, yaw_of(msg.pose.pose.orientation))
+        if not all(math.isfinite(value) for value in state):
+            raise RuntimeError("nonfinite odometry pose")
+        if self.sync.add_odom(stamp_ns(msg.header.stamp), state):
+            self.st = state
+            self.odom_received_at = time.monotonic()
 
     def img_cb(self, msg):
-        self.img = msg
-
-    def wait_state(self, t=8):
-        t0 = time.time()
-        while self.st is None and time.time() - t0 < t:
-            rclpy.spin_once(self, timeout_sec=0.05)
+        self.sync.add_image(stamp_ns(msg.header.stamp), msg)
 
     def publish_twist(self, v, w):
         msg = TwistStamped()
@@ -144,69 +146,88 @@ class Recorder(Node):
         msg.twist.angular.z = w
         self.pub.publish(msg)
 
-    def stop(self):
+    def stop(self, *, drain_callbacks=True):
         for _ in range(8):
             self.publish_twist(0.0, 0.0)
-            rclpy.spin_once(self, timeout_sec=0.05)
+            if drain_callbacks:
+                rclpy.spin_once(self, timeout_sec=0.05)
+            else:
+                time.sleep(0.05)
 
-    def save_if_needed(self, force=False):
-        if self.st is None or self.img is None:
-            return
-        if self.last_save is None:
-            force = True
-        if not force:
-            d = math.hypot(
-                self.st[0] - self.last_save[0], self.st[1] - self.last_save[1]
-            )
-            dyaw = (self.st[2] - self.last_save[2] + math.pi) % (2 * math.pi) - math.pi
-            if d < SPACING and abs(dyaw) < YAW_SPACING:
+    def save_frame(self, frame, *, force=False):
+        x, y, yaw = frame.pose
+        if self.frames:
+            prev_x, prev_y, prev_yaw = self.frames[-1][1]
+            distance = math.hypot(x - prev_x, y - prev_y)
+            dyaw = abs(wrapped_delta(prev_yaw, yaw))
+            if dyaw > MAX_YAW_GAP:
+                raise RuntimeError(f"missing intermediate turn images: gap {math.degrees(dyaw):.1f}°")
+            if not force and distance < SPACING and dyaw < YAW_SPACING:
                 return
-        img = np.frombuffer(self.img.data, dtype=np.uint8).reshape(
-            self.img.height, self.img.width, 3
-        )
-        if self.img.encoding.startswith("bgr"):
-            img = img[:, :, ::-1]
-        path = os.path.join(self.out, f"{self.idx}.jpg")
-        PILImage.fromarray(img, "RGB").save(path, quality=92)
-        self.frames.append([self.st[0], self.st[1], self.st[2]])
-        self.last_save = self.st
-        self.idx += 1
-        print(f"frame {self.idx}", flush=True)
+        img = frame.image
+        if (img.encoding not in ("rgb8", "bgr8") or img.step < img.width * 3
+                or len(img.data) != img.height * img.step):
+            raise RuntimeError(f"unsupported camera buffer: {img.encoding} {img.width}x{img.height}")
+        image = PILImage.frombytes("RGB", (img.width, img.height), bytes(img.data),
+                                   "raw", "BGR" if img.encoding == "bgr8" else "RGB", img.step, 1)
+        index = len(self.frames)
+        image.save(os.path.join(self.out, f"{index}.jpg"), quality=92)
+        self.frames.append((frame.stamp, frame.pose, frame.odom_before, frame.odom_after))
+        print(f"frame {index} stamp_ns={frame.stamp}", flush=True)
+
+    def save_ready(self):
+        for frame in self.sync.paired():
+            self.save_frame(frame)
+
+    def save_endpoint(self, minimum_stamp=0):
+        deadline = time.monotonic() + 8
+        while rclpy.ok() and time.monotonic() < deadline:
+            rclpy.spin_once(self, timeout_sec=0.05)
+            batch = list(self.sync.paired())
+            for frame in batch:
+                self.save_frame(frame, force=frame is batch[-1] and frame.stamp >= minimum_stamp)
+            if batch and batch[-1].stamp >= minimum_stamp:
+                return
+        raise RuntimeError("timed out waiting for a new camera frame with a close odometry bracket")
+
+    def motion_tick(self, v, w):
+        rclpy.spin_once(self, timeout_sec=0.05)
+        if time.monotonic() - self.odom_received_at > 2:
+            raise RuntimeError("odometry stopped during recording")
+        self.save_ready()
+        self.publish_twist(v, w)
+
+    def finish_segment(self):
+        self.stop()
+        self.save_endpoint(self.sync.last_odom_stamp)
 
     def drive_dist(self, v, w, dist, wall=180):
-        if self.st is None:
-            return
         x0, y0, _ = self.st
-        t0 = time.time()
-        while time.time() - t0 < wall:
-            rclpy.spin_once(self, timeout_sec=0.05)
-            self.publish_twist(v, w)
-            self.save_if_needed()
-            if self.st and math.hypot(self.st[0] - x0, self.st[1] - y0) >= dist:
-                break
-        self.stop()
-        self.save_if_needed(force=True)
+        deadline = time.monotonic() + wall
+        while rclpy.ok() and time.monotonic() < deadline:
+            self.motion_tick(v, w)
+            if math.hypot(self.st[0] - x0, self.st[1] - y0) >= dist:
+                self.finish_segment()
+                return
+        raise RuntimeError("translation did not reach its requested distance")
 
     def drive_yaw(self, w, dyaw, wall=120):
-        if self.st is None:
-            return
         yaw0 = self.st[2]
-        t0 = time.time()
-        while time.time() - t0 < wall:
-            rclpy.spin_once(self, timeout_sec=0.05)
-            self.publish_twist(0.0, w)
-            self.save_if_needed()
-            if self.st:
-                d = (self.st[2] - yaw0 + math.pi) % (2 * math.pi) - math.pi
-                if abs(d) >= abs(dyaw) - 0.03:
-                    break
-        self.stop()
-        self.save_if_needed(force=True)
+        deadline = time.monotonic() + wall
+        direction = math.copysign(1.0, dyaw)
+        while rclpy.ok() and time.monotonic() < deadline:
+            self.motion_tick(0.0, w)
+            if direction * wrapped_delta(yaw0, self.st[2]) >= abs(dyaw) - 0.03:
+                self.finish_segment()
+                return
+        raise RuntimeError("turn did not reach its requested yaw")
 
 
-def run_one(name, *, spawn_at_launch: bool = False):
+def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT):
     plan = PLANS[name]
-    out = os.path.join(ROOT, name)
+    out = os.path.join(out_root, name)
+    if os.path.exists(out) and os.listdir(out):
+        raise RuntimeError(f"recording directory already contains data: {out}; use --out-root")
     x, y, yaw = plan["pose"]
     if spawn_at_launch:
         print(
@@ -218,30 +239,41 @@ def run_one(name, *, spawn_at_launch: bool = False):
         set_pose(x, y, yaw)
     rclpy.init()
     node = Recorder(out)
-    node.wait_state()
-    node.save_if_needed(force=True)
-    for seg in plan["segs"]:
-        if seg[0] == "dist":
-            _, v, w, dist = seg
-            node.drive_dist(v, w, dist)
-        else:
-            _, w, dyaw = seg
-            node.drive_yaw(w, dyaw)
-    pos = np.array([[f[0], f[1]] for f in node.frames], dtype=np.float64)
-    yaw_a = np.array([f[2] for f in node.frames], dtype=np.float64)
-    payload = {"position": pos, "yaw": yaw_a}
+    try:
+        node.save_endpoint()
+        for seg in plan["segs"]:
+            if seg[0] == "dist":
+                _, v, w, dist = seg
+                node.drive_dist(v, w, dist)
+            else:
+                _, w, dyaw = seg
+                node.drive_yaw(w, dyaw)
+    finally:
+        try:
+            if rclpy.ok():
+                node.stop(drain_callbacks=False)
+        finally:
+            node.destroy_node()
+            rclpy.try_shutdown()
+    poses = np.asarray([frame[1] for frame in node.frames], dtype=np.float64)
+    pos, yaw_a = poses[:, :2], poses[:, 2]
+    payload = {
+        "position": pos, "yaw": yaw_a, "pose_source": "wheel_odometry_at_image_stamp",
+        "image_stamp_ns": np.asarray([frame[0] for frame in node.frames], dtype=np.int64),
+        "odom_before_stamp_ns": np.asarray([frame[2] for frame in node.frames], dtype=np.int64),
+        "odom_after_stamp_ns": np.asarray([frame[3] for frame in node.frames], dtype=np.int64),
+    }
     if spawn_at_launch:
         payload["world_anchor"] = [float(x), float(y)]
-    with open(os.path.join(out, "traj_data.pkl"), "wb") as f:
+    partial = os.path.join(out, "traj_data.pkl.tmp")
+    with open(partial, "wb") as f:
         pickle.dump(payload, f)
+    os.replace(partial, os.path.join(out, "traj_data.pkl"))
     tot = float(
         sum(np.linalg.norm(pos[i] - pos[i - 1]) for i in range(1, len(pos)))
     )
     dy = float(np.degrees(np.unwrap(yaw_a)[-1] - np.unwrap(yaw_a)[0]))
     print(f"DONE {name} frames={len(node.frames)} path_m={tot:.2f} yaw={dy:.1f}")
-    node.stop()
-    node.destroy_node()
-    rclpy.shutdown()
     time.sleep(2)
 
 
@@ -255,13 +287,14 @@ def main():
         help="do not gz teleport; odom starts at launch spawn (matches holdout)",
     )
     parser.add_argument("runs", nargs="*", help="e.g. house_run_06")
+    parser.add_argument("--out-root", default=ROOT, help="parent directory for new recordings")
     args = parser.parse_args()
     names = args.runs or list(PLANS.keys())
     for n in names:
         if n not in PLANS:
             print(f"unknown run {n}", file=sys.stderr)
             continue
-        run_one(n, spawn_at_launch=args.spawn_at_launch)
+        run_one(n, spawn_at_launch=args.spawn_at_launch, out_root=args.out_root)
 
 
 def topomap_name(run: str) -> str:

@@ -9,12 +9,15 @@ import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import TwistStamped
+from nav_msgs.msg import Odometry
 from sensor_msgs.msg import LaserScan
 from rosgraph_msgs.msg import Clock
 from gz.msgs10.pose_v_pb2 import Pose_V
+from gz.msgs10.twist_pb2 import Twist
 from gz.transport13 import Node as GzNode
 
 CMD = "/cmd_vel"
+RESPONSE_WINDOW_NS = 1_000_000_000
 
 
 def yaw_of(q):
@@ -28,10 +31,13 @@ class Spin(Node):
         self.scan = None
         self.clock = None
         self.pose = None
+        self.odom = None
+        self.gz_turn = None
         self.cmd = None
         self.clock_reversed = False
         self.create_subscription(LaserScan, "/scan", self.on_scan, qos_profile_sensor_data)
         self.create_subscription(Clock, "/clock", self.on_clock, qos_profile_sensor_data)
+        self.create_subscription(Odometry, "/odom", self.on_odom, qos_profile_sensor_data)
         self.gz = GzNode()
         self.pose_topic = f"/world/{world}/dynamic_pose/info"
 
@@ -46,6 +52,18 @@ class Spin(Node):
 
         if not self.gz.subscribe(Pose_V, self.pose_topic, on_pose):
             raise RuntimeError(f"could not subscribe to {self.pose_topic}")
+        if not self.gz.subscribe(Twist, CMD, self.on_gz_command):
+            raise RuntimeError(f"could not observe Gazebo {CMD}")
+
+    def on_odom(self, msg):
+        stamp = msg.header.stamp
+        ns = stamp.sec * 10**9 + stamp.nanosec
+        if ns > 0 and (self.odom is None or ns > self.odom[0]):
+            self.odom = (ns, time.monotonic(), yaw_of(msg.pose.pose.orientation))
+
+    def on_gz_command(self, msg):
+        if abs(msg.angular.z) > 1e-6:
+            self.gz_turn = (time.monotonic(), msg.angular.z)
 
     def on_scan(self, msg):
         vals = [v for v in msg.ranges if math.isfinite(v) and msg.range_min <= v <= msg.range_max]
@@ -66,11 +84,12 @@ class Spin(Node):
         now = time.monotonic()
         if self.clock_reversed:
             raise RuntimeError("sim clock reversed")
-        for name, stream in (("scan", self.scan), ("clock", self.clock), ("model pose", self.pose)):
+        for name, stream in (("scan", self.scan), ("clock", self.clock),
+                             ("model pose", self.pose), ("wheel odometry", self.odom)):
             if stream is None or now - stream[1] > 2:
                 raise RuntimeError(f"{name} missing or stale")
-        if any(abs(stream[0] - self.clock[0]) > 350_000_000 for stream in (self.scan, self.pose)):
-            raise RuntimeError("scan or model pose is too far from /clock")
+        if any(abs(stream[0] - self.clock[0]) > 350_000_000 for stream in (self.scan, self.pose, self.odom)):
+            raise RuntimeError("scan, model pose or wheel odometry is too far from /clock")
         if self.scan[2] <= 0.3:
             raise RuntimeError(f"scan clearance <= 0.3 m: {self.scan[2]:.3f}")
         owners = self.get_publishers_info_by_topic(CMD)
@@ -84,6 +103,7 @@ class Spin(Node):
     def publish(self, angular):
         msg = TwistStamped()
         msg.header.stamp.sec, msg.header.stamp.nanosec = divmod(self.clock[0], 10**9)
+        msg.header.frame_id = "base_link"
         msg.twist.angular.z = angular
         self.cmd.publish(msg)
 
@@ -96,6 +116,8 @@ class Spin(Node):
         if not rclpy.ok() or time.monotonic() >= deadline:
             raise RuntimeError("host timeout or ROS shutdown")
         self.check()
+        if angular and not self.cmd.get_subscription_count():
+            raise RuntimeError("ROS velocity publisher has no QoS-matched subscriber")
         self.publish(angular)
         rclpy.spin_once(self, timeout_sec=0.02)
 
@@ -121,21 +143,38 @@ def main():
         ready_until = time.monotonic() + 8
         while rclpy.ok() and time.monotonic() < ready_until:
             rclpy.spin_once(node, timeout_sec=0.1)
-            if node.clock and node.scan and node.pose and node.count_subscribers(CMD):
+            if (node.clock and node.scan and node.pose and node.odom
+                    and node.count_subscribers(CMD)):
                 break
         node.check()
         node.cmd = node.create_publisher(TwistStamped, CMD, 10)
         deadline = time.monotonic() + args.wall_seconds
         node.hold(0.5, deadline)
         start_ns, _, start_yaw = node.pose
+        odom_start = node.odom[2]
+        wall_start = time.monotonic()
         motion_start = node.clock[0]
         direction = math.copysign(1, args.angular)
+        response_checked = False
         while True:
             pose_ns, _, yaw = node.pose
             delta = math.degrees(math.remainder(yaw - start_yaw, 2 * math.pi))
             if pose_ns < start_ns or delta * direction < -2:
                 raise RuntimeError(f"rotation/pose inconsistent with command: {delta:.2f} deg")
             sim_seconds = (node.clock[0] - motion_start) / 1e9
+            if not response_checked and node.clock[0] - motion_start >= RESPONSE_WINDOW_NS:
+                echo = node.gz_turn
+                if echo is None or echo[0] < wall_start or not math.isclose(echo[1], args.angular, abs_tol=1e-6):
+                    raise RuntimeError("ROS publisher matched, but the requested turn was not observed on Gazebo /cmd_vel")
+                wheel_delta = math.degrees(math.remainder(node.odom[2] - odom_start, 2 * math.pi))
+                print(f"gazebo_cmd_rad_s={echo[1]:+.3f} wheel_delta_deg={wheel_delta:+.3f} "
+                      f"model_delta_deg={delta:+.3f}", flush=True)
+                min_delta = min(0.5, math.degrees(abs(args.angular)) * 0.15)
+                if delta * direction < min_delta:
+                    if wheel_delta * direction < min_delta:
+                        raise RuntimeError("Gazebo received velocity but wheels and body did not respond")
+                    raise RuntimeError("wheel odometry turned but the Gazebo body did not respond")
+                response_checked = True
             if delta * direction >= args.target_deg or sim_seconds >= motion_limit:
                 break
             node.tick(args.angular, deadline)
@@ -153,6 +192,7 @@ def main():
                 node.publish(0.0)
                 time.sleep(0.04)
         node.gz.unsubscribe(node.pose_topic)
+        node.gz.unsubscribe(CMD)
         node.destroy_node()
         rclpy.try_shutdown()
 

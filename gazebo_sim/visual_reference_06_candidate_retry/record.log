@@ -1,0 +1,6 @@
+burger_id=271
+gz topic /scan type gz.msgs.LaserScan
+ROS /scan publisher ros_gz_bridge, subscribers 0 before recording
+RuntimeError: reference recording requires a fresh scan: scan_receipt_over_2_wall_s_old
+record_exit=1
+gz_header_lines=14

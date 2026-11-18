@@ -1,0 +1,82 @@
+{
+  "run": "house_run_06",
+  "model_entity_id": 271,
+  "passed": false,
+  "failure": "reference recording requires a fresh scan: scan_receipt_over_2_wall_s_old",
+  "stop_context": {
+    "segment_index": 1,
+    "segment": [
+      "dist",
+      0.14,
+      0.0,
+      0.9
+    ],
+    "scan": {
+      "issues": [
+        "scan_receipt_over_2_wall_s_old"
+      ],
+      "scan_stamp_ns": 26400000000,
+      "odom_stamp_ns": 26600000000,
+      "receipt_age_wall_s": 2.0324819029992796,
+      "scan_minus_odom_ns": -200000000,
+      "scan_min_m": 0.9095507860183716
+    },
+    "last_image_stamp_ns": 26566000000
+  },
+  "frames": [
+    {
+      "image_stamp_ns": 24222000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -2.2003878373995875,
+          1.1965816844208848,
+          0.010007731920236951
+        ],
+        "roll_pitch_yaw_deg": [
+          1.9574582546466065e-05,
+          -0.4482468760975142,
+          -25.01258890453829
+        ],
+        "before_stamp_ns": 24215000000,
+        "after_stamp_ns": 24223000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 25212000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -2.1023953530997646,
+          1.151367105593863,
+          0.010008547355566694
+        ],
+        "roll_pitch_yaw_deg": [
+          9.925325227206502e-05,
+          -0.7001256258480177,
+          -25.00446238846961
+        ],
+        "before_stamp_ns": 25201000000,
+        "after_stamp_ns": 25213000000
+      },
+      "tilt_ok": true
+    },
+    {
+      "image_stamp_ns": 26071000000,
+      "gazebo_pose": {
+        "position_xyz_m": [
+          -1.995350265939976,
+          1.1016969128913494,
+          0.01000893524775685
+        ],
+        "roll_pitch_yaw_deg": [
+          -3.0979467207326033e-07,
+          -0.7139145452061763,
+          -24.99468196402392
+        ],
+        "before_stamp_ns": 26064000000,
+        "after_stamp_ns": 26072000000
+      },
+      "tilt_ok": true
+    }
+  ]
+}

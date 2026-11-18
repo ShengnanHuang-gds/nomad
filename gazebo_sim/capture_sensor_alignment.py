@@ -94,9 +94,15 @@ def main():
     parser.add_argument("--entity-id", type=int, required=True, help="Gazebo model ID from gz model")
     parser.add_argument("--sim-seconds", type=float, default=4.0)
     parser.add_argument("--wall-seconds", type=float, default=45.0)
+    parser.add_argument("--image-period-ms", type=int, default=0,
+                        help="minimum spacing by image header stamp; 0 keeps all images")
     args = parser.parse_args()
-    if not (args.entity_id > 0 and 0 < args.sim_seconds <= 10 and 0 < args.wall_seconds <= 90):
-        parser.error("use a positive entity ID, 0 < sim seconds <= 10 and 0 < wall seconds <= 90")
+    if not (args.entity_id > 0 and 0 < args.sim_seconds <= 20 and 0 < args.wall_seconds <= 240
+            and 0 <= args.image_period_ms <= 500):
+        parser.error("use a positive entity ID, sim seconds in (0, 20], wall seconds in (0, 240], "
+                     "and image period in [0, 500] ms")
+    if args.sim_seconds > 10 and args.image_period_ms < 100:
+        parser.error("for captures over 10 sim seconds, use --image-period-ms 100 or longer")
     if args.out.exists():
         parser.error(f"output directory already exists: {args.out}")
 
@@ -113,6 +119,7 @@ def main():
     poses, odom, images, image_data, clocks = [], [], [], [], []
     errors = set()
     zero_stamps = dict.fromkeys(("Gazebo model", "odom", "image", "/clock"), 0)
+    last_image_stamp = 0
 
     def collect_pose(message):
         stamp = message.header.stamp
@@ -134,7 +141,20 @@ def main():
         }, errors, zero_stamps, "odom")
 
     def collect_image(message):
-        stamp = message.header.stamp
+        nonlocal last_image_stamp
+        header = message.header.stamp
+        stamp_ns = stamped(header, header.nanosec)
+        if stamp_ns <= 0:
+            zero_stamps["image"] += 1
+            return
+        if stamp_ns < last_image_stamp:
+            errors.add("image timestamp went backwards")
+            return
+        if stamp_ns == last_image_stamp:
+            return
+        last_image_stamp = stamp_ns
+        if images and stamp_ns - images[-1]["stamp_ns"] < args.image_period_ms * 1_000_000:
+            return
         if (message.width, message.height) != (320, 240):
             errors.add("unexpected image size; expected native burger_cam 320x240")
             return
@@ -146,12 +166,11 @@ def main():
             errors.add("image count exceeded capture limit")
             return
         append_sample(images, {
-            "stamp_ns": stamped(stamp, stamp.nanosec), "frame_id": message.header.frame_id,
+            "stamp_ns": stamp_ns, "frame_id": message.header.frame_id,
             "file": f"images/{len(images):04d}.png", "width": message.width,
             "height": message.height, "encoding": message.encoding, "step": message.step,
         }, errors, zero_stamps, "image")
-        if len(image_data) < len(images):
-            image_data.append(bytes(message.data))
+        image_data.append(bytes(message.data))
 
     def collect_clock(message):
         clock = message.clock
@@ -161,6 +180,7 @@ def main():
     rclpy.init()
     node = rclpy.create_node("nomad_sensor_alignment")
     started = time.monotonic()
+    announced = False
     try:
         if not gz_node.subscribe(Pose_V, pose_topic, collect_pose):
             raise RuntimeError(f"could not subscribe to {pose_topic}")
@@ -169,6 +189,9 @@ def main():
         node.create_subscription(Clock, "/clock", collect_clock, qos_profile_sensor_data)
         while rclpy.ok() and not errors and time.monotonic() - started < args.wall_seconds:
             rclpy.spin_once(node, timeout_sec=0.05)
+            if not announced and len(clocks) > 1 and images and poses and odom:
+                print("capture ready: image, odom, model pose and advancing /clock", flush=True)
+                announced = True
             if clocks and clocks[-1]["stamp_ns"] - clocks[0]["stamp_ns"] >= args.sim_seconds * NS_PER_SECOND:
                 break
     finally:
@@ -206,6 +229,7 @@ def main():
         "pose_topic": pose_topic, "image_topic": IMAGE_TOPIC, "odom_topic": ODOM_TOPIC,
         "model_name": args.model, "entity_id": args.entity_id, "max_bracket_side_ms": MAX_SIDE_NS / 1e6,
         "wall_seconds": elapsed, "sim_seconds": sim_s,
+        "requested_sim_seconds": args.sim_seconds, "image_period_ms": args.image_period_ms,
         "errors": sorted(errors), "zero_stamp_count": zero_stamps,
         "jointly_aligned_image_count": len(matched),
         "clock": clocks, "images": images, "model_samples": poses, "odom_samples": odom,

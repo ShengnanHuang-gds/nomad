@@ -1,22 +1,20 @@
 #!/usr/bin/env python3
-"""One short in-place sim turn timed by /clock. Publishes zero on every exit."""
+"""Bounded in-place Gazebo diagnostic turn for sensor capture."""
 
+import argparse
 import math
-import subprocess
-import sys
 import time
 
 import rclpy
 from rclpy.node import Node
-from rclpy.parameter import Parameter
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import TwistStamped
 from sensor_msgs.msg import LaserScan
+from rosgraph_msgs.msg import Clock
 from gz.msgs10.pose_v_pb2 import Pose_V
 from gz.transport13 import Node as GzNode
 
-ENTITY_ID = 271
-MODEL = "burger_cam"
+CMD = "/cmd_vel"
 
 
 def yaw_of(q):
@@ -25,113 +23,136 @@ def yaw_of(q):
 
 
 class Spin(Node):
-    def __init__(self, angular):
-        super().__init__("nomad_align_spin", parameter_overrides=[
-            Parameter("use_sim_time", Parameter.Type.BOOL, True)])
-        self.angular = angular
-        self.scan_min = None
-        self.clock_ns = None
+    def __init__(self, world, model, entity_id):
+        super().__init__("nomad_align_spin")
+        self.scan = None
+        self.clock = None
         self.pose = None
-        self.pose_wall = None
         self.cmd = None
+        self.clock_reversed = False
         self.create_subscription(LaserScan, "/scan", self.on_scan, qos_profile_sensor_data)
-        from rosgraph_msgs.msg import Clock
         self.create_subscription(Clock, "/clock", self.on_clock, qos_profile_sensor_data)
         self.gz = GzNode()
-        if not self.gz.subscribe(Pose_V, "/world/default/dynamic_pose/info", self.on_pose):
-            raise RuntimeError("could not subscribe to Gazebo model pose")
+        self.pose_topic = f"/world/{world}/dynamic_pose/info"
+
+        def on_pose(msg):
+            stamp = msg.header.stamp
+            for pose in msg.pose:
+                if pose.id == entity_id and pose.name == model:
+                    ns = stamp.sec * 10**9 + stamp.nsec
+                    if ns > 0 and (self.pose is None or ns != self.pose[0]):
+                        self.pose = (ns, time.monotonic(), yaw_of(pose.orientation))
+                    break
+
+        if not self.gz.subscribe(Pose_V, self.pose_topic, on_pose):
+            raise RuntimeError(f"could not subscribe to {self.pose_topic}")
 
     def on_scan(self, msg):
-        vals = [v for v in msg.ranges if math.isfinite(v) and v > msg.range_min]
-        if vals:
-            self.scan_min = min(vals)
+        vals = [v for v in msg.ranges if math.isfinite(v) and msg.range_min <= v <= msg.range_max]
+        stamp = msg.header.stamp
+        ns = stamp.sec * 10**9 + stamp.nanosec
+        if ns > 0 and (self.scan is None or ns != self.scan[0]):
+            self.scan = (ns, time.monotonic(), min(vals, default=0.0))
 
     def on_clock(self, msg):
-        self.clock_ns = int(msg.clock.sec) * 1_000_000_000 + int(msg.clock.nanosec)
+        clock = msg.clock
+        ns = clock.sec * 10**9 + clock.nanosec
+        if self.clock is not None and ns < self.clock[0]:
+            self.clock_reversed = True
+        if ns > 0 and (self.clock is None or ns != self.clock[0]):
+            self.clock = (ns, time.monotonic())
 
-    def on_pose(self, msg):
-        for pose in msg.pose:
-            if pose.id == ENTITY_ID and pose.name == MODEL:
-                self.pose = pose
-                self.pose_wall = time.monotonic()
+    def check(self):
+        now = time.monotonic()
+        if self.clock_reversed:
+            raise RuntimeError("sim clock reversed")
+        for name, stream in (("scan", self.scan), ("clock", self.clock), ("model pose", self.pose)):
+            if stream is None or now - stream[1] > 2:
+                raise RuntimeError(f"{name} missing or stale")
+        if any(abs(stream[0] - self.clock[0]) > 350_000_000 for stream in (self.scan, self.pose)):
+            raise RuntimeError("scan or model pose is too far from /clock")
+        if self.scan[2] <= 0.3:
+            raise RuntimeError(f"scan clearance <= 0.3 m: {self.scan[2]:.3f}")
+        owners = self.get_publishers_info_by_topic(CMD)
+        own_name = self.get_name()
+        own_count = sum(p.node_name == own_name and p.node_namespace == self.get_namespace() for p in owners)
+        if len(owners) - own_count > 0 or own_count > (1 if self.cmd is not None else 0):
+            raise RuntimeError("another cmd_vel publisher is present")
+        if not any(s.node_name == "ros_gz_bridge" for s in self.get_subscriptions_info_by_topic(CMD)):
+            raise RuntimeError("ros_gz_bridge cmd_vel subscriber is missing")
 
     def publish(self, angular):
-        if self.cmd is None:
-            self.cmd = self.create_publisher(TwistStamped, "/cmd_vel", 10)
         msg = TwistStamped()
-        if self.clock_ns is not None:
-            msg.header.stamp.sec = self.clock_ns // 1_000_000_000
-            msg.header.stamp.nanosec = self.clock_ns % 1_000_000_000
-        msg.twist.angular.z = float(angular)
+        msg.header.stamp.sec, msg.header.stamp.nanosec = divmod(self.clock[0], 10**9)
+        msg.twist.angular.z = angular
         self.cmd.publish(msg)
 
-    def zeros(self):
-        for _ in range(20):
-            self.publish(0.0)
-            rclpy.spin_once(self, timeout_sec=0.02)
+    def hold(self, sim_seconds, deadline):
+        start = self.clock[0]
+        while self.clock[0] - start < sim_seconds * 10**9:
+            self.tick(0.0, deadline)
 
-    def wait_until(self, start_ns, sim_s, wall_deadline):
-        while rclpy.ok() and time.monotonic() < wall_deadline:
-            rclpy.spin_once(self, timeout_sec=0.02)
-            if self.clock_ns is None or self.pose is None:
-                continue
-            if self.pose_wall is not None and time.monotonic() - self.pose_wall > 2:
-                return "pose_stale"
-            if self.clock_ns - start_ns >= int(sim_s * 1_000_000_000):
-                return "ok"
-        return "wall_timeout"
+    def tick(self, angular, deadline):
+        if not rclpy.ok() or time.monotonic() >= deadline:
+            raise RuntimeError("host timeout or ROS shutdown")
+        self.check()
+        self.publish(angular)
+        rclpy.spin_once(self, timeout_sec=0.02)
 
 
 def main():
-    angular = float(sys.argv[1])
-    if not 0 < abs(angular) <= 0.12:
-        raise SystemExit("angular speed must be within 0.12 rad/s")
-    info = subprocess.run(["ros2", "topic", "info", "/cmd_vel"], capture_output=True, text=True).stdout
-    if "Publisher count: 0" not in info:
-        raise SystemExit("another cmd_vel publisher is present")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("angular", type=float, help="signed angular speed in rad/s")
+    parser.add_argument("--entity-id", type=int, required=True, help="Gazebo model entity ID")
+    parser.add_argument("--world", default="default")
+    parser.add_argument("--model", default="burger_cam")
+    parser.add_argument("--target-deg", type=float, default=10.0)
+    parser.add_argument("--wall-seconds", type=float, default=30.0)
+    args = parser.parse_args()
+    if (args.entity_id <= 0 or not 0 < abs(args.angular) <= 0.12
+            or not 8 <= args.target_deg <= 90 or not 0 < args.wall_seconds <= 210):
+        parser.error("use a positive ID, angular speed within ±0.12 rad/s and nonzero, "
+                     "target in [8, 90] deg, wall seconds in (0, 210]")
+    motion_limit = min(16.0, math.radians(args.target_deg) / abs(args.angular) + 0.5)
+
     rclpy.init()
-    node = Spin(angular)
+    node = Spin(args.world, args.model, args.entity_id)
     try:
-        deadline = time.monotonic() + 8
-        while time.monotonic() < deadline and (node.scan_min is None or node.clock_ns is None or node.pose is None):
+        ready_until = time.monotonic() + 8
+        while rclpy.ok() and time.monotonic() < ready_until:
             rclpy.spin_once(node, timeout_sec=0.1)
-        print(f"scan_min_m={node.scan_min} clock_ns={node.clock_ns}", flush=True)
-        if node.scan_min is None or node.scan_min <= 0.3 or node.clock_ns is None or node.pose is None:
-            raise SystemExit("preconditions failed")
-        wall_deadline = time.monotonic() + 30
-        start_ns = node.clock_ns
-        start_yaw = yaw_of(node.pose.orientation)
-        node.publish(0.0)
-        status = node.wait_until(start_ns, 0.5, wall_deadline)
-        if status != "ok":
-            print(f"pre_still={status}", flush=True)
-            raise SystemExit(status)
-        motion_ns = node.clock_ns
-        reached = False
-        while rclpy.ok() and time.monotonic() < wall_deadline:
-            node.publish(angular)
-            rclpy.spin_once(node, timeout_sec=0.02)
-            if node.pose_wall is None or time.monotonic() - node.pose_wall > 2:
-                print("pose_stale", flush=True)
+            if node.clock and node.scan and node.pose and node.count_subscribers(CMD):
                 break
-            delta = (yaw_of(node.pose.orientation) - start_yaw + math.pi) % (2 * math.pi) - math.pi
-            sim_motion = (node.clock_ns - motion_ns) / 1e9
-            if abs(delta) >= math.radians(10) or sim_motion >= 2.0:
-                reached = abs(delta) >= math.radians(8)
-                print(f"motion_delta_deg={math.degrees(delta):.3f} motion_sim_s={sim_motion:.3f}", flush=True)
+        node.check()
+        node.cmd = node.create_publisher(TwistStamped, CMD, 10)
+        deadline = time.monotonic() + args.wall_seconds
+        node.hold(0.5, deadline)
+        start_ns, _, start_yaw = node.pose
+        motion_start = node.clock[0]
+        direction = math.copysign(1, args.angular)
+        while True:
+            pose_ns, _, yaw = node.pose
+            delta = math.degrees(math.remainder(yaw - start_yaw, 2 * math.pi))
+            if pose_ns < start_ns or delta * direction < -2:
+                raise RuntimeError(f"rotation/pose inconsistent with command: {delta:.2f} deg")
+            sim_seconds = (node.clock[0] - motion_start) / 1e9
+            if delta * direction >= args.target_deg or sim_seconds >= motion_limit:
                 break
-        else:
-            print("motion_wall_timeout", flush=True)
-        post_ns = node.clock_ns
+            node.tick(args.angular, deadline)
         node.publish(0.0)
-        node.wait_until(post_ns, 0.5, wall_deadline)
-        delta = (yaw_of(node.pose.orientation) - start_yaw + math.pi) % (2 * math.pi) - math.pi
-        print(f"final_delta_deg={math.degrees(delta):.3f}", flush=True)
-        if not reached:
-            raise SystemExit("angle below about 8 degrees")
+        node.hold(0.5, deadline)
+        final = math.degrees(math.remainder(node.pose[2] - start_yaw, 2 * math.pi))
+        print(f"motion_start_ns={motion_start} motion_sim_s={sim_seconds:.3f} final_delta_deg={final:.3f}")
+        if final * direction < args.target_deg - 2.0:
+            raise SystemExit("target angle not reached")
     finally:
-        node.zeros()
-        node.gz.unsubscribe("/world/default/dynamic_pose/info")
+        if node.cmd is not None:
+            for _ in range(20):
+                if not rclpy.ok():
+                    break
+                node.publish(0.0)
+                time.sleep(0.04)
+        node.gz.unsubscribe(node.pose_topic)
         node.destroy_node()
         rclpy.try_shutdown()
 

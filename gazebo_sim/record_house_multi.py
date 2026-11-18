@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import math
 import os
 import pickle
@@ -16,9 +17,10 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 from geometry_msgs.msg import TwistStamped
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, LaserScan
 
 from route_frame_sync import RouteFrameSync, stamp_ns, wrapped_delta
+from scan_diagnostics import summarize_scan
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SPACING = 0.12
@@ -109,7 +111,7 @@ def set_pose(x, y, yaw):
 
 
 class Recorder(Node):
-    def __init__(self, out):
+    def __init__(self, out, reference_pose=None):
         super().__init__("house_rec")
         self.out = out
         os.makedirs(out, exist_ok=True)
@@ -117,6 +119,8 @@ class Recorder(Node):
         self.st = None
         self.odom_received_at = None
         self.sync = RouteFrameSync()
+        self.reference_pose = reference_pose
+        self.scan = None
         qos = QoSProfile(
             depth=10,
             reliability=ReliabilityPolicy.BEST_EFFORT,
@@ -124,6 +128,8 @@ class Recorder(Node):
         )
         self.create_subscription(Odometry, "/odom", self.odom_cb, 10)
         self.create_subscription(Image, "/camera/image_raw", self.img_cb, qos)
+        if reference_pose is not None:
+            self.create_subscription(LaserScan, "/scan", self.scan_cb, qos)
         self.frames = []
 
     def odom_cb(self, msg):
@@ -137,6 +143,20 @@ class Recorder(Node):
 
     def img_cb(self, msg):
         self.sync.add_image(stamp_ns(msg.header.stamp), msg)
+
+    def scan_cb(self, msg):
+        self.scan = (stamp_ns(msg.header.stamp), time.monotonic(), summarize_scan(msg)["scan_min"])
+
+    def check_reference(self):
+        self.reference_pose.check_upright(self.sync.last_odom_stamp)
+        if (self.scan is None or self.scan[0] <= 0 or time.monotonic() - self.scan[1] > 2
+                or abs(self.scan[0] - self.sync.last_odom_stamp) > 350_000_000):
+            raise RuntimeError("reference recording requires a fresh scan")
+        distance = self.scan[2]
+        if distance is None or distance < 0.15:
+            raise RuntimeError(f"reference recording stopped for scan proximity: {distance} m")
+        if self.count_publishers("/cmd_vel") > 1:
+            raise RuntimeError("another cmd_vel publisher is present")
 
     def publish_twist(self, v, w):
         msg = TwistStamped()
@@ -194,6 +214,8 @@ class Recorder(Node):
         rclpy.spin_once(self, timeout_sec=0.05)
         if time.monotonic() - self.odom_received_at > 2:
             raise RuntimeError("odometry stopped during recording")
+        if self.reference_pose is not None:
+            self.check_reference()
         self.save_ready()
         self.publish_twist(v, w)
 
@@ -223,7 +245,7 @@ class Recorder(Node):
         raise RuntimeError("turn did not reach its requested yaw")
 
 
-def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT):
+def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT, reference_model_id=None):
     plan = PLANS[name]
     out = os.path.join(out_root, name)
     if os.path.exists(out) and os.listdir(out):
@@ -238,8 +260,22 @@ def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT):
     else:
         set_pose(x, y, yaw)
     rclpy.init()
-    node = Recorder(out)
+    reference_pose = None
+    if reference_model_id is not None:
+        from reference_map_pose import ReferenceMapPose, pose_at_images
+
+        reference_pose = ReferenceMapPose(reference_model_id)
+    node = Recorder(out, reference_pose)
+    failure = None
     try:
+        if reference_pose is not None:
+            deadline = time.monotonic() + 8
+            while rclpy.ok() and time.monotonic() < deadline:
+                if reference_pose.samples and node.scan is not None and node.st is not None:
+                    break
+                rclpy.spin_once(node, timeout_sec=0.05)
+            node.check_reference()
+            node.sync.images.clear()
         node.save_endpoint()
         for seg in plan["segs"]:
             if seg[0] == "dist":
@@ -248,13 +284,34 @@ def run_one(name, *, spawn_at_launch: bool = False, out_root=ROOT):
             else:
                 _, w, dyaw = seg
                 node.drive_yaw(w, dyaw)
+    except (Exception, KeyboardInterrupt) as exc:
+        failure = str(exc) or type(exc).__name__
+        raise
     finally:
         try:
             if rclpy.ok():
                 node.stop(drain_callbacks=False)
         finally:
-            node.destroy_node()
-            rclpy.try_shutdown()
+            try:
+                if reference_pose is not None:
+                    if node.frames and not failure:
+                        deadline = time.monotonic() + 2
+                        while (reference_pose.samples[-1][0] < node.frames[-1][0]
+                               and time.monotonic() < deadline):
+                            time.sleep(0.05)
+                    reference_pose.close()
+                    rows = pose_at_images([frame[0] for frame in node.frames], reference_pose.samples)
+                    if not failure and (reference_pose.error or any(not row.get("tilt_ok", False) for row in rows)):
+                        failure = reference_pose.error or "one or more frames lack a valid upright Gazebo pose bracket"
+                    report = {"run": name, "model_entity_id": reference_model_id,
+                              "passed": failure is None and bool(rows), "failure": failure, "frames": rows}
+                    with open(os.path.join(out, "gazebo_reference_pose.json"), "w", encoding="utf-8") as stream:
+                        json.dump(report, stream, indent=2)
+            finally:
+                node.destroy_node()
+                rclpy.try_shutdown()
+    if failure:
+        raise RuntimeError(failure)
     poses = np.asarray([frame[1] for frame in node.frames], dtype=np.float64)
     pos, yaw_a = poses[:, :2], poses[:, 2]
     payload = {
@@ -288,13 +345,22 @@ def main():
     )
     parser.add_argument("runs", nargs="*", help="e.g. house_run_06")
     parser.add_argument("--out-root", default=ROOT, help="parent directory for new recordings")
+    parser.add_argument("--reference-model-id", type=int,
+                        help="verify pitch/roll and timestamped model pose for a new 06 reference map")
     args = parser.parse_args()
     names = args.runs or list(PLANS.keys())
+    if args.reference_model_id is not None and (
+        args.reference_model_id <= 0 or not args.spawn_at_launch
+        or os.path.abspath(args.out_root) == ROOT or names != ["house_run_06"]
+    ):
+        parser.error("--reference-model-id needs a positive entity id, --spawn-at-launch, "
+                     "a separate --out-root and house_run_06")
     for n in names:
         if n not in PLANS:
             print(f"unknown run {n}", file=sys.stderr)
             continue
-        run_one(n, spawn_at_launch=args.spawn_at_launch, out_root=args.out_root)
+        run_one(n, spawn_at_launch=args.spawn_at_launch, out_root=args.out_root,
+                reference_model_id=args.reference_model_id)
 
 
 def topomap_name(run: str) -> str:

@@ -1,54 +1,55 @@
-name: Repair first floor DXF with ODA
+name: Inspect DXF layers and entities
 on:
   push:
     branches: [cad-export/first-floor-dxf]
     paths: ['.github/workflows/first-floor-dxf.yml']
 permissions:
-  contents: write
+  contents: read
 jobs:
-  export:
+  inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch architectural plans
+      - name: Fetch CAD file
         run: |
           git init -q
           git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
           git sparse-checkout init --cone
           git sparse-checkout set cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
-          git checkout -q -B export FETCH_HEAD
-      - name: Convert and audit with ODA File Converter
+          git checkout -q -B inspect FETCH_HEAD
+      - name: Summarize DXF
         run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq libopengl0 libxcb-util1 libegl1 xvfb
-          mkdir -p "$RUNNER_TEMP/oda-out"
-          curl -fL 'https://www.opendesign.com/guestfiles/get?filename=ODAFileConverter_QT6_lnxX64_11dll.AppImage' -o "$RUNNER_TEMP/ODAFileConverter.AppImage"
-          chmod +x "$RUNNER_TEMP/ODAFileConverter.AppImage"
-          "$RUNNER_TEMP/ODAFileConverter.AppImage" --appimage-extract >/dev/null
-          xvfb-run -a "$PWD/squashfs-root/AppRun" "$GITHUB_WORKSPACE/cad_data/建筑/建筑" "$RUNNER_TEMP/oda-out" ACAD2018 DXF 0 1 '*.dwg'
-          test -s "$RUNNER_TEMP/oda-out/JZ-1F_t3.dxf"
-          cp "$RUNNER_TEMP/oda-out/JZ-1F_t3.dxf" "$GITHUB_WORKSPACE/cad_data/建筑/建筑/JZ-1F_t3.dxf"
           python -m pip install --quiet ezdxf
           python - <<'PY'
+          from collections import Counter, defaultdict
           import ezdxf
           p = 'cad_data/建筑/建筑/JZ-1F_t3.dxf'
           doc = ezdxf.readfile(p)
-          auditor = doc.audit()
           msp = doc.modelspace()
-          print(f'entities={len(msp)}, audit_errors={len(auditor.errors)}, audit_fixes={len(auditor.fixes)}')
-          if auditor.errors:
-              raise SystemExit('DXF audit reported errors')
-          if len(msp) < 1000:
-              raise SystemExit('DXF entity count unexpectedly low')
+          print('INSUNITS=', doc.header.get('$INSUNITS'))
+          print('HEADER_EXTMIN=', doc.header.get('$EXTMIN'))
+          print('HEADER_EXTMAX=', doc.header.get('$EXTMAX'))
+          print('MODELSPACE_ENTITY_COUNT=', len(msp))
+          types = Counter()
+          by_layer = defaultdict(Counter)
+          for e in msp:
+              typ = e.dxftype()
+              try:
+                  layer = e.dxf.layer
+              except Exception:
+                  layer = '(no layer)'
+              types[typ] += 1
+              by_layer[layer][typ] += 1
+          print('ENTITY_TYPES=', dict(types.most_common()))
+          print('LAYERS_USED_BEGIN')
+          for layer, counts in sorted(by_layer.items(), key=lambda item: (-sum(item[1].values()), item[0])):
+              print(f'{layer}\t{sum(counts.values())}\t{dict(counts.most_common())}')
+          print('LAYERS_USED_END')
+          print('INSERT_BLOCK_COUNTS=', dict(Counter(e.dxf.name for e in msp.query('INSERT')).most_common(50)))
+          print('LAYER_TABLE_BEGIN')
+          for layer in doc.layers:
+              used = sum(by_layer[layer.dxf.name].values())
+              if used:
+                  print(f'{layer.dxf.name}\tcolor={layer.dxf.color}\tlinetype={layer.dxf.linetype}\tused={used}')
+          print('LAYER_TABLE_END')
           PY
-      - name: Commit generated DXF
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh auth setup-git
-          git config user.name github-actions
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3.dxf'
-          git commit -m 'Repair first-floor DXF using ODA File Converter'
-          git push origin HEAD:refs/heads/cad-export/first-floor-dxf

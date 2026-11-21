@@ -1,67 +1,62 @@
-name: Inspect DXF layers and entities
+name: Create cleaned DXF review copy
 on:
   push:
     branches: [cad-export/first-floor-dxf]
     paths: ['.github/workflows/first-floor-dxf.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
-  inspect:
+  create-review:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch CAD file
+      - name: Fetch CAD files
         run: |
           git init -q
           git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
           git sparse-checkout init --cone
           git sparse-checkout set cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
-          git checkout -q -B inspect FETCH_HEAD
-      - name: Summarize DXF
+          git checkout -q -B work FETCH_HEAD
+      - name: Generate review copy
         run: |
           python -m pip install --quiet ezdxf
           python - <<'PY'
-          from collections import Counter, defaultdict
+          from pathlib import Path
           import ezdxf
-          p = 'cad_data/建筑/建筑/JZ-1F_t3.dxf'
-          doc = ezdxf.readfile(p)
+          src = Path('cad_data/建筑/建筑/JZ-1F_t3.dxf')
+          dst = src.with_name('JZ-1F_t3_review.dxf')
+          doc = ezdxf.readfile(src)
           msp = doc.modelspace()
-          print('INSUNITS=', doc.header.get('$INSUNITS'))
-          print('HEADER_EXTMIN=', doc.header.get('$EXTMIN'))
-          print('HEADER_EXTMAX=', doc.header.get('$EXTMAX'))
-          print('MODELSPACE_ENTITY_COUNT=', len(msp))
-          types = Counter()
-          by_layer = defaultdict(Counter)
-          for e in msp:
-              typ = e.dxftype()
-              try:
-                  layer = e.dxf.layer
-              except Exception:
-                  layer = '(no layer)'
-              types[typ] += 1
-              by_layer[layer][typ] += 1
-          print('ENTITY_TYPES=', dict(types.most_common()))
-          print('LAYERS_USED_BEGIN')
-          for layer, counts in sorted(by_layer.items(), key=lambda item: (-sum(item[1].values()), item[0])):
-              print(f'{layer}\t{sum(counts.values())}\t{dict(counts.most_common())}')
-          print('LAYERS_USED_END')
-          dims = Counter()
-          print('DIMENSION_VALUES_BEGIN')
-          for e in msp.query('DIMENSION'):
-              try:
-                  value = round(e.get_measurement(), 3)
-              except Exception:
-                  value = None
-              dims[value] += 1
-              if value is not None:
-                  print(f'{value}\tstyle={e.dxf.dimstyle}\tlayer={e.dxf.layer}\ttext={e.dxf.text!r}')
-          print('DIMENSION_VALUES_END')
-          print('COMMON_DIMENSIONS=', dims.most_common(40))
-          print('INSERT_BLOCK_COUNTS=', dict(Counter(e.dxf.name for e in msp.query('INSERT')).most_common(50)))
-          print('LAYER_TABLE_BEGIN')
+          # Hide obvious annotation-only layers in this review copy.
+          hidden = {'PUB_DIM', 'PUB_TEXT', 'DIM_ELEV', 'DIM_LEAD', 'DIM_IDEN', 'DIM_SYMB', 'SPACE', 'AXIS_TEXT'}
+          turned_off = []
           for layer in doc.layers:
-              used = sum(by_layer[layer.dxf.name].values())
-              if used:
-                  print(f'{layer.dxf.name}\tcolor={layer.dxf.color}\tlinetype={layer.dxf.linetype}\tused={used}')
-          print('LAYER_TABLE_END')
+              if layer.dxf.name in hidden:
+                  layer.dxf.color = -abs(layer.dxf.color or 7)
+                  turned_off.append(layer.dxf.name)
+          # Dimensions are mixed into the AXIS layer too; remove only dimension
+          # objects from this disposable copy while keeping the axis geometry.
+          dimensions = list(msp.query('DIMENSION'))
+          for entity in dimensions:
+              msp.delete_entity(entity)
+          doc.saveas(dst)
+          check = ezdxf.readfile(dst)
+          auditor = check.audit()
+          print('CREATED=', dst)
+          print('HIDDEN_LAYERS=', sorted(turned_off))
+          print('REMOVED_DIMENSION_ENTITIES=', len(dimensions))
+          print('REVIEW_MODELSPACE_ENTITIES=', len(check.modelspace()))
+          print('AUDIT_ERRORS=', len(auditor.errors))
+          if auditor.errors:
+              raise SystemExit('Review DXF audit failed')
           PY
+      - name: Commit review copy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git config user.name github-actions
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_review.dxf'
+          git commit -m 'Add cleaned DXF review copy'
+          git push origin HEAD:refs/heads/cad-export/first-floor-dxf

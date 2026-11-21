@@ -9,9 +9,14 @@ jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - name: Fetch architectural plans
+        run: |
+          git init -q
+          git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
+          git sparse-checkout init --cone
+          git sparse-checkout set cad_data/建筑/建筑
+          git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
+          git checkout -q -B export FETCH_HEAD
       - name: Convert drawing
         run: |
           cd "$RUNNER_TEMP"

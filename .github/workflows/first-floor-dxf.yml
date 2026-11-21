@@ -1,4 +1,4 @@
-name: Create classification overlay DXF
+name: Rebuild classification overlay with layout viewport
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -17,7 +17,7 @@ jobs:
           git sparse-checkout set cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
           git checkout -q -B work FETCH_HEAD
-      - name: Build color-coded diagnostic copy
+      - name: Build corrected color-coded copy
         run: |
           python -m pip install --quiet ezdxf
           python - <<'PY'
@@ -64,28 +64,35 @@ jobs:
                   pass
               kept[category] += 1
 
-          # Remove paper-space title blocks and drawing borders only from this copy.
-          layout_removed = 0
+          viewport_count = 0
+          deleted_layout = 0
           for layout in doc.layouts:
               if layout.name.lower() == 'model':
                   continue
               for entity in list(layout):
-                  layout.delete_entity(entity)
-                  layout_removed += 1
+                  if entity.dxftype() == 'VIEWPORT':
+                      viewport_count += 1
+                  else:
+                      layout.delete_entity(entity)
+                      deleted_layout += 1
 
           doc.saveas(dst)
           check = ezdxf.readfile(dst)
           auditor = check.audit()
+          remaining_viewports = sum(1 for layout in check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
           print('OUTPUT=', dst)
           print('MODELSPACE_ENTITIES=', len(check.modelspace()))
-          print('PAPERSPACE_ENTITIES_REMOVED=', layout_removed)
+          print('LAYOUT_VIEWPORTS_PRESERVED=', remaining_viewports)
+          print('NON_VIEWPORT_LAYOUT_ENTITIES_REMOVED=', deleted_layout)
           print('REMOVED_ANNOTATION_COUNTS=', dict(removed))
           print('VISIBLE_CATEGORY_COUNTS=', dict(kept))
           print('AUDIT_ERRORS=', len(auditor.errors))
+          if not remaining_viewports:
+              raise SystemExit('No layout viewport remained')
           if auditor.errors:
               raise SystemExit('Overlay DXF audit failed')
           PY
-      - name: Commit overlay
+      - name: Commit corrected overlay
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -93,5 +100,5 @@ jobs:
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git add -- 'cad_data/建筑/建筑/JZ-1F_t3_classification_overlay.dxf'
-          git commit -m 'Add color-coded entity classification overlay'
+          git commit -m 'Preserve layout viewport in classification overlay'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

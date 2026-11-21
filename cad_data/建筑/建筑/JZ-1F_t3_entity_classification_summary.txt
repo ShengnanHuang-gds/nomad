@@ -1,0 +1,75 @@
+Source: cad_data/建筑/建筑/JZ-1F_t3.dxf
+Total classified entities (model + paper layouts): 4725
+Drawing units header ($INSUNITS): 0
+
+Counts by category:
+  dimension_annotation: 1108
+  conversion_generated_review: 1019
+  wall_candidate: 966
+  text_annotation: 491
+  stair_candidate: 313
+  axis_reference: 304
+  unknown_review: 238
+  window_candidate: 162
+  elevator_candidate: 80
+  layout_frame_or_titleblock: 43
+  embedded_or_masking_object_review: 1
+
+Counts by layer and category:
+  WALL: {'wall_candidate': 908}
+  PUB_DIM: {'dimension_annotation': 519}
+  PUB_TEXT: {'text_annotation': 395}
+  AXIS: {'axis_reference': 304, 'dimension_annotation': 56, 'text_annotation': 20}
+  STAIR: {'stair_candidate': 313}
+  DIM_ELEV: {'dimension_annotation': 257}
+  $TD_AUDIT_GENERATED_(133): {'conversion_generated_review': 204, 'layout_frame_or_titleblock': 33}
+  $TD_AUDIT_GENERATED_(4FB): {'conversion_generated_review': 135}
+  $TD_AUDIT_GENERATED_(488): {'conversion_generated_review': 134}
+  $TD_AUDIT_GENERATED_(F3): {'conversion_generated_review': 132}
+  WINDOW: {'window_candidate': 132}
+  DIM_LEAD: {'dimension_annotation': 113}
+  $TD_AUDIT_GENERATED_(2D8): {'conversion_generated_review': 104}
+  $TD_AUDIT_GENERATED_(249): {'conversion_generated_review': 102}
+  DIM_IDEN: {'dimension_annotation': 100}
+  EVTR: {'elevator_candidate': 80}
+  0: {'unknown_review': 33, 'dimension_annotation': 2, 'text_annotation': 36, 'layout_frame_or_titleblock': 8}
+  DOTE: {'unknown_review': 79}
+  A-DOTE: {'unknown_review': 70}
+  DIM_SYMB: {'dimension_annotation': 61}
+  CURTWALL: {'wall_candidate': 57}
+  $TD_AUDIT_GENERATED_(B05): {'conversion_generated_review': 42}
+  $TD_AUDIT_GENERATED_(C18): {'conversion_generated_review': 31}
+  A-Window: {'window_candidate': 30}
+  $TD_AUDIT_GENERATED_(1D6): {'conversion_generated_review': 28}
+  hatch: {'unknown_review': 24}
+  $TD_AUDIT_GENERATED_(13): {'text_annotation': 18, 'conversion_generated_review': 1, 'layout_frame_or_titleblock': 1}
+  $TD_AUDIT_GENERATED_(C6A): {'conversion_generated_review': 17}
+  $TD_AUDIT_GENERATED_(E8): {'conversion_generated_review': 17}
+  PUB_HATCH: {'unknown_review': 17}
+  $TD_AUDIT_GENERATED_(B01): {'conversion_generated_review': 13}
+  $TD_AUDIT_GENERATED_(33): {'conversion_generated_review': 12}
+  SPACE: {'text_annotation': 12}
+  SURFACE: {'unknown_review': 11}
+  $TD_AUDIT_GENERATED_(11FB): {'conversion_generated_review': 10}
+  $TD_AUDIT_GENERATED_(9D0): {'text_annotation': 8}
+  $TD_AUDIT_GENERATED_(C57): {'conversion_generated_review': 7}
+  $TD_AUDIT_GENERATED_(2D): {'conversion_generated_review': 4}
+  $TD_AUDIT_GENERATED_(105): {'conversion_generated_review': 3}
+  $TD_AUDIT_GENERATED_(127A): {'conversion_generated_review': 3}
+  $TD_AUDIT_GENERATED_(127F): {'conversion_generated_review': 3}
+  $TD_AUDIT_GENERATED_(15CC): {'conversion_generated_review': 3}
+  $TD_AUDIT_GENERATED_(9E7): {'conversion_generated_review': 3}
+  $TD_AUDIT_GENERATED_(A49): {'conversion_generated_review': 3}
+  1-wall: {'unknown_review': 3}
+  $TD_AUDIT_GENERATED_(15D2): {'conversion_generated_review': 2}
+  $TD_AUDIT_GENERATED_(1B8): {'conversion_generated_review': 2}
+  $TD_AUDIT_GENERATED_(926): {'conversion_generated_review': 1}
+  $TD_AUDIT_GENERATED_(9E3): {'text_annotation': 1}
+  $TD_AUDIT_GENERATED_(BEC): {'conversion_generated_review': 1}
+  $TD_AUDIT_GENERATED_(C0E): {'conversion_generated_review': 1}
+  $TD_AUDIT_GENERATED_(C15): {'conversion_generated_review': 1}
+  A-Wall: {'wall_candidate': 1}
+  AXIS_TEXT: {'text_annotation': 1}
+  MB: {'unknown_review': 1}
+  PUB_WINDW: {'layout_frame_or_titleblock': 1}
+  WIPEOUT: {'embedded_or_masking_object_review': 1}

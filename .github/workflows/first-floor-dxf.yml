@@ -1,0 +1,38 @@
+name: Export first floor DXF
+on:
+  push:
+    branches: [cad-export/first-floor-dxf]
+    paths: ['.github/workflows/first-floor-dxf.yml']
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Convert drawing
+        run: |
+          cd "$RUNNER_TEMP"
+          npm install --ignore-scripts @mlightcad/libredwg-web@0.9.0
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import { LibreDwg } from '@mlightcad/libredwg-web';
+          const path = process.env.GITHUB_WORKSPACE + '/cad_data/建筑/建筑/JZ-1F_t3';
+          const b = fs.readFileSync(path + '.dwg');
+          const lib = await LibreDwg.create(process.cwd() + '/node_modules/@mlightcad/libredwg-web/wasm/');
+          const out = lib.dwg_write_dxf(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength));
+          if (!out || out.length < 100000 || !Buffer.from(out).subarray(-100).toString().includes('EOF')) throw Error('Incomplete DXF');
+          fs.writeFileSync(path + '.dxf',out);
+          JS
+      - name: Commit generated DXF
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git config user.name github-actions
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3.dxf'
+          git commit -m 'Add first-floor DXF converted from the architectural DWG'
+          git push origin HEAD:refs/heads/cad-export/first-floor-dxf

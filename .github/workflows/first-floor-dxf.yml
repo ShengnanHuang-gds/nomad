@@ -1,4 +1,4 @@
-name: Classify DXF entities
+name: Create classification overlay DXF
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -6,10 +6,10 @@ on:
 permissions:
   contents: write
 jobs:
-  classify:
+  overlay:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch CAD files
+      - name: Fetch CAD source
         run: |
           git init -q
           git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
@@ -17,147 +17,81 @@ jobs:
           git sparse-checkout set cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
           git checkout -q -B work FETCH_HEAD
-      - name: Classify each drawing entity
+      - name: Build color-coded diagnostic copy
         run: |
           python -m pip install --quiet ezdxf
           python - <<'PY'
-          import csv, json
-          from collections import Counter, defaultdict
+          from collections import Counter
           from pathlib import Path
           import ezdxf
 
           root = Path('cad_data/建筑/建筑')
-          source = root / 'JZ-1F_t3.dxf'
-          output = root / 'JZ-1F_t3_entity_classification.csv'
-          summary = root / 'JZ-1F_t3_entity_classification_summary.txt'
-          doc = ezdxf.readfile(source)
+          src = root / 'JZ-1F_t3.dxf'
+          dst = root / 'JZ-1F_t3_classification_overlay.dxf'
+          doc = ezdxf.readfile(src)
+          msp = doc.modelspace()
+          annotation_layers = {'PUB_DIM','DIM_ELEV','DIM_LEAD','DIM_IDEN','DIM_SYMB','PUB_TEXT','SPACE','AXIS_TEXT'}
+          text_types = {'TEXT','MTEXT','ATTRIB','ATTDEF'}
+          wall_layers = {'WALL','CURTWALL','A-Wall'}
+          window_layers = {'WINDOW','A-Window'}
+          kept = Counter()
+          removed = Counter()
 
-          annotation_layers = {'PUB_DIM', 'DIM_ELEV', 'DIM_LEAD', 'DIM_IDEN', 'DIM_SYMB'}
-          wall_layers = {'WALL', 'CURTWALL', 'A-Wall'}
-          window_layers = {'WINDOW', 'A-Window'}
-          text_types = {'TEXT', 'MTEXT', 'ATTRIB', 'ATTDEF'}
-
-          def classify(space, entity):
+          for entity in list(msp):
+              layer = entity.dxf.get('layer','0')
               typ = entity.dxftype()
-              layer = entity.dxf.get('layer', '0')
-              if typ == 'DIMENSION' or layer in annotation_layers:
-                  return ('dimension_annotation', 'high', 'DIMENSION type or known dimension layer')
-              if typ in text_types or layer in {'PUB_TEXT', 'SPACE', 'AXIS_TEXT'}:
-                  return ('text_annotation', 'high', 'text entity type or known text layer')
-              if space != 'Model':
-                  return ('layout_frame_or_titleblock', 'high', 'entity is in paper-space layout')
+              if typ == 'DIMENSION' or typ in text_types or layer in annotation_layers:
+                  msp.delete_entity(entity)
+                  removed[typ] += 1
+                  continue
               if layer in wall_layers:
-                  confidence = 'medium' if typ in {'LINE', 'ARC', 'LWPOLYLINE', 'POLYLINE'} else 'low'
-                  return ('wall_candidate', confidence, 'matched wall layer; arcs may include door swings')
-              if layer in window_layers:
-                  return ('window_candidate', 'medium', 'matched window layer')
-              if layer == 'STAIR':
-                  return ('stair_candidate', 'medium', 'matched stair layer')
-              if layer == 'EVTR':
-                  return ('elevator_candidate', 'medium', 'matched elevator layer')
-              if layer == 'AXIS':
-                  return ('axis_reference', 'medium', 'matched axis layer; reference only, not 3D geometry')
-              if layer.startswith('$TD_AUDIT_GENERATED_'):
-                  return ('conversion_generated_review', 'low', 'converter-generated layer; inspect before use')
-              if typ in {'OLE2FRAME', 'WIPEOUT'}:
-                  return ('embedded_or_masking_object_review', 'low', 'embedded or masking object')
-              return ('unknown_review', 'low', 'no confident layer/type rule matched')
+                  color, category = 1, 'wall candidate (red)'
+              elif layer in window_layers:
+                  color, category = 4, 'window candidate (cyan)'
+              elif layer == 'STAIR':
+                  color, category = 6, 'stair candidate (magenta)'
+              elif layer == 'EVTR':
+                  color, category = 3, 'elevator candidate (green)'
+              elif layer == 'AXIS':
+                  color, category = 8, 'axis reference (gray)'
+              elif layer.startswith('$TD_AUDIT_GENERATED_'):
+                  color, category = 30, 'converter-generated review (orange)'
+              else:
+                  color, category = 2, 'unknown review (yellow)'
+              try:
+                  entity.dxf.color = color
+              except Exception:
+                  pass
+              kept[category] += 1
 
-          def geometry(entity):
-              typ = entity.dxftype()
-              dxf = entity.dxf
-              data = {}
-              for key in ('start', 'end', 'center', 'insert', 'location', 'defpoint'):
-                  try:
-                      if dxf.hasattr(key):
-                          v = dxf.get(key)
-                          data[key] = [round(float(x), 4) for x in v]
-                  except Exception:
-                      pass
-              for key in ('radius', 'start_angle', 'end_angle', 'height', 'rotation', 'xscale', 'yscale', 'zscale'):
-                  try:
-                      if dxf.hasattr(key):
-                          data[key] = round(float(dxf.get(key)), 4)
-                  except Exception:
-                      pass
-              if typ == 'LWPOLYLINE':
-                  try:
-                      data['vertices_xy_bulge'] = [[round(float(x),4), round(float(y),4), round(float(b),6)] for x,y,b in entity.get_points('xyb')]
-                      data['closed'] = bool(entity.closed)
-                  except Exception:
-                      pass
-              if typ == 'INSERT':
-                  try:
-                      data['block_name'] = dxf.name
-                  except Exception:
-                      pass
-              if typ in {'TEXT', 'MTEXT', 'ATTRIB', 'ATTDEF'}:
-                  try:
-                      data['text'] = entity.text if typ == 'MTEXT' else dxf.text
-                  except Exception:
-                      pass
-              if typ == 'DIMENSION':
-                  try:
-                      data['measured_value'] = round(float(entity.get_measurement()), 4)
-                  except Exception:
-                      pass
-              return json.dumps(data, ensure_ascii=False, separators=(',', ':'))
-
-          spaces = [('Model', doc.modelspace())]
+          # Remove paper-space title blocks and drawing borders only from this copy.
+          layout_removed = 0
           for layout in doc.layouts:
-              if layout.name.lower() != 'model':
-                  spaces.append((layout.name, layout))
+              if layout.name.lower() == 'model':
+                  continue
+              for entity in list(layout):
+                  layout.delete_entity(entity)
+                  layout_removed += 1
 
-          fields = ['id','space','entity_type','layer','category','confidence','rule','block_name','geometry_json']
-          counts = Counter()
-          layer_counts = defaultdict(Counter)
-          total = 0
-          with output.open('w', newline='', encoding='utf-8-sig') as f:
-              writer = csv.DictWriter(f, fieldnames=fields)
-              writer.writeheader()
-              for space_name, space in spaces:
-                  for entity in space:
-                      typ = entity.dxftype()
-                      layer = entity.dxf.get('layer', '0')
-                      category, confidence, rule = classify(space_name, entity)
-                      block_name = entity.dxf.get('name', '') if typ == 'INSERT' else ''
-                      writer.writerow({
-                          'id': entity.dxf.get('handle', ''),
-                          'space': space_name,
-                          'entity_type': typ,
-                          'layer': layer,
-                          'category': category,
-                          'confidence': confidence,
-                          'rule': rule,
-                          'block_name': block_name,
-                          'geometry_json': geometry(entity),
-                      })
-                      total += 1
-                      counts[category] += 1
-                      layer_counts[layer][category] += 1
-
-          with summary.open('w', encoding='utf-8') as f:
-              f.write(f'Source: {source}\nTotal classified entities (model + paper layouts): {total}\n')
-              f.write(f'Drawing units header ($INSUNITS): {doc.header.get("$INSUNITS")}\n\n')
-              f.write('Counts by category:\n')
-              for category, n in counts.most_common():
-                  f.write(f'  {category}: {n}\n')
-              f.write('\nCounts by layer and category:\n')
-              for layer, cats in sorted(layer_counts.items(), key=lambda item: (-sum(item[1].values()), item[0])):
-                  f.write(f'  {layer}: {dict(cats)}\n')
-          print('CSV=', output, 'bytes=', output.stat().st_size)
-          print('SUMMARY=', summary, 'bytes=', summary.stat().st_size)
-          print('TOTAL=', total)
-          print('CATEGORY_COUNTS=', dict(counts))
-          print('MODELSPACE_COUNT=', len(doc.modelspace()))
+          doc.saveas(dst)
+          check = ezdxf.readfile(dst)
+          auditor = check.audit()
+          print('OUTPUT=', dst)
+          print('MODELSPACE_ENTITIES=', len(check.modelspace()))
+          print('PAPERSPACE_ENTITIES_REMOVED=', layout_removed)
+          print('REMOVED_ANNOTATION_COUNTS=', dict(removed))
+          print('VISIBLE_CATEGORY_COUNTS=', dict(kept))
+          print('AUDIT_ERRORS=', len(auditor.errors))
+          if auditor.errors:
+              raise SystemExit('Overlay DXF audit failed')
           PY
-      - name: Commit classification files
+      - name: Commit overlay
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_entity_classification.csv' 'cad_data/建筑/建筑/JZ-1F_t3_entity_classification_summary.txt'
-          git commit -m 'Add classified DXF entity inventory'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_classification_overlay.dxf'
+          git commit -m 'Add color-coded entity classification overlay'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

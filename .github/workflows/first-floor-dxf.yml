@@ -1,4 +1,4 @@
-name: Create cleaned DXF review copy
+name: Create strict building-layer DXF
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 jobs:
-  create-review:
+  create-building-view:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch CAD files
@@ -17,46 +17,49 @@ jobs:
           git sparse-checkout set cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
           git checkout -q -B work FETCH_HEAD
-      - name: Generate review copy
+      - name: Keep only building and axis layers
         run: |
           python -m pip install --quiet ezdxf
           python - <<'PY'
           from pathlib import Path
           import ezdxf
           src = Path('cad_data/建筑/建筑/JZ-1F_t3.dxf')
-          dst = src.with_name('JZ-1F_t3_review.dxf')
+          dst = src.with_name('JZ-1F_t3_building_layers.dxf')
+          keep = {'WALL', 'CURTWALL', 'WINDOW', 'STAIR', 'EVTR', 'AXIS', 'A-Wall', 'A-Window'}
           doc = ezdxf.readfile(src)
           msp = doc.modelspace()
-          # Hide obvious annotation-only layers in this review copy.
-          hidden = {'PUB_DIM', 'PUB_TEXT', 'DIM_ELEV', 'DIM_LEAD', 'DIM_IDEN', 'DIM_SYMB', 'SPACE', 'AXIS_TEXT'}
-          turned_off = []
+          removed = 0
+          for entity in list(msp):
+              layer = entity.dxf.layer
+              kind = entity.dxftype()
+              if layer not in keep or kind == 'DIMENSION' or (layer == 'AXIS' and kind in {'TEXT', 'MTEXT'}):
+                  msp.delete_entity(entity)
+                  removed += 1
           for layer in doc.layers:
-              if layer.dxf.name in hidden:
+              if layer.dxf.name not in keep:
                   layer.dxf.color = -abs(layer.dxf.color or 7)
-                  turned_off.append(layer.dxf.name)
-          # Dimensions are mixed into the AXIS layer too; remove only dimension
-          # objects from this disposable copy while keeping the axis geometry.
-          dimensions = list(msp.query('DIMENSION'))
-          for entity in dimensions:
-              msp.delete_entity(entity)
           doc.saveas(dst)
           check = ezdxf.readfile(dst)
-          auditor = check.audit()
-          print('CREATED=', dst)
-          print('HIDDEN_LAYERS=', sorted(turned_off))
-          print('REMOVED_DIMENSION_ENTITIES=', len(dimensions))
-          print('REVIEW_MODELSPACE_ENTITIES=', len(check.modelspace()))
-          print('AUDIT_ERRORS=', len(auditor.errors))
-          if auditor.errors:
-              raise SystemExit('Review DXF audit failed')
+          audit = check.audit()
+          print('OUTPUT=', dst)
+          print('KEPT_LAYERS=', sorted(keep))
+          print('REMOVED_MODELSPACE_ENTITIES=', removed)
+          print('REMAINING_ENTITIES=', len(check.modelspace()))
+          print('AUDIT_ERRORS=', len(audit.errors))
+          print('REMAINING_LAYER_COUNTS=')
+          for name in sorted(keep):
+              n = sum(1 for e in check.modelspace() if e.dxf.layer == name)
+              print(f'{name}: {n}')
+          if audit.errors:
+              raise SystemExit('Filtered DXF audit failed')
           PY
-      - name: Commit review copy
+      - name: Commit filtered copy
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_review.dxf'
-          git commit -m 'Add cleaned DXF review copy'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_building_layers.dxf'
+          git commit -m 'Add strict building layer DXF view'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

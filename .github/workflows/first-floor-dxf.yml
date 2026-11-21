@@ -21,13 +21,12 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq libopengl0 libxcb-util1 libegl1
+          sudo apt-get install -y -qq libopengl0 libxcb-util1 libegl1 xvfb
           mkdir -p "$RUNNER_TEMP/oda-out"
           curl -fL 'https://www.opendesign.com/guestfiles/get?filename=ODAFileConverter_QT6_lnxX64_11dll.AppImage' -o "$RUNNER_TEMP/ODAFileConverter.AppImage"
           chmod +x "$RUNNER_TEMP/ODAFileConverter.AppImage"
           "$RUNNER_TEMP/ODAFileConverter.AppImage" --appimage-extract >/dev/null
-          export QT_QPA_PLATFORM=offscreen
-          "$PWD/squashfs-root/AppRun" "$GITHUB_WORKSPACE/cad_data/建筑/建筑" "$RUNNER_TEMP/oda-out" ACAD2018 DXF 0 1 '*.dwg'
+          xvfb-run -a "$PWD/squashfs-root/AppRun" "$GITHUB_WORKSPACE/cad_data/建筑/建筑" "$RUNNER_TEMP/oda-out" ACAD2018 DXF 0 1 '*.dwg'
           test -s "$RUNNER_TEMP/oda-out/JZ-1F_t3.dxf"
           cp "$RUNNER_TEMP/oda-out/JZ-1F_t3.dxf" "$GITHUB_WORKSPACE/cad_data/建筑/建筑/JZ-1F_t3.dxf"
           python -m pip install --quiet ezdxf

@@ -45,6 +45,18 @@ jobs:
           for layer, counts in sorted(by_layer.items(), key=lambda item: (-sum(item[1].values()), item[0])):
               print(f'{layer}\t{sum(counts.values())}\t{dict(counts.most_common())}')
           print('LAYERS_USED_END')
+          dims = Counter()
+          print('DIMENSION_VALUES_BEGIN')
+          for e in msp.query('DIMENSION'):
+              try:
+                  value = round(e.get_measurement(), 3)
+              except Exception:
+                  value = None
+              dims[value] += 1
+              if value is not None:
+                  print(f'{value}\tstyle={e.dxf.dimstyle}\tlayer={e.dxf.layer}\ttext={e.dxf.text!r}')
+          print('DIMENSION_VALUES_END')
+          print('COMMON_DIMENSIONS=', dims.most_common(40))
           print('INSERT_BLOCK_COUNTS=', dict(Counter(e.dxf.name for e in msp.query('INSERT')).most_common(50)))
           print('LAYER_TABLE_BEGIN')
           for layer in doc.layers:

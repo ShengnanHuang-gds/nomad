@@ -91,6 +91,59 @@ jobs:
               raise SystemExit('No layout viewport remained')
           if auditor.errors:
               raise SystemExit('Overlay DXF audit failed')
+
+          # Build a separate, non-destructive geometry-only candidate preview.
+          preview = ezdxf.readfile(src)
+          preview_msp = preview.modelspace()
+          layer_colors = {
+              'WALL': (1, 'wall'),
+              'CURTWALL': (1, 'wall'),
+              'A-Wall': (1, 'wall'),
+              '1-wall': (1, 'wall'),
+              'WINDOW': (4, 'window'),
+              'A-Window': (4, 'window'),
+              'STAIR': (6, 'stair'),
+              'EVTR': (3, 'elevator'),
+          }
+          preview_counts = Counter()
+          for entity in list(preview_msp):
+              layer = entity.dxf.get('layer', '0')
+              match = layer_colors.get(layer)
+              if not match:
+                  preview_msp.delete_entity(entity)
+                  continue
+              color, category = match
+              try:
+                  entity.dxf.color = color
+              except Exception:
+                  pass
+              preview_counts[category] += 1
+
+          preview_deleted_layout = 0
+          for layout in preview.layouts:
+              if layout.name.lower() == 'model':
+                  continue
+              for entity in list(layout):
+                  if entity.dxftype() != 'VIEWPORT':
+                      layout.delete_entity(entity)
+                      preview_deleted_layout += 1
+
+          preview_path = root / 'JZ-1F_t3_elements_only_preview.dxf'
+          preview.saveas(preview_path)
+          preview_check = ezdxf.readfile(preview_path)
+          preview_auditor = preview_check.audit()
+          preview_viewports = sum(1 for layout in preview_check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
+          print('ELEMENTS_ONLY_OUTPUT=', preview_path)
+          print('ELEMENTS_ONLY_COUNTS=', dict(preview_counts))
+          print('ELEMENTS_ONLY_MODELSPACE_ENTITIES=', len(preview_check.modelspace()))
+          print('ELEMENTS_ONLY_VIEWPORTS=', preview_viewports)
+          print('ELEMENTS_ONLY_AUDIT_ERRORS=', len(preview_auditor.errors))
+          if not sum(preview_counts.values()):
+              raise SystemExit('No candidate elements remained in preview')
+          if not preview_viewports:
+              raise SystemExit('No layout viewport remained in preview')
+          if preview_auditor.errors:
+              raise SystemExit('Elements-only preview DXF audit failed')
           PY
       - name: Commit corrected overlay
         env:
@@ -99,6 +152,6 @@ jobs:
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_classification_overlay.dxf'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_classification_overlay.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_elements_only_preview.dxf'
           git commit -m 'Preserve layout viewport in classification overlay'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

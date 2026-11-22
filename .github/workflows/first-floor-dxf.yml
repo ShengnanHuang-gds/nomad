@@ -1,4 +1,4 @@
-name: Export first-floor outer arc gap review
+name: Convert facade drawings for first-floor comparison
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -6,121 +6,56 @@ on:
 permissions:
   contents: write
 jobs:
-  overlay:
+  export:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch CAD source
+      - name: Fetch facade drawing
         run: |
           git init -q
           git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
           git sparse-checkout init --cone
-          git sparse-checkout set cad_data/建筑/建筑
+          git sparse-checkout set cad_data/幕墙/幕墙
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
-          git checkout -q -B work FETCH_HEAD
-      - name: Build corrected color-coded copy
+          git checkout -q -B export FETCH_HEAD
+      - name: Convert and audit with ODA File Converter
         run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libopengl0 libxcb-util1 libegl1 xvfb
+          mkdir -p "$RUNNER_TEMP/oda-out"
+          curl -fL 'https://www.opendesign.com/guestfiles/get?filename=ODAFileConverter_QT6_lnxX64_11dll.AppImage' -o "$RUNNER_TEMP/ODAFileConverter.AppImage"
+          chmod +x "$RUNNER_TEMP/ODAFileConverter.AppImage"
+          "$RUNNER_TEMP/ODAFileConverter.AppImage" --appimage-extract >/dev/null
+          xvfb-run -a "$PWD/squashfs-root/AppRun" "$GITHUB_WORKSPACE/cad_data/幕墙/幕墙" "$RUNNER_TEMP/oda-out" ACAD2018 DXF 0 1 '3诺丁汉平立面.dwg'
+          test -s "$RUNNER_TEMP/oda-out/3诺丁汉平立面.dxf"
+          cp "$RUNNER_TEMP/oda-out/3诺丁汉平立面.dxf" "$GITHUB_WORKSPACE/cad_data/幕墙/幕墙/3诺丁汉平立面.dxf"
           python -m pip install --quiet ezdxf
           python - <<'PY'
           from collections import Counter
-          from pathlib import Path
+          import json
           import ezdxf
-
-          root = Path('cad_data/建筑/建筑')
-          src = root / 'JZ-1F_t3.dxf'
-          import csv
-
-          selected = [["380","$TD_AUDIT_GENERATED_(2D8)","ARC","1352 1353","200 400"],["405","$TD_AUDIT_GENERATED_(2D8)","ARC","13B7 13B8","350 150"],["448","$TD_AUDIT_GENERATED_(2D8)","ARC","14A5 14A6","200 400"],["467","$TD_AUDIT_GENERATED_(2D8)","ARC","14E9 14EA","350 150"],["118C","$TD_AUDIT_GENERATED_(133)","LINE","118B 4E68","300 300"],["11B0","$TD_AUDIT_GENERATED_(133)","LINE","1190 4E64","300 300"],["11B3","$TD_AUDIT_GENERATED_(133)","LINE","118E 118F 1190 11E5 4E63 4E64","150 200 400 100 200 400"],["11B5","$TD_AUDIT_GENERATED_(133)","LINE","1188 11C0","150 100"],["481D","$TD_AUDIT_GENERATED_(249)","ARC","481E","200"],["481E","$TD_AUDIT_GENERATED_(249)","ARC","481D","200"],["4821","$TD_AUDIT_GENERATED_(249)","ARC","4822","200"],["4822","$TD_AUDIT_GENERATED_(249)","ARC","4821","200"],["4825","$TD_AUDIT_GENERATED_(249)","ARC","4826","200"],["4826","$TD_AUDIT_GENERATED_(249)","ARC","4825","200"],["482D","$TD_AUDIT_GENERATED_(249)","ARC","482E","200"],["482E","$TD_AUDIT_GENERATED_(249)","ARC","482D","200"],["4831","$TD_AUDIT_GENERATED_(249)","ARC","4832","200"],["4832","$TD_AUDIT_GENERATED_(249)","ARC","4831","200"],["4835","$TD_AUDIT_GENERATED_(249)","ARC","4836","200"],["4836","$TD_AUDIT_GENERATED_(249)","ARC","4835","200"],["483C","$TD_AUDIT_GENERATED_(249)","ARC","483D","200"],["483D","$TD_AUDIT_GENERATED_(249)","ARC","483C","200"],["4840","$TD_AUDIT_GENERATED_(249)","ARC","4841","200"],["4841","$TD_AUDIT_GENERATED_(249)","ARC","4840","200"],["4850","$TD_AUDIT_GENERATED_(249)","ARC","4852","200"],["4852","$TD_AUDIT_GENERATED_(249)","ARC","4850","200"],["4854","$TD_AUDIT_GENERATED_(249)","ARC","4855","200"],["4855","$TD_AUDIT_GENERATED_(249)","ARC","4854","200"],["4858","$TD_AUDIT_GENERATED_(249)","ARC","485A","200"],["485A","$TD_AUDIT_GENERATED_(249)","ARC","4858","200"],["4860","$TD_AUDIT_GENERATED_(249)","ARC","4861","200"],["4861","$TD_AUDIT_GENERATED_(249)","ARC","4860","200"],["4864","$TD_AUDIT_GENERATED_(249)","ARC","4865","200"],["4865","$TD_AUDIT_GENERATED_(249)","ARC","4864","200"],["4868","$TD_AUDIT_GENERATED_(249)","ARC","4869","200"],["4869","$TD_AUDIT_GENERATED_(249)","ARC","4868","200"],["486C","$TD_AUDIT_GENERATED_(249)","ARC","486D","200"],["486D","$TD_AUDIT_GENERATED_(249)","ARC","486C","200"]]
-          by_handle = {row[0]: row for row in selected}
-          # Build a separate, non-destructive geometry-only candidate preview.
-          preview = ezdxf.readfile(src)
-          preview_msp = preview.modelspace()
-          layer_colors = {
-              'WALL': (1, 'wall'),
-              'CURTWALL': (1, 'wall'),
-              'A-Wall': (1, 'wall'),
-              '1-wall': (1, 'wall'),
-              'WINDOW': (4, 'window'),
-              'A-Window': (4, 'window'),
-              'STAIR': (6, 'stair'),
-              'EVTR': (3, 'elevator'),
-          }
-          review_layer = 'REVIEW-WALL-CANDIDATE'
-          preview.layers.new(review_layer, dxfattribs={'color': 5})
-          preview_counts = Counter()
-          restored = set()
-          restored_gap_arcs = set()
-          gap_layer = 'REVIEW-ORIGINAL-GAP-ARCS'
-          preview.layers.new(gap_layer, dxfattribs={'color': 30})
-          for entity in list(preview_msp):
-              layer = entity.dxf.get('layer', '0')
-              handle = entity.dxf.handle
-              if handle in {'860', '861'}:
-                  if entity.dxftype() != 'ARC':
-                      raise SystemExit('Expected an original arc')
-                  entity.dxf.layer = gap_layer
-                  entity.dxf.discard('true_color')
-                  entity.dxf.color = 30
-                  restored_gap_arcs.add(handle)
-                  continue
-              if handle in by_handle:
-                  entity.dxf.layer = review_layer
-                  entity.dxf.discard('true_color')
-                  entity.dxf.color = 5
-                  restored.add(handle)
-                  continue
-              match = layer_colors.get(layer)
-              if not match:
-                  preview_msp.delete_entity(entity)
-                  continue
-              color, category = match
-              try:
-                  entity.dxf.color = color
-              except Exception:
-                  pass
-              preview_counts[category] += 1
-
-          preview_deleted_layout = 0
-          for layout in preview.layouts:
-              if layout.name.lower() == 'model':
-                  continue
-              for entity in list(layout):
-                  if entity.dxftype() != 'VIEWPORT':
-                      layout.delete_entity(entity)
-                      preview_deleted_layout += 1
-
-          preview_path = root / 'JZ-1F_t3_outer_arc_gap_review.dxf'
-          if restored != set(by_handle):
-              raise SystemExit('Some candidate handles were missing from the source')
-          preview.saveas(preview_path)
-          if restored_gap_arcs != {'860', '861'}:
-              raise SystemExit('Missing original gap arcs')
-          with (root / 'JZ-1F_t3_outer_arc_gap_review.csv').open('w', encoding='utf-8-sig', newline='') as stream:
-              writer = csv.writer(stream)
-              writer.writerow(['interval', 'from_handles', 'to_handles', 'start_deg', 'end_deg', 'chord_drawing_units', 'inner_arc_coverage_pct', 'outer_arc_coverage_pct', 'matching_arc_handles', 'reference_arc_handles', 'nearby_swing_arc_handles', 'review_status'])
-              writer.writerows([[1,"4860 4861","4858 485A",160.212,163.169,5768,100,100,"860 861","286","","original_arcs_restored"],[2,"4858 485A","4850 4852",167.676,167.676,0,0,0,"","286","","coincident_endpoints"],[3,"4850 4852","4854 4855",168.623,173.677,9857,0,0,"","286","","unresolved"],[4,"4854 4855","483C 483D",175.213,185.676,20388,14,13,"484C 484D C30 C31","286","","partial_arc_evidence"],[5,"483C 483D","4840 4841",187.212,209.705,43607,0,6,"C46","286","","partial_arc_evidence"],[6,"4840 4841","4868 4869",210.496,211.288,1547,75,75,"4844 4845","286","","partial_arc_evidence"],[7,"4868 4869","482D 482E",212.77,215.676,5671,0,0,"","286","","unresolved"],[8,"482D 482E","4835 4836",217.98,221.677,7212,0,0,"","286","","unresolved"],[9,"4835 4836","481D 481E",223.212,226.912,7218,0,0,"","286","","unresolved"],[10,"481D 481E","4825 4826",229.212,233.677,8709,0,0,"","286","","unresolved"],[11,"4825 4826","486C 486D",235.213,238.271,5967,0,0,"","286","","unresolved"]])
-          preview_check = ezdxf.readfile(preview_path)
-          preview_auditor = preview_check.audit()
-          preview_viewports = sum(1 for layout in preview_check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
-          print('ELEMENTS_ONLY_OUTPUT=', preview_path)
-          print('RESTORED_CANDIDATES=', len(restored))
-          print('ELEMENTS_ONLY_COUNTS=', dict(preview_counts))
-          print('ELEMENTS_ONLY_MODELSPACE_ENTITIES=', len(preview_check.modelspace()))
-          print('ELEMENTS_ONLY_VIEWPORTS=', preview_viewports)
-          print('ELEMENTS_ONLY_AUDIT_ERRORS=', len(preview_auditor.errors))
-          if not sum(preview_counts.values()):
-              raise SystemExit('No candidate elements remained in preview')
-          if not preview_viewports:
-              raise SystemExit('No layout viewport remained in preview')
-          if preview_auditor.errors:
-              raise SystemExit('Elements-only preview DXF audit failed')
+          p = 'cad_data/幕墙/幕墙/3诺丁汉平立面.dxf'
+          doc = ezdxf.readfile(p)
+          auditor = doc.audit()
+          msp = doc.modelspace()
+          print(f'entities={len(msp)}, audit_errors={len(auditor.errors)}, audit_fixes={len(auditor.fixes)}')
+          print('FACADE_LAYOUTS', [(l.name, len(l)) for l in doc.layouts])
+          print('FACADE_LAYERS', Counter(e.dxf.get('layer', '0') for e in msp).most_common(35))
+          arcs = [e for e in msp if e.dxftype() == 'ARC' and 90000 < e.dxf.radius < 140000]
+          print('FACADE_ARCS', json.dumps([[e.dxf.handle, e.dxf.layer, list(e.dxf.center), e.dxf.radius, e.dxf.start_angle, e.dxf.end_angle] for e in arcs[:120]], ensure_ascii=False))
+          print('FACADE_BLOCKS', Counter(e.dxf.name for e in msp if e.dxftype() == 'INSERT').most_common(25))
+          if auditor.errors:
+              raise SystemExit('DXF audit reported errors')
+          if len(msp) < 1:
+              raise SystemExit('DXF entity count unexpectedly low')
           PY
-      - name: Commit corrected overlay
+      - name: Commit generated DXF
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_outer_arc_gap_review.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_outer_arc_gap_review.csv'
-          git commit -m 'Export first-floor outer arc gap review'
+          git add -- 'cad_data/幕墙/幕墙/3诺丁汉平立面.dxf'
+          git commit -m 'Add facade DXF for comparison'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

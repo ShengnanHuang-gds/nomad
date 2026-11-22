@@ -1,0 +1,139 @@
+name: Build first-floor 3D prototype
+on:
+  push:
+    branches: [cad-export/first-floor-dxf]
+    paths: ['.github/workflows/build-first-floor-prototype.yml']
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch plan and classification
+        run: |
+          git init -q
+          git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
+          git sparse-checkout init --cone
+          git sparse-checkout set cad_data/建筑/建筑
+          git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
+          git checkout -q -B build FETCH_HEAD
+      - name: Build prototype mesh and Gazebo files
+        run: |
+          python - <<'PY'
+          import csv, json, math, struct
+          from pathlib import Path
+
+          root = Path('cad_data/建筑/建筑')
+          source = root / 'JZ-1F_t3_entity_classification.csv'
+          output = root / 'JZ-1F_t3_prototype'
+          meshes = output / 'meshes'
+          meshes.mkdir(parents=True, exist_ok=True)
+
+          wall_layers = {'WALL', 'CURTWALL', 'A-Wall', '1-wall'}
+          window_layers = {'WINDOW', 'A-Window'}
+          paths = []
+          with source.open(encoding='utf-8-sig', newline='') as f:
+              for row in csv.DictReader(f):
+                  if row['space'] != 'Model' or row['layer'] not in wall_layers | window_layers:
+                      continue
+                  try:
+                      g = json.loads(row['geometry_json'] or '{}')
+                  except json.JSONDecodeError:
+                      continue
+                  typ = row['entity_type']
+                  pts = []
+                  if typ == 'LINE' and 'start' in g and 'end' in g:
+                      pts = [g['start'][:2], g['end'][:2]]
+                  elif typ == 'ARC' and 'center' in g and 'radius' in g:
+                      start, end = g['start_angle'], g['end_angle']
+                      sweep = (end - start) % 360
+                      if sweep < 0.05:
+                          sweep = 360
+                      n = max(2, math.ceil(math.radians(sweep) * g['radius'] / 100))
+                      pts = [[g['center'][0] + g['radius'] * math.cos(math.radians(start + sweep*i/n)),
+                              g['center'][1] + g['radius'] * math.sin(math.radians(start + sweep*i/n))] for i in range(n+1)]
+                  elif typ == 'LWPOLYLINE' and 'vertices_xy_bulge' in g:
+                      pts = [p[:2] for p in g['vertices_xy_bulge']]
+                  if len(pts) >= 2:
+                      paths.append((row['category'], row['layer'], pts))
+
+          coords = [p for _,_,line in paths for p in line]
+          if not coords:
+              raise SystemExit('No wall/window line geometry found')
+          xmin, xmax = min(p[0] for p in coords), max(p[0] for p in coords)
+          ymin, ymax = min(p[1] for p in coords), max(p[1] for p in coords)
+          ox, oy = (xmin+xmax)/2, (ymin+ymax)/2
+          height = 4.8
+          thickness = 0.18
+          triangles = []
+          def add_box(a, b, width, z0, z1):
+              dx, dy = b[0]-a[0], b[1]-a[1]
+              length = math.hypot(dx,dy)
+              if length < 0.02: return
+              nx, ny = -dy/length*width/2, dx/length*width/2
+              ax, ay = (a[0]-ox)/1000, (a[1]-oy)/1000
+              bx, by = (b[0]-ox)/1000, (b[1]-oy)/1000
+              nx, ny = nx/1000, ny/1000
+              v = [(ax+nx,ay+ny,z0),(bx+nx,by+ny,z0),(bx-nx,by-ny,z0),(ax-nx,ay-ny,z0),
+                   (ax+nx,ay+ny,z1),(bx+nx,by+ny,z1),(bx-nx,by-ny,z1),(ax-nx,ay-ny,z1)]
+              for face in [(0,2,1),(0,3,2),(4,5,6),(4,6,7),(0,1,5),(0,5,4),
+                           (1,2,6),(1,6,5),(2,3,7),(2,7,6),(3,0,4),(3,4,7)]:
+                  triangles.append(tuple(v[i] for i in face))
+          counts = {'wall':0,'window':0}
+          for category, layer, pts in paths:
+              kind = 'window' if layer in window_layers else 'wall'
+              width = 0.08 if kind == 'window' else thickness
+              z0, z1 = (0.0, 1.2) if kind == 'window' else (0.0, height)
+              for a,b in zip(pts,pts[1:]):
+                  add_box(a,b,width,z0,z1)
+                  counts[kind] += 1
+
+          stl = meshes / 'walls_and_windows.stl'
+          with stl.open('wb') as f:
+              f.write(b'JZ-1F prototype. Drawing coordinates assumed millimetres.'[:80].ljust(80,b' '))
+              f.write(struct.pack('<I',len(triangles)))
+              for tri in triangles:
+                  f.write(struct.pack('<3f',0.0,0.0,1.0))
+                  for p in tri: f.write(struct.pack('<3f',*p))
+                  f.write(struct.pack('<H',0))
+
+          sx, sy = (xmax-xmin)/1000+10, (ymax-ymin)/1000+10
+          model = output / 'model.sdf'
+          model.write_text(f'''<sdf version="1.7">
+          <model name="jz_1f_prototype">
+            <static>true</static>
+            <link name="floor">
+              <collision name="floor_collision"><geometry><box><size>{sx:.3f} {sy:.3f} 0.05</size></box></geometry><pose>0 0 -0.025 0 0 0</pose></collision>
+              <visual name="floor_visual"><geometry><box><size>{sx:.3f} {sy:.3f} 0.05</size></box></geometry><pose>0 0 -0.025 0 0 0</pose><material><ambient>0.72 0.72 0.72 1</ambient><diffuse>0.72 0.72 0.72 1</diffuse></material></visual>
+            </link>
+            <link name="walls">
+              <collision name="walls_collision"><geometry><mesh><uri>model://jz_1f_prototype/meshes/walls_and_windows.stl</uri></mesh></geometry></collision>
+              <visual name="walls_visual"><geometry><mesh><uri>model://jz_1f_prototype/meshes/walls_and_windows.stl</uri></mesh></geometry><material><ambient>0.85 0.82 0.75 1</ambient><diffuse>0.85 0.82 0.75 1</diffuse></material></visual>
+            </link>
+          </model>
+          </sdf>''', encoding='utf-8')
+          (output / 'model.config').write_text('''<model><name>jz_1f_prototype</name><version>1.0</version><sdf version="1.7">model.sdf</sdf><author><name>Prototype</name></author><description>First-floor CAD-derived collision prototype</description></model>''')
+          (output / 'world.sdf').write_text('''<sdf version="1.7"><world name="jz_1f"><include><uri>model://ground_plane</uri></include><include><uri>model://sun</uri></include><include><uri>model://jz_1f_prototype</uri></include></world></sdf>''')
+          (output / 'README.txt').write_text(f"""International Innovation and Entrepreneurship Incubator, first-floor prototype
+          Geometry paths represented: {len(paths)}
+          Wall segments: {counts['wall']}
+          Window segments: {counts['window']}
+          Assumed scale: 1 drawing unit = 1 mm
+          Assumed wall height: {height} m
+          Assumed wall thickness: {thickness} m
+          Origin: ({ox:.3f}, {oy:.3f}) drawing units
+          Bounding box: {sx:.3f} m x {sy:.3f} m including 5 m margin
+          This is a visual and collision prototype, not a construction-accurate model.
+          """, encoding='utf-8')
+          print('PATHS',len(paths),'SEGMENTS',counts,'TRIANGLES',len(triangles),'BOUNDS_M',sx,sy,'HEIGHT_M',height)
+          PY
+      - name: Commit prototype
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh auth setup-git
+          git config user.name github-actions
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_prototype'
+          git commit -m 'Build first-floor CAD collision prototype'
+          git push origin HEAD:refs/heads/cad-export/first-floor-dxf

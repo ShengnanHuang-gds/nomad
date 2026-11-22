@@ -1,4 +1,4 @@
-name: Rebuild classification overlay with layout viewport
+name: Export first-floor wall recovery preview
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -27,71 +27,10 @@ jobs:
 
           root = Path('cad_data/建筑/建筑')
           src = root / 'JZ-1F_t3.dxf'
-          dst = root / 'JZ-1F_t3_classification_overlay.dxf'
-          doc = ezdxf.readfile(src)
-          msp = doc.modelspace()
-          annotation_layers = {'PUB_DIM','DIM_ELEV','DIM_LEAD','DIM_IDEN','DIM_SYMB','PUB_TEXT','SPACE','AXIS_TEXT'}
-          text_types = {'TEXT','MTEXT','ATTRIB','ATTDEF'}
-          wall_layers = {'WALL','CURTWALL','A-Wall'}
-          window_layers = {'WINDOW','A-Window'}
-          kept = Counter()
-          removed = Counter()
+          import csv
 
-          for entity in list(msp):
-              layer = entity.dxf.get('layer','0')
-              typ = entity.dxftype()
-              if typ == 'DIMENSION' or typ in text_types or layer in annotation_layers:
-                  msp.delete_entity(entity)
-                  removed[typ] += 1
-                  continue
-              if layer in wall_layers:
-                  color, category = 1, 'wall candidate (red)'
-              elif layer in window_layers:
-                  color, category = 4, 'window candidate (cyan)'
-              elif layer == 'STAIR':
-                  color, category = 6, 'stair candidate (magenta)'
-              elif layer == 'EVTR':
-                  color, category = 3, 'elevator candidate (green)'
-              elif layer == 'AXIS':
-                  color, category = 8, 'axis reference (gray)'
-              elif layer.startswith('$TD_AUDIT_GENERATED_'):
-                  color, category = 30, 'converter-generated review (orange)'
-              else:
-                  color, category = 2, 'unknown review (yellow)'
-              try:
-                  entity.dxf.color = color
-              except Exception:
-                  pass
-              kept[category] += 1
-
-          viewport_count = 0
-          deleted_layout = 0
-          for layout in doc.layouts:
-              if layout.name.lower() == 'model':
-                  continue
-              for entity in list(layout):
-                  if entity.dxftype() == 'VIEWPORT':
-                      viewport_count += 1
-                  else:
-                      layout.delete_entity(entity)
-                      deleted_layout += 1
-
-          doc.saveas(dst)
-          check = ezdxf.readfile(dst)
-          auditor = check.audit()
-          remaining_viewports = sum(1 for layout in check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
-          print('OUTPUT=', dst)
-          print('MODELSPACE_ENTITIES=', len(check.modelspace()))
-          print('LAYOUT_VIEWPORTS_PRESERVED=', remaining_viewports)
-          print('NON_VIEWPORT_LAYOUT_ENTITIES_REMOVED=', deleted_layout)
-          print('REMOVED_ANNOTATION_COUNTS=', dict(removed))
-          print('VISIBLE_CATEGORY_COUNTS=', dict(kept))
-          print('AUDIT_ERRORS=', len(auditor.errors))
-          if not remaining_viewports:
-              raise SystemExit('No layout viewport remained')
-          if auditor.errors:
-              raise SystemExit('Overlay DXF audit failed')
-
+          selected = [["380","$TD_AUDIT_GENERATED_(2D8)","ARC","1352 1353","200 400"],["405","$TD_AUDIT_GENERATED_(2D8)","ARC","13B7 13B8","350 150"],["448","$TD_AUDIT_GENERATED_(2D8)","ARC","14A5 14A6","200 400"],["467","$TD_AUDIT_GENERATED_(2D8)","ARC","14E9 14EA","350 150"],["118C","$TD_AUDIT_GENERATED_(133)","LINE","118B 4E68","300 300"],["11B0","$TD_AUDIT_GENERATED_(133)","LINE","1190 4E64","300 300"],["11B3","$TD_AUDIT_GENERATED_(133)","LINE","118E 118F 1190 11E5 4E63 4E64","150 200 400 100 200 400"],["11B5","$TD_AUDIT_GENERATED_(133)","LINE","1188 11C0","150 100"],["481D","$TD_AUDIT_GENERATED_(249)","ARC","481E","200"],["481E","$TD_AUDIT_GENERATED_(249)","ARC","481D","200"],["4821","$TD_AUDIT_GENERATED_(249)","ARC","4822","200"],["4822","$TD_AUDIT_GENERATED_(249)","ARC","4821","200"],["4825","$TD_AUDIT_GENERATED_(249)","ARC","4826","200"],["4826","$TD_AUDIT_GENERATED_(249)","ARC","4825","200"],["482D","$TD_AUDIT_GENERATED_(249)","ARC","482E","200"],["482E","$TD_AUDIT_GENERATED_(249)","ARC","482D","200"],["4831","$TD_AUDIT_GENERATED_(249)","ARC","4832","200"],["4832","$TD_AUDIT_GENERATED_(249)","ARC","4831","200"],["4835","$TD_AUDIT_GENERATED_(249)","ARC","4836","200"],["4836","$TD_AUDIT_GENERATED_(249)","ARC","4835","200"],["483C","$TD_AUDIT_GENERATED_(249)","ARC","483D","200"],["483D","$TD_AUDIT_GENERATED_(249)","ARC","483C","200"],["4840","$TD_AUDIT_GENERATED_(249)","ARC","4841","200"],["4841","$TD_AUDIT_GENERATED_(249)","ARC","4840","200"],["4850","$TD_AUDIT_GENERATED_(249)","ARC","4852","200"],["4852","$TD_AUDIT_GENERATED_(249)","ARC","4850","200"],["4854","$TD_AUDIT_GENERATED_(249)","ARC","4855","200"],["4855","$TD_AUDIT_GENERATED_(249)","ARC","4854","200"],["4858","$TD_AUDIT_GENERATED_(249)","ARC","485A","200"],["485A","$TD_AUDIT_GENERATED_(249)","ARC","4858","200"],["4860","$TD_AUDIT_GENERATED_(249)","ARC","4861","200"],["4861","$TD_AUDIT_GENERATED_(249)","ARC","4860","200"],["4864","$TD_AUDIT_GENERATED_(249)","ARC","4865","200"],["4865","$TD_AUDIT_GENERATED_(249)","ARC","4864","200"],["4868","$TD_AUDIT_GENERATED_(249)","ARC","4869","200"],["4869","$TD_AUDIT_GENERATED_(249)","ARC","4868","200"],["486C","$TD_AUDIT_GENERATED_(249)","ARC","486D","200"],["486D","$TD_AUDIT_GENERATED_(249)","ARC","486C","200"]]
+          by_handle = {row[0]: row for row in selected}
           # Build a separate, non-destructive geometry-only candidate preview.
           preview = ezdxf.readfile(src)
           preview_msp = preview.modelspace()
@@ -105,9 +44,19 @@ jobs:
               'STAIR': (6, 'stair'),
               'EVTR': (3, 'elevator'),
           }
+          review_layer = 'REVIEW-WALL-CANDIDATE'
+          preview.layers.new(review_layer, dxfattribs={'color': 5})
           preview_counts = Counter()
+          restored = set()
           for entity in list(preview_msp):
               layer = entity.dxf.get('layer', '0')
+              handle = entity.dxf.handle
+              if handle in by_handle:
+                  entity.dxf.layer = review_layer
+                  entity.dxf.discard('true_color')
+                  entity.dxf.color = 5
+                  restored.add(handle)
+                  continue
               match = layer_colors.get(layer)
               if not match:
                   preview_msp.delete_entity(entity)
@@ -128,12 +77,19 @@ jobs:
                       layout.delete_entity(entity)
                       preview_deleted_layout += 1
 
-          preview_path = root / 'JZ-1F_t3_elements_only_preview.dxf'
+          preview_path = root / 'JZ-1F_t3_wall_recovery_preview.dxf'
+          if restored != set(by_handle):
+              raise SystemExit('Some candidate handles were missing from the source')
           preview.saveas(preview_path)
+          with (root / 'JZ-1F_t3_wall_recovery_candidates.csv').open('w', encoding='utf-8-sig', newline='') as stream:
+              writer = csv.writer(stream)
+              writer.writerow(['handle', 'source_layer', 'entity_type', 'paired_handles', 'pair_gaps_drawing_units'])
+              writer.writerows(selected)
           preview_check = ezdxf.readfile(preview_path)
           preview_auditor = preview_check.audit()
           preview_viewports = sum(1 for layout in preview_check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
           print('ELEMENTS_ONLY_OUTPUT=', preview_path)
+          print('RESTORED_CANDIDATES=', len(restored))
           print('ELEMENTS_ONLY_COUNTS=', dict(preview_counts))
           print('ELEMENTS_ONLY_MODELSPACE_ENTITIES=', len(preview_check.modelspace()))
           print('ELEMENTS_ONLY_VIEWPORTS=', preview_viewports)
@@ -152,6 +108,6 @@ jobs:
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_classification_overlay.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_elements_only_preview.dxf'
-          git commit -m 'Preserve layout viewport in classification overlay'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_wall_recovery_preview.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_wall_recovery_candidates.csv'
+          git commit -m 'Export first-floor wall recovery preview'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

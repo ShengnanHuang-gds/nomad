@@ -1,4 +1,4 @@
-name: Export first-floor wall recovery preview
+name: Export first-floor outer arc gap review
 on:
   push:
     branches: [cad-export/first-floor-dxf]
@@ -48,9 +48,20 @@ jobs:
           preview.layers.new(review_layer, dxfattribs={'color': 5})
           preview_counts = Counter()
           restored = set()
+          restored_gap_arcs = set()
+          gap_layer = 'REVIEW-ORIGINAL-GAP-ARCS'
+          preview.layers.new(gap_layer, dxfattribs={'color': 30})
           for entity in list(preview_msp):
               layer = entity.dxf.get('layer', '0')
               handle = entity.dxf.handle
+              if handle in {'860', '861'}:
+                  if entity.dxftype() != 'ARC':
+                      raise SystemExit('Expected an original arc')
+                  entity.dxf.layer = gap_layer
+                  entity.dxf.discard('true_color')
+                  entity.dxf.color = 30
+                  restored_gap_arcs.add(handle)
+                  continue
               if handle in by_handle:
                   entity.dxf.layer = review_layer
                   entity.dxf.discard('true_color')
@@ -77,14 +88,16 @@ jobs:
                       layout.delete_entity(entity)
                       preview_deleted_layout += 1
 
-          preview_path = root / 'JZ-1F_t3_wall_recovery_preview.dxf'
+          preview_path = root / 'JZ-1F_t3_outer_arc_gap_review.dxf'
           if restored != set(by_handle):
               raise SystemExit('Some candidate handles were missing from the source')
           preview.saveas(preview_path)
-          with (root / 'JZ-1F_t3_wall_recovery_candidates.csv').open('w', encoding='utf-8-sig', newline='') as stream:
+          if restored_gap_arcs != {'860', '861'}:
+              raise SystemExit('Missing original gap arcs')
+          with (root / 'JZ-1F_t3_outer_arc_gap_review.csv').open('w', encoding='utf-8-sig', newline='') as stream:
               writer = csv.writer(stream)
-              writer.writerow(['handle', 'source_layer', 'entity_type', 'paired_handles', 'pair_gaps_drawing_units'])
-              writer.writerows(selected)
+              writer.writerow(['interval', 'from_handles', 'to_handles', 'start_deg', 'end_deg', 'chord_drawing_units', 'inner_arc_coverage_pct', 'outer_arc_coverage_pct', 'matching_arc_handles', 'reference_arc_handles', 'nearby_swing_arc_handles', 'review_status'])
+              writer.writerows([[1,"4860 4861","4858 485A",160.212,163.169,5768,100,100,"860 861","286","","original_arcs_restored"],[2,"4858 485A","4850 4852",167.676,167.676,0,0,0,"","286","","coincident_endpoints"],[3,"4850 4852","4854 4855",168.623,173.677,9857,0,0,"","286","","unresolved"],[4,"4854 4855","483C 483D",175.213,185.676,20388,14,13,"484C 484D C30 C31","286","","partial_arc_evidence"],[5,"483C 483D","4840 4841",187.212,209.705,43607,0,6,"C46","286","","partial_arc_evidence"],[6,"4840 4841","4868 4869",210.496,211.288,1547,75,75,"4844 4845","286","","partial_arc_evidence"],[7,"4868 4869","482D 482E",212.77,215.676,5671,0,0,"","286","","unresolved"],[8,"482D 482E","4835 4836",217.98,221.677,7212,0,0,"","286","","unresolved"],[9,"4835 4836","481D 481E",223.212,226.912,7218,0,0,"","286","","unresolved"],[10,"481D 481E","4825 4826",229.212,233.677,8709,0,0,"","286","","unresolved"],[11,"4825 4826","486C 486D",235.213,238.271,5967,0,0,"","286","","unresolved"]])
           preview_check = ezdxf.readfile(preview_path)
           preview_auditor = preview_check.audit()
           preview_viewports = sum(1 for layout in preview_check.layouts for e in layout if e.dxftype() == 'VIEWPORT')
@@ -108,6 +121,6 @@ jobs:
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_wall_recovery_preview.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_wall_recovery_candidates.csv'
-          git commit -m 'Export first-floor wall recovery preview'
+          git add -- 'cad_data/建筑/建筑/JZ-1F_t3_outer_arc_gap_review.dxf' 'cad_data/建筑/建筑/JZ-1F_t3_outer_arc_gap_review.csv'
+          git commit -m 'Export first-floor outer arc gap review'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

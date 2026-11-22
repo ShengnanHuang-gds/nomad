@@ -1,0 +1,1 @@
+<sdf version="1.7"><world name="jz_1f"><include><uri>model://ground_plane</uri></include><include><uri>model://sun</uri></include><include><uri>model://jz_1f_prototype</uri></include></world></sdf>

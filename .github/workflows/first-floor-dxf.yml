@@ -44,37 +44,30 @@ jobs:
           arcs = [e for e in msp if e.dxftype() == 'ARC' and 90000 < e.dxf.radius < 140000]
           print('FACADE_ARCS', json.dumps([[e.dxf.handle, e.dxf.layer, list(e.dxf.center), e.dxf.radius, e.dxf.start_angle, e.dxf.end_angle] for e in arcs[:120]], ensure_ascii=False))
           print('FACADE_BLOCKS', Counter(e.dxf.name for e in msp if e.dxftype() == 'INSERT').most_common(25))
-          from pathlib import Path
-          entries = []
-          for label, source in [('facade', doc), ('architecture', ezdxf.readfile('cad_data/建筑/建筑/JZ-1F_t3.dxf'))]:
-              for e in source.modelspace():
-                  t = e.dxftype()
-                  l = e.dxf.get('layer', '0')
-                  row = [label, e.dxf.handle, l, t]
-                  if t == 'ARC' and e.dxf.radius > 2000:
-                      row += [list(e.dxf.center), e.dxf.radius, e.dxf.start_angle, e.dxf.end_angle]
-                  elif t in ('TEXT', 'MTEXT'):
-                      row += [list(e.dxf.insert), e.dxf.text]
-                  elif t == 'INSERT' and ('AXIS' in (l + e.dxf.name).upper() or e.attribs):
-                      row += [list(e.dxf.insert), e.dxf.name, [[at.dxf.tag, at.dxf.text] for at in e.attribs]]
-                  elif t == 'LINE' and 'AXIS' in l.upper():
-                      row += [list(e.dxf.start), list(e.dxf.end)]
+          from math import dist
+          for handle in ['2AC674','3C2A7D']:
+              note = doc.entitydb[handle]
+              x,y = note.dxf.insert[:2]
+              print('NOTE',handle,x,y,note.dxf.layer,note.dxf.all_existing_dxf_attribs())
+              candidates = []
+              for ent in msp:
+                  kind = ent.dxftype()
+                  if kind == 'LINE':
+                      pts = [ent.dxf.start, ent.dxf.end]
+                  elif kind == 'LWPOLYLINE':
+                      pts = list(ent.get_points('xy'))
+                  elif kind == 'LEADER':
+                      pts = ent.vertices
                   else:
                       continue
-                  entries.append(row)
-          Path('cad_data/幕墙/幕墙/facade_alignment_inventory.json').write_text(json.dumps(entries, ensure_ascii=False), encoding='utf-8')
+                  pts = [[round(p[0],1), round(p[1],1)] for p in pts]
+                  if not pts: continue
+                  nearest = min(dist((x,y),p) for p in pts)
+                  if nearest < 12000 and len(pts) <= 10:
+                      candidates.append((round(nearest), ent.dxf.handle, ent.dxf.layer, kind, pts))
+              for c in sorted(candidates)[:80]: print('NEAR',handle,json.dumps(c,ensure_ascii=False))
           if auditor.errors:
               raise SystemExit('DXF audit reported errors')
           if len(msp) < 1:
               raise SystemExit('DXF entity count unexpectedly low')
           PY
-      - name: Commit generated DXF
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh auth setup-git
-          git config user.name github-actions
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/幕墙/幕墙/facade_alignment_inventory.json'
-          git commit -m 'Record facade and architectural alignment coordinates'
-          git push origin HEAD:refs/heads/cad-export/first-floor-dxf

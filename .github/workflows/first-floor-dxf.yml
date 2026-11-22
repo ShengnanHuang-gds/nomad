@@ -14,7 +14,7 @@ jobs:
           git init -q
           git remote add origin https://github.com/ShengnanHuang-gds/nomad.git
           git sparse-checkout init --cone
-          git sparse-checkout set cad_data/幕墙/幕墙
+          git sparse-checkout set cad_data/幕墙/幕墙 cad_data/建筑/建筑
           git fetch --depth=1 --filter=blob:none origin refs/heads/cad-export/first-floor-dxf
           git checkout -q -B export FETCH_HEAD
       - name: Convert and audit with ODA File Converter
@@ -44,6 +44,25 @@ jobs:
           arcs = [e for e in msp if e.dxftype() == 'ARC' and 90000 < e.dxf.radius < 140000]
           print('FACADE_ARCS', json.dumps([[e.dxf.handle, e.dxf.layer, list(e.dxf.center), e.dxf.radius, e.dxf.start_angle, e.dxf.end_angle] for e in arcs[:120]], ensure_ascii=False))
           print('FACADE_BLOCKS', Counter(e.dxf.name for e in msp if e.dxftype() == 'INSERT').most_common(25))
+          from pathlib import Path
+          entries = []
+          for label, source in [('facade', doc), ('architecture', ezdxf.readfile('cad_data/建筑/建筑/JZ-1F_t3.dxf'))]:
+              for e in source.modelspace():
+                  t = e.dxftype()
+                  l = e.dxf.get('layer', '0')
+                  row = [label, e.dxf.handle, l, t]
+                  if t == 'ARC' and e.dxf.radius > 2000:
+                      row += [list(e.dxf.center), e.dxf.radius, e.dxf.start_angle, e.dxf.end_angle]
+                  elif t in ('TEXT', 'MTEXT'):
+                      row += [list(e.dxf.insert), e.dxf.text]
+                  elif t == 'INSERT' and ('AXIS' in (l + e.dxf.name).upper() or e.attribs):
+                      row += [list(e.dxf.insert), e.dxf.name, [[at.dxf.tag, at.dxf.text] for at in e.attribs]]
+                  elif t == 'LINE' and 'AXIS' in l.upper():
+                      row += [list(e.dxf.start), list(e.dxf.end)]
+                  else:
+                      continue
+                  entries.append(row)
+          Path('cad_data/幕墙/幕墙/facade_alignment_inventory.json').write_text(json.dumps(entries, ensure_ascii=False), encoding='utf-8')
           if auditor.errors:
               raise SystemExit('DXF audit reported errors')
           if len(msp) < 1:
@@ -56,6 +75,6 @@ jobs:
           gh auth setup-git
           git config user.name github-actions
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git add -- 'cad_data/幕墙/幕墙/3诺丁汉平立面.dxf'
-          git commit -m 'Add facade DXF for comparison'
+          git add -- 'cad_data/幕墙/幕墙/facade_alignment_inventory.json'
+          git commit -m 'Record facade and architectural alignment coordinates'
           git push origin HEAD:refs/heads/cad-export/first-floor-dxf

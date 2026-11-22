@@ -47,7 +47,7 @@ jobs:
           from math import dist
           for handle in ['2AC674','3C2A7D']:
               note = doc.entitydb[handle]
-              x,y = note.dxf.insert[:2]
+              x,y = (note.dxf.insert.x, note.dxf.insert.y)
               print('NOTE',handle,x,y,note.dxf.layer,note.dxf.all_existing_dxf_attribs())
               candidates = []
               for ent in msp:
@@ -65,7 +65,7 @@ jobs:
                   nearest = min(dist((x,y),p) for p in pts)
                   if nearest < 12000 and len(pts) <= 10:
                       candidates.append((round(nearest), ent.dxf.handle, ent.dxf.layer, kind, pts))
-              for c in sorted(candidates)[:80]: print('NEAR',handle,json.dumps(c,ensure_ascii=False))
+              for c in sorted(candidates, key=lambda c: (0 if ('lead' in c[2].lower() or 'text' in c[2].lower() or c[3]=='LEADER') else 1,c[0]))[:180]: print('NEAR',handle,json.dumps(c,ensure_ascii=False))
           if auditor.errors:
               raise SystemExit('DXF audit reported errors')
           if len(msp) < 1:
